@@ -28,7 +28,7 @@ Aplicação acadêmica para criação, edição e apresentação de táticas de 
 |Android SDK Platform|API 36|Compilação e execução no Android|
 |Microsoft OpenJDK|21|Ferramentas de compilação do Android|
 |MySQL Server|8.x|Persistência dos dados|
-|xUnit|Versão registrada em `Limk.Tests.csproj`|Testes automatizados|
+|xUnit|2.9.3|Testes automatizados|
 |Git|2.x ou superior|Versionamento e colaboração|
 |Visual Studio|Visual Studio 2022 atualizado ou versão posterior compatível com .NET 10|Desenvolvimento pela interface gráfica|
 
