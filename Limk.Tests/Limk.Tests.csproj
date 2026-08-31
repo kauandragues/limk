@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Limk.Core\Limk.Core.csproj" />
-    <ProjectReference Include="..\Limk.Api\Limk.Api.csproj" />
   </ItemGroup>
 
 </Project>

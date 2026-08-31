@@ -1,5 +1,4 @@
 <Solution>
-  <Project Path="Limk.Api/Limk.Api.csproj" />
   <Project Path="Limk.App/Limk.App.csproj" />
   <Project Path="Limk.Core/Limk.Core.csproj" />
   <Project Path="Limk.Tests/Limk.Tests.csproj" />
