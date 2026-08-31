@@ -20,32 +20,6 @@ O MVP deverá permitir que um treinador:
 
 A prancheta é o núcleo do sistema. Equipes, rodízios, táticas e persistência serão construídos a partir dela.
 
-## Fluxo principal
-
-```text
-Abrir o aplicativo
-        ↓
-Cadastrar equipe e atletas
-        ↓
-Criar ou configurar um rodízio 5x1
-        ↓
-Selecionar uma rotação
-        ↓
-Criar uma tática e seus quadros
-        ↓
-Mover jogadores e bola
-        ↓
-Adicionar setas e textos
-        ↓
-Apresentar a tática
-        ↓
-Salvar no MySQL
-        ↓
-Fechar e abrir novamente o aplicativo
-        ↓
-Recuperar a tática
-```
-
 ## Arquitetura
 
 ```text
