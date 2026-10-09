@@ -14,5 +14,10 @@ namespace Limk.VolleyBall.User_Constrols
         {
             InitializeComponent();
         }
+
+        private void TelaInicial_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
