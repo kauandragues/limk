@@ -34,9 +34,11 @@
             gb5 = new GroupBox();
             gb6 = new GroupBox();
             gb1 = new GroupBox();
-            gb7 = new GroupBox();
             label1 = new Label();
+            gb7 = new GroupBox();
+            label2 = new Label();
             gb1.SuspendLayout();
+            gb7.SuspendLayout();
             SuspendLayout();
             // 
             // gb2
@@ -88,14 +90,6 @@
             gb1.TabIndex = 7;
             gb1.TabStop = false;
             // 
-            // gb7
-            // 
-            gb7.Location = new Point(0, -9);
-            gb7.Name = "gb7";
-            gb7.Size = new Size(1094, 48);
-            gb7.TabIndex = 8;
-            gb7.TabStop = false;
-            // 
             // label1
             // 
             label1.AutoSize = true;
@@ -103,6 +97,24 @@
             label1.Name = "label1";
             label1.Size = new Size(0, 20);
             label1.TabIndex = 0;
+            // 
+            // gb7
+            // 
+            gb7.Controls.Add(label2);
+            gb7.Location = new Point(0, -9);
+            gb7.Name = "gb7";
+            gb7.Size = new Size(1094, 48);
+            gb7.TabIndex = 8;
+            gb7.TabStop = false;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(16, 23);
+            label2.Name = "label2";
+            label2.Size = new Size(125, 20);
+            label2.TabIndex = 1;
+            label2.Text = "LINK Tactical Hub";
             // 
             // TelaInicial
             // 
@@ -123,6 +135,8 @@
             Load += TelaInicial_Load;
             gb1.ResumeLayout(false);
             gb1.PerformLayout();
+            gb7.ResumeLayout(false);
+            gb7.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -142,5 +156,6 @@
         private GroupBox gb6;
         private GroupBox gb1;
         private Label label1;
+        private Label label2;
     }
 }
