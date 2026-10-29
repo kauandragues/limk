@@ -47,7 +47,7 @@
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(800, 450);
+            tableLayoutPanel1.Size = new Size(1059, 819);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // menuLateral1
@@ -56,24 +56,25 @@
             menuLateral1.Dock = DockStyle.Fill;
             menuLateral1.Location = new Point(3, 3);
             menuLateral1.Name = "menuLateral1";
-            menuLateral1.Size = new Size(154, 444);
+            menuLateral1.Size = new Size(205, 813);
             menuLateral1.TabIndex = 0;
             // 
             // panelTelas
             // 
             panelTelas.Dock = DockStyle.Fill;
-            panelTelas.Location = new Point(163, 3);
+            panelTelas.Location = new Point(214, 3);
             panelTelas.Name = "panelTelas";
-            panelTelas.Size = new Size(634, 444);
+            panelTelas.Size = new Size(842, 813);
             panelTelas.TabIndex = 1;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1059, 819);
             Controls.Add(tableLayoutPanel1);
             Name = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Form1";
             tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
