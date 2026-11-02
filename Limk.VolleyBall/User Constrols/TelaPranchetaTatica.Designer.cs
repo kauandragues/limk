@@ -35,21 +35,17 @@
             labelTitulo = new Label();
             panel5 = new Panel();
             panel2 = new Panel();
-            panel4 = new Panel();
-            pictureBox2 = new PictureBox();
+            panelPranchetaTatica = new Panel();
             panel6 = new Panel();
             panel3 = new Panel();
-            button4 = new Button();
-            button3 = new Button();
-            button2 = new Button();
+            btnAdicionarAtleta = new Button();
+            btnAdicionarBola = new Button();
             panel1 = new Panel();
             label1 = new Label();
             pictureBox1 = new PictureBox();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             panelCabecalho.SuspendLayout();
             panel2.SuspendLayout();
-            panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             panel3.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -114,7 +110,7 @@
             // 
             panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel2.BackColor = SystemColors.ControlLight;
-            panel2.Controls.Add(panel4);
+            panel2.Controls.Add(panelPranchetaTatica);
             panel2.Controls.Add(panel6);
             panel2.Controls.Add(panel3);
             panel2.Location = new Point(0, 85);
@@ -122,26 +118,14 @@
             panel2.Size = new Size(842, 597);
             panel2.TabIndex = 5;
             // 
-            // panel4
+            // panelPranchetaTatica
             // 
-            panel4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panel4.BackColor = Color.White;
-            panel4.Controls.Add(pictureBox2);
-            panel4.Location = new Point(194, 23);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(402, 552);
-            panel4.TabIndex = 3;
-            // 
-            // pictureBox2
-            // 
-            pictureBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBox2.Image = Properties.Resources.Quadra;
-            pictureBox2.Location = new Point(3, 168);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(396, 193);
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 0;
-            pictureBox2.TabStop = false;
+            panelPranchetaTatica.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelPranchetaTatica.BackColor = Color.White;
+            panelPranchetaTatica.Location = new Point(194, 23);
+            panelPranchetaTatica.Name = "panelPranchetaTatica";
+            panelPranchetaTatica.Size = new Size(402, 552);
+            panelPranchetaTatica.TabIndex = 3;
             // 
             // panel6
             // 
@@ -156,65 +140,49 @@
             // 
             panel3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panel3.BackColor = Color.White;
-            panel3.Controls.Add(button4);
-            panel3.Controls.Add(button3);
-            panel3.Controls.Add(button2);
+            panel3.Controls.Add(btnAdicionarAtleta);
+            panel3.Controls.Add(btnAdicionarBola);
             panel3.Controls.Add(panel1);
             panel3.Location = new Point(21, 23);
             panel3.Name = "panel3";
             panel3.Size = new Size(150, 552);
             panel3.TabIndex = 2;
             // 
-            // button4
+            // btnAdicionarAtleta
             // 
-            button4.Dock = DockStyle.Top;
-            button4.FlatAppearance.BorderSize = 0;
-            button4.FlatAppearance.MouseDownBackColor = Color.FromArgb(133, 62, 255);
-            button4.FlatAppearance.MouseOverBackColor = Color.FromArgb(124, 58, 237);
-            button4.FlatStyle = FlatStyle.Flat;
-            button4.Font = new Font("Arial", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button4.Image = (Image)resources.GetObject("button4.Image");
-            button4.ImageAlign = ContentAlignment.MiddleLeft;
-            button4.Location = new Point(0, 149);
-            button4.Name = "button4";
-            button4.Size = new Size(150, 48);
-            button4.TabIndex = 6;
-            button4.Text = "   Atleta";
-            button4.UseVisualStyleBackColor = true;
+            btnAdicionarAtleta.Dock = DockStyle.Top;
+            btnAdicionarAtleta.FlatAppearance.BorderSize = 0;
+            btnAdicionarAtleta.FlatAppearance.MouseDownBackColor = Color.FromArgb(133, 62, 255);
+            btnAdicionarAtleta.FlatAppearance.MouseOverBackColor = Color.FromArgb(124, 58, 237);
+            btnAdicionarAtleta.FlatStyle = FlatStyle.Flat;
+            btnAdicionarAtleta.Font = new Font("Arial", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnAdicionarAtleta.Image = (Image)resources.GetObject("btnAdicionarAtleta.Image");
+            btnAdicionarAtleta.ImageAlign = ContentAlignment.MiddleLeft;
+            btnAdicionarAtleta.Location = new Point(0, 101);
+            btnAdicionarAtleta.Name = "btnAdicionarAtleta";
+            btnAdicionarAtleta.Size = new Size(150, 48);
+            btnAdicionarAtleta.TabIndex = 6;
+            btnAdicionarAtleta.Text = "   Atleta";
+            btnAdicionarAtleta.UseVisualStyleBackColor = true;
+            btnAdicionarAtleta.Click += btnAdicionarAtleta_Click;
             // 
-            // button3
+            // btnAdicionarBola
             // 
-            button3.Dock = DockStyle.Top;
-            button3.FlatAppearance.BorderSize = 0;
-            button3.FlatAppearance.MouseDownBackColor = Color.FromArgb(133, 62, 255);
-            button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(124, 58, 237);
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Font = new Font("Arial", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button3.Image = (Image)resources.GetObject("button3.Image");
-            button3.ImageAlign = ContentAlignment.MiddleLeft;
-            button3.Location = new Point(0, 101);
-            button3.Name = "button3";
-            button3.Size = new Size(150, 48);
-            button3.TabIndex = 5;
-            button3.Text = "  Bola";
-            button3.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            button2.Dock = DockStyle.Top;
-            button2.FlatAppearance.BorderSize = 0;
-            button2.FlatAppearance.MouseDownBackColor = Color.FromArgb(133, 62, 255);
-            button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(124, 58, 237);
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Font = new Font("Arial", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button2.Image = Properties.Resources.cursor_1_;
-            button2.ImageAlign = ContentAlignment.MiddleLeft;
-            button2.Location = new Point(0, 53);
-            button2.Name = "button2";
-            button2.Size = new Size(150, 48);
-            button2.TabIndex = 4;
-            button2.Text = "      Selecionar";
-            button2.UseVisualStyleBackColor = true;
+            btnAdicionarBola.Dock = DockStyle.Top;
+            btnAdicionarBola.FlatAppearance.BorderSize = 0;
+            btnAdicionarBola.FlatAppearance.MouseDownBackColor = Color.FromArgb(133, 62, 255);
+            btnAdicionarBola.FlatAppearance.MouseOverBackColor = Color.FromArgb(124, 58, 237);
+            btnAdicionarBola.FlatStyle = FlatStyle.Flat;
+            btnAdicionarBola.Font = new Font("Arial", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnAdicionarBola.Image = (Image)resources.GetObject("btnAdicionarBola.Image");
+            btnAdicionarBola.ImageAlign = ContentAlignment.MiddleLeft;
+            btnAdicionarBola.Location = new Point(0, 53);
+            btnAdicionarBola.Name = "btnAdicionarBola";
+            btnAdicionarBola.Size = new Size(150, 48);
+            btnAdicionarBola.TabIndex = 5;
+            btnAdicionarBola.Text = "  Bola";
+            btnAdicionarBola.UseVisualStyleBackColor = true;
+            btnAdicionarBola.Click += btnAdicionarBola_Click;
             // 
             // panel1
             // 
@@ -262,8 +230,6 @@
             panelCabecalho.ResumeLayout(false);
             panelCabecalho.PerformLayout();
             panel2.ResumeLayout(false);
-            panel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             panel3.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
@@ -278,17 +244,15 @@
         private Panel panel2;
         private Panel panel6;
         private Panel panel3;
-        private Panel panel4;
+        private Panel panelPranchetaTatica;
         private Label labelTitulo;
         private Button button1;
         private Label labelNomeTatica;
         private Panel panel1;
-        private Button button2;
-        private Button button4;
-        private Button button3;
+        private Button btnAdicionarAtleta;
+        private Button btnAdicionarBola;
         private PictureBox pictureBox1;
         private Label label1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private PictureBox pictureBox2;
     }
 }
