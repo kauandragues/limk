@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="label3.Text" xml:space="preserve">
+    <value>As mudanças nas regras se relacionam diretamente com a espetacularização do esporte. Esse fenômeno é caracterizado pela disseminação do vôlei por meio dos veículos de comunicação, por exemplo, a televisão e a internet. As mudanças nas regras se relacionam diretamente com a espetacularização do esporte. Esse fenômeno é caracterizado pela disseminação do vôlei por meio dos veículos de comunicação, por exemplo, a televisão e a internet.
+
+A atualização das regras é fundamental para que a prática esportiva se mantenha atrativa, tanto para jogadores quanto para os espectadores e, consequentemente, para o setor comercial e os diretores das equipes profissionais.
+
+Uma das mudanças que impactaram o esporte foi a criação da posição do líbero, em 1998. A novidade foi incluída no vôlei, pois o esporte se caracterizava por ataques eficientes, entretanto, carecia de ferramentas de defesa. Nesse sentido, o jogador líbero passou a atuar exclusivamente na assistência e defesa durante as partidas.</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+        YII=
+</value>
+  </data>
+</root>

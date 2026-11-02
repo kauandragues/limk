@@ -43,36 +43,40 @@
             tableLayoutPanel1.Controls.Add(panelTelas, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(800, 450);
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
+            tableLayoutPanel1.Size = new Size(1057, 811);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // menuLateral1
             // 
             menuLateral1.BackColor = Color.FromArgb(30, 21, 42);
             menuLateral1.Dock = DockStyle.Fill;
-            menuLateral1.Location = new Point(3, 3);
+            menuLateral1.Location = new Point(3, 5);
+            menuLateral1.Margin = new Padding(3, 5, 3, 5);
             menuLateral1.Name = "menuLateral1";
-            menuLateral1.Size = new Size(154, 444);
+            menuLateral1.Size = new Size(205, 801);
             menuLateral1.TabIndex = 0;
             // 
             // panelTelas
             // 
             panelTelas.Dock = DockStyle.Fill;
-            panelTelas.Location = new Point(163, 3);
+            panelTelas.Location = new Point(214, 4);
+            panelTelas.Margin = new Padding(3, 4, 3, 4);
             panelTelas.Name = "panelTelas";
-            panelTelas.Size = new Size(634, 444);
+            panelTelas.Size = new Size(840, 803);
             panelTelas.TabIndex = 1;
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1057, 811);
             Controls.Add(tableLayoutPanel1);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
             Text = "Form1";
             tableLayoutPanel1.ResumeLayout(false);
