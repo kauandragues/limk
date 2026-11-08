@@ -63,12 +63,13 @@
             // 
             // label3
             // 
-            label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label3.AutoEllipsis = true;
             label3.ForeColor = Color.DimGray;
-            label3.Location = new Point(31, 121);
+            label3.Location = new Point(30, 98);
+            label3.MaximumSize = new Size(500, 0);
             label3.Name = "label3";
-            label3.Size = new Size(3005, 100);
+            label3.Size = new Size(500, 68);
             label3.TabIndex = 2;
             label3.Text = resources.GetString("label3.Text");
             // 

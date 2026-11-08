@@ -38,8 +38,8 @@
             comboBox1 = new ComboBox();
             textBox1 = new TextBox();
             tableLayoutPanel1 = new TableLayoutPanel();
-            panel2 = new Panel();
             cardTática1 = new CardTática();
+            panel2 = new Panel();
             panel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -157,6 +157,15 @@
             tableLayoutPanel1.Size = new Size(779, 617);
             tableLayoutPanel1.TabIndex = 4;
             // 
+            // cardTática1
+            // 
+            cardTática1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            cardTática1.BackColor = Color.White;
+            cardTática1.Location = new Point(3, 3);
+            cardTática1.Name = "cardTática1";
+            cardTática1.Size = new Size(383, 262);
+            cardTática1.TabIndex = 0;
+            // 
             // panel2
             // 
             panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -165,15 +174,6 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(779, 617);
             panel2.TabIndex = 5;
-            // 
-            // cardTática1
-            // 
-            cardTática1.BackColor = Color.White;
-            cardTática1.Dock = DockStyle.Fill;
-            cardTática1.Location = new Point(3, 3);
-            cardTática1.Name = "cardTática1";
-            cardTática1.Size = new Size(383, 262);
-            cardTática1.TabIndex = 0;
             // 
             // TelaTaticas
             // 
