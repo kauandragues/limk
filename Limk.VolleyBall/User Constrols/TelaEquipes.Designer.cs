@@ -35,6 +35,7 @@
             button1 = new Button();
             label3 = new Label();
             panel1 = new Panel();
+            pictureBox4 = new PictureBox();
             panel2 = new Panel();
             button3 = new Button();
             button6 = new Button();
@@ -53,20 +54,17 @@
             label4 = new Label();
             textBox2 = new TextBox();
             openFileDialog1 = new OpenFileDialog();
-            panel3 = new Panel();
-            button8 = new Button();
-            label10 = new Label();
-            label9 = new Label();
-            label8 = new Label();
-            pictureBox3 = new PictureBox();
-            pictureBox4 = new PictureBox();
+            panel4 = new Panel();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            cardEquipes2 = new CardEquipes();
+            cardEquipes1 = new CardEquipes();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            panel4.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -114,7 +112,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Arial", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(28, 114);
+            label3.Location = new Point(3, 12);
             label3.Name = "label3";
             label3.Size = new Size(166, 17);
             label3.TabIndex = 4;
@@ -122,7 +120,6 @@
             // 
             // panel1
             // 
-            panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             panel1.BackColor = Color.White;
             panel1.Controls.Add(pictureBox4);
             panel1.Controls.Add(panel2);
@@ -134,11 +131,20 @@
             panel1.Controls.Add(textBox3);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(textBox2);
-            panel1.Location = new Point(449, 89);
+            panel1.Dock = DockStyle.Right;
+            panel1.Location = new Point(414, 0);
             panel1.MaximumSize = new Size(412, 398);
             panel1.Name = "panel1";
-            panel1.Size = new Size(371, 335);
+            panel1.Size = new Size(362, 398);
             panel1.TabIndex = 5;
+            // 
+            // pictureBox4
+            // 
+            pictureBox4.Location = new Point(244, 182);
+            pictureBox4.Name = "pictureBox4";
+            pictureBox4.Size = new Size(106, 84);
+            pictureBox4.TabIndex = 11;
+            pictureBox4.TabStop = false;
             // 
             // panel2
             // 
@@ -152,10 +158,10 @@
             panel2.Controls.Add(textBox4);
             panel2.Controls.Add(label7);
             panel2.Controls.Add(textBox5);
-            panel2.Location = new Point(-462, 8);
+            panel2.Location = new Point(-471, 8);
             panel2.MaximumSize = new Size(412, 398);
             panel2.Name = "panel2";
-            panel2.Size = new Size(371, 0);
+            panel2.Size = new Size(371, 63);
             panel2.TabIndex = 9;
             // 
             // button3
@@ -163,7 +169,7 @@
             button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             button3.BackColor = Color.FromArgb(124, 58, 237);
             button3.ForeColor = Color.White;
-            button3.Location = new Point(342, 511);
+            button3.Location = new Point(342, 574);
             button3.Name = "button3";
             button3.Size = new Size(140, 38);
             button3.TabIndex = 8;
@@ -174,7 +180,7 @@
             // 
             button6.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             button6.BackColor = SystemColors.ControlLight;
-            button6.Location = new Point(193, 511);
+            button6.Location = new Point(193, 574);
             button6.Name = "button6";
             button6.Size = new Size(140, 38);
             button6.TabIndex = 7;
@@ -248,7 +254,7 @@
             button5.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             button5.BackColor = Color.FromArgb(124, 58, 237);
             button5.ForeColor = Color.White;
-            button5.Location = new Point(171, 276);
+            button5.Location = new Point(162, 339);
             button5.Name = "button5";
             button5.Size = new Size(140, 38);
             button5.TabIndex = 8;
@@ -259,7 +265,7 @@
             // 
             button4.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             button4.BackColor = SystemColors.ControlLight;
-            button4.Location = new Point(22, 276);
+            button4.Location = new Point(13, 339);
             button4.Name = "button4";
             button4.Size = new Size(140, 38);
             button4.TabIndex = 7;
@@ -332,74 +338,51 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
-            // panel3
+            // panel4
             // 
-            panel3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            panel3.BackColor = Color.White;
-            panel3.Controls.Add(button8);
-            panel3.Controls.Add(label10);
-            panel3.Controls.Add(label9);
-            panel3.Controls.Add(label8);
-            panel3.Controls.Add(pictureBox3);
-            panel3.Location = new Point(29, 164);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(403, 95);
-            panel3.TabIndex = 6;
+            panel4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel4.Controls.Add(tableLayoutPanel1);
+            panel4.Controls.Add(label3);
+            panel4.Controls.Add(panel1);
+            panel4.Location = new Point(35, 83);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(776, 708);
+            panel4.TabIndex = 7;
             // 
-            // button8
+            // tableLayoutPanel1
             // 
-            button8.Location = new Point(86, 61);
-            button8.Name = "button8";
-            button8.Size = new Size(145, 25);
-            button8.TabIndex = 10;
-            button8.Text = "Ver Elenco";
-            button8.UseVisualStyleBackColor = true;
+            tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(cardEquipes2, 0, 0);
+            tableLayoutPanel1.Controls.Add(cardEquipes1, 0, 4);
+            tableLayoutPanel1.Location = new Point(0, 32);
+            tableLayoutPanel1.Margin = new Padding(3, 10, 3, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 5;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.Size = new Size(408, 673);
+            tableLayoutPanel1.TabIndex = 6;
             // 
-            // label10
+            // cardEquipes2
             // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Arial", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label10.Location = new Point(224, 38);
-            label10.Name = "label10";
-            label10.Size = new Size(137, 16);
-            label10.TabIndex = 9;
-            label10.Text = "0 Táticas Cadastradas";
+            cardEquipes2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cardEquipes2.Location = new Point(3, 3);
+            cardEquipes2.Name = "cardEquipes2";
+            cardEquipes2.Size = new Size(402, 95);
+            cardEquipes2.TabIndex = 1;
             // 
-            // label9
+            // cardEquipes1
             // 
-            label9.AutoSize = true;
-            label9.Font = new Font("Arial", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label9.Location = new Point(86, 38);
-            label9.Name = "label9";
-            label9.Size = new Size(135, 16);
-            label9.TabIndex = 7;
-            label9.Text = "0 Atletas Cadastrados";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label8.Location = new Point(84, 6);
-            label8.Name = "label8";
-            label8.Size = new Size(134, 28);
-            label8.TabIndex = 8;
-            label8.Text = "Vôlei Taubaté";
-            // 
-            // pictureBox3
-            // 
-            pictureBox3.Location = new Point(12, 12);
-            pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(61, 53);
-            pictureBox3.TabIndex = 7;
-            pictureBox3.TabStop = false;
-            // 
-            // pictureBox4
-            // 
-            pictureBox4.Location = new Point(244, 182);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(106, 84);
-            pictureBox4.TabIndex = 11;
-            pictureBox4.TabStop = false;
+            cardEquipes1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cardEquipes1.Location = new Point(3, 104);
+            cardEquipes1.Name = "cardEquipes1";
+            cardEquipes1.Size = new Size(402, 95);
+            cardEquipes1.TabIndex = 0;
             // 
             // TelaEquipes
             // 
@@ -407,9 +390,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             BackColor = SystemColors.ControlLight;
-            Controls.Add(panel3);
-            Controls.Add(panel1);
-            Controls.Add(label3);
+            Controls.Add(panel4);
             Controls.Add(button1);
             Controls.Add(textBox1);
             Controls.Add(label2);
@@ -419,14 +400,14 @@
             Size = new Size(841, 813);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            panel3.ResumeLayout(false);
-            panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -457,12 +438,10 @@
         private TextBox textBox4;
         private Label label7;
         private TextBox textBox5;
-        private Panel panel3;
-        private PictureBox pictureBox3;
-        private Label label8;
-        private Button button8;
-        private Label label10;
-        private Label label9;
         private PictureBox pictureBox4;
+        private Panel panel4;
+        private TableLayoutPanel tableLayoutPanel1;
+        private CardEquipes cardEquipes1;
+        private CardEquipes cardEquipes2;
     }
 }
