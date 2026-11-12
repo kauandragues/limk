@@ -2,9 +2,9 @@ using Limk.VolleyBall.User_Constrols;
 
 namespace Limk.VolleyBall
 {
-    public partial class Form1 : Form
+    public partial class FrmInicial : Form
     {
-        public Form1()
+        public FrmInicial()
         {
             InitializeComponent();
 
@@ -24,6 +24,16 @@ namespace Limk.VolleyBall
             Tela.Dock = DockStyle.Fill;
             panelTelas.Controls.Add(Tela);
             Tela.BringToFront();
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
