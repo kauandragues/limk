@@ -35,19 +35,17 @@
             label9 = new Label();
             label8 = new Label();
             pictureBox3 = new PictureBox();
-            pictureBox1 = new PictureBox();
-            pictureBox2 = new PictureBox();
+            button1 = new Button();
+            button2 = new Button();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
             // 
             // panel3
             // 
             panel3.BackColor = Color.White;
-            panel3.Controls.Add(pictureBox2);
-            panel3.Controls.Add(pictureBox1);
+            panel3.Controls.Add(button2);
+            panel3.Controls.Add(button1);
             panel3.Controls.Add(button8);
             panel3.Controls.Add(label10);
             panel3.Controls.Add(label9);
@@ -110,23 +108,23 @@
             pictureBox3.TabIndex = 7;
             pictureBox3.TabStop = false;
             // 
-            // pictureBox1
+            // button1
             // 
-            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(314, 57);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(47, 29);
-            pictureBox1.TabIndex = 11;
-            pictureBox1.TabStop = false;
+            button1.Image = (Image)resources.GetObject("button1.Image");
+            button1.Location = new Point(314, 57);
+            button1.Name = "button1";
+            button1.Size = new Size(47, 29);
+            button1.TabIndex = 13;
+            button1.UseVisualStyleBackColor = true;
             // 
-            // pictureBox2
+            // button2
             // 
-            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(267, 63);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(47, 29);
-            pictureBox2.TabIndex = 12;
-            pictureBox2.TabStop = false;
+            button2.Image = (Image)resources.GetObject("button2.Image");
+            button2.Location = new Point(261, 57);
+            button2.Name = "button2";
+            button2.Size = new Size(47, 29);
+            button2.TabIndex = 14;
+            button2.UseVisualStyleBackColor = true;
             // 
             // CardEquipes
             // 
@@ -138,20 +136,18 @@
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
         private Panel panel3;
-        private PictureBox pictureBox1;
         private Button button8;
         private Label label10;
         private Label label9;
         private Label label8;
         private PictureBox pictureBox3;
-        private PictureBox pictureBox2;
+        private Button button2;
+        private Button button1;
     }
 }
