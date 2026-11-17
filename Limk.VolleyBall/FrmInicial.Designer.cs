@@ -29,10 +29,17 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmInicial));
-            panelTelas = new Panel();
-            panel1 = new Panel();
-            label1 = new Label();
-            button1 = new Button();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            menuLateral1 = new Limk.VolleyBall.User_Constrols.MenuLateral();
+            panel2 = new Panel();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            label5 = new Label();
+            label6 = new Label();
+            button2 = new Button();
+            button3 = new Button();
+            button4 = new Button();
             label7 = new Label();
             label8 = new Label();
             label9 = new Label();
@@ -73,19 +80,12 @@
             panel9 = new Panel();
             label24 = new Label();
             label25 = new Label();
-            menuLateral1 = new Limk.VolleyBall.User_Constrols.MenuLateral();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
-            label6 = new Label();
-            button2 = new Button();
-            button3 = new Button();
-            button4 = new Button();
-            panel2 = new Panel();
-            panelTelas.SuspendLayout();
-            panel1.SuspendLayout();
+            panelTelas = new Panel();
+            label1 = new Label();
+            button1 = new Button();
+            panel1 = new Panel();
+            tableLayoutPanel1.SuspendLayout();
+            panel2.SuspendLayout();
             panel3.SuspendLayout();
             panel6.SuspendLayout();
             panel4.SuspendLayout();
@@ -93,61 +93,136 @@
             panel7.SuspendLayout();
             panel8.SuspendLayout();
             panel9.SuspendLayout();
-            tableLayoutPanel1.SuspendLayout();
-            panel2.SuspendLayout();
+            panelTelas.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
-            // panelTelas
+            // tableLayoutPanel1
             // 
-            panelTelas.BackColor = Color.FromArgb(248, 249, 254);
-            panelTelas.Controls.Add(panel7);
-            panelTelas.Controls.Add(panel5);
-            panelTelas.Controls.Add(panel4);
-            panelTelas.Controls.Add(panel6);
-            panelTelas.Controls.Add(panel3);
-            panelTelas.Controls.Add(button5);
-            panelTelas.Controls.Add(label9);
-            panelTelas.Controls.Add(label8);
-            panelTelas.Controls.Add(label7);
-            panelTelas.Controls.Add(panel2);
-            panelTelas.Controls.Add(panel1);
-            panelTelas.Dock = DockStyle.Fill;
-            panelTelas.Location = new Point(185, 4);
-            panelTelas.Margin = new Padding(3, 4, 3, 4);
-            panelTelas.Name = "panelTelas";
-            panelTelas.Size = new Size(726, 592);
-            panelTelas.TabIndex = 1;
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80F));
+            tableLayoutPanel1.Controls.Add(menuLateral1, 0, 0);
+            tableLayoutPanel1.Controls.Add(panelTelas, 1, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
+            tableLayoutPanel1.Size = new Size(914, 600);
+            tableLayoutPanel1.TabIndex = 0;
             // 
-            // panel1
+            // menuLateral1
             // 
-            panel1.BackColor = Color.FromArgb(254, 254, 255);
-            panel1.Controls.Add(button1);
-            panel1.Controls.Add(label1);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(726, 34);
-            panel1.TabIndex = 0;
+            menuLateral1.BackColor = Color.FromArgb(30, 21, 42);
+            menuLateral1.Dock = DockStyle.Fill;
+            menuLateral1.Location = new Point(3, 5);
+            menuLateral1.Margin = new Padding(3, 5, 3, 5);
+            menuLateral1.Name = "menuLateral1";
+            menuLateral1.Size = new Size(176, 590);
+            menuLateral1.TabIndex = 0;
             // 
-            // label1
+            // panel2
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(3, 5);
-            label1.Name = "label1";
-            label1.Size = new Size(127, 20);
-            label1.TabIndex = 1;
-            label1.Text = "LIMK Tactical Hub";
+            panel2.BackColor = Color.White;
+            panel2.Controls.Add(button4);
+            panel2.Controls.Add(button3);
+            panel2.Controls.Add(button2);
+            panel2.Controls.Add(label6);
+            panel2.Controls.Add(label5);
+            panel2.Controls.Add(label4);
+            panel2.Controls.Add(label3);
+            panel2.Controls.Add(label2);
+            panel2.Location = new Point(15, 40);
+            panel2.Name = "panel2";
+            panel2.Padding = new Padding(20, 0, 0, 20);
+            panel2.Size = new Size(702, 128);
+            panel2.TabIndex = 1;
+            panel2.Paint += panel2_Paint;
             // 
-            // button1
+            // label2
             // 
-            button1.BackColor = Color.FromArgb(125, 59, 237);
-            button1.ForeColor = Color.FromArgb(254, 254, 255);
-            button1.Location = new Point(623, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(94, 29);
-            button1.TabIndex = 2;
-            button1.Text = "💾Salvar Tática";
-            button1.UseVisualStyleBackColor = false;
+            label2.AutoSize = true;
+            label2.Font = new Font("Arial Rounded MT Bold", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.Location = new Point(11, 36);
+            label2.Name = "label2";
+            label2.Size = new Size(307, 34);
+            label2.TabIndex = 0;
+            label2.Text = "LIMK Volleyball Hub";
+            label2.Click += label2_Click;
+            // 
+            // label3
+            // 
+            label3.Location = new Point(11, 70);
+            label3.Name = "label3";
+            label3.Size = new Size(387, 45);
+            label3.TabIndex = 1;
+            label3.Text = "Planeje rotações, posicione defesas de alto nível e projete táticas sequenciais com precisão em quadra.";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.BackColor = Color.FromArgb(237, 233, 254);
+            label4.Font = new Font("Segoe UI", 8F);
+            label4.ForeColor = Color.FromArgb(99, 14, 212);
+            label4.Location = new Point(19, 17);
+            label4.Name = "label4";
+            label4.Size = new Size(128, 19);
+            label4.TabIndex = 2;
+            label4.Text = "TACTICAL DESK 2.4";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 8F);
+            label5.Location = new Point(167, 17);
+            label5.Name = "label5";
+            label5.Size = new Size(163, 19);
+            label5.TabIndex = 3;
+            label5.Text = "Pronto para sessão tática";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.ForeColor = Color.FromArgb(16, 185, 129);
+            label6.Location = new Point(153, 15);
+            label6.Name = "label6";
+            label6.Size = new Size(18, 20);
+            label6.TabIndex = 4;
+            label6.Text = "●";
+            // 
+            // button2
+            // 
+            button2.Location = new Point(538, 17);
+            button2.Name = "button2";
+            button2.Size = new Size(141, 39);
+            button2.TabIndex = 5;
+            button2.Text = "📂Abrir Tática...";
+            button2.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            button3.BackColor = Color.FromArgb(123, 59, 237);
+            button3.ForeColor = Color.White;
+            button3.Location = new Point(374, 15);
+            button3.Name = "button3";
+            button3.Size = new Size(158, 41);
+            button3.TabIndex = 6;
+            button3.Text = " \U0001f9fe+Nova Tática";
+            button3.UseVisualStyleBackColor = false;
+            // 
+            // button4
+            // 
+            button4.BackColor = Color.FromArgb(27, 19, 38);
+            button4.ForeColor = Color.White;
+            button4.Location = new Point(374, 70);
+            button4.Name = "button4";
+            button4.Size = new Size(158, 45);
+            button4.TabIndex = 7;
+            button4.Text = "🏐Prancheta Rápida";
+            button4.UseVisualStyleBackColor = false;
             // 
             // label7
             // 
@@ -589,132 +664,57 @@
             label25.TabIndex = 1;
             label25.Text = "Sistemas Recepção";
             // 
-            // menuLateral1
+            // panelTelas
             // 
-            menuLateral1.BackColor = Color.FromArgb(30, 21, 42);
-            menuLateral1.Dock = DockStyle.Fill;
-            menuLateral1.Location = new Point(3, 5);
-            menuLateral1.Margin = new Padding(3, 5, 3, 5);
-            menuLateral1.Name = "menuLateral1";
-            menuLateral1.Size = new Size(176, 590);
-            menuLateral1.TabIndex = 0;
+            panelTelas.BackColor = Color.FromArgb(248, 249, 254);
+            panelTelas.Controls.Add(panel7);
+            panelTelas.Controls.Add(panel5);
+            panelTelas.Controls.Add(panel4);
+            panelTelas.Controls.Add(panel6);
+            panelTelas.Controls.Add(panel3);
+            panelTelas.Controls.Add(button5);
+            panelTelas.Controls.Add(label9);
+            panelTelas.Controls.Add(label8);
+            panelTelas.Controls.Add(label7);
+            panelTelas.Controls.Add(panel2);
+            panelTelas.Controls.Add(panel1);
+            panelTelas.Dock = DockStyle.Fill;
+            panelTelas.Location = new Point(185, 4);
+            panelTelas.Margin = new Padding(3, 4, 3, 4);
+            panelTelas.Name = "panelTelas";
+            panelTelas.Size = new Size(726, 592);
+            panelTelas.TabIndex = 1;
             // 
-            // tableLayoutPanel1
+            // label1
             // 
-            tableLayoutPanel1.ColumnCount = 2;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80F));
-            tableLayoutPanel1.Controls.Add(menuLateral1, 0, 0);
-            tableLayoutPanel1.Controls.Add(panelTelas, 1, 0);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 1;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
-            tableLayoutPanel1.Size = new Size(914, 600);
-            tableLayoutPanel1.TabIndex = 0;
+            label1.AutoSize = true;
+            label1.Location = new Point(3, 5);
+            label1.Name = "label1";
+            label1.Size = new Size(127, 20);
+            label1.TabIndex = 1;
+            label1.Text = "LIMK Tactical Hub";
             // 
-            // label2
+            // button1
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Arial Rounded MT Bold", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(11, 36);
-            label2.Name = "label2";
-            label2.Size = new Size(307, 34);
-            label2.TabIndex = 0;
-            label2.Text = "LIMK Volleyball Hub";
-            label2.Click += label2_Click;
+            button1.BackColor = Color.FromArgb(125, 59, 237);
+            button1.ForeColor = Color.FromArgb(254, 254, 255);
+            button1.Location = new Point(623, 2);
+            button1.Name = "button1";
+            button1.Size = new Size(94, 29);
+            button1.TabIndex = 2;
+            button1.Text = "💾Salvar Tática";
+            button1.UseVisualStyleBackColor = false;
             // 
-            // label3
+            // panel1
             // 
-            label3.Location = new Point(11, 70);
-            label3.Name = "label3";
-            label3.Size = new Size(387, 45);
-            label3.TabIndex = 1;
-            label3.Text = "Planeje rotações, posicione defesas de alto nível e projete táticas sequenciais com precisão em quadra.";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.BackColor = Color.FromArgb(237, 233, 254);
-            label4.Font = new Font("Segoe UI", 8F);
-            label4.ForeColor = Color.FromArgb(99, 14, 212);
-            label4.Location = new Point(19, 17);
-            label4.Name = "label4";
-            label4.Size = new Size(128, 19);
-            label4.TabIndex = 2;
-            label4.Text = "TACTICAL DESK 2.4";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 8F);
-            label5.Location = new Point(167, 17);
-            label5.Name = "label5";
-            label5.Size = new Size(163, 19);
-            label5.TabIndex = 3;
-            label5.Text = "Pronto para sessão tática";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.ForeColor = Color.FromArgb(16, 185, 129);
-            label6.Location = new Point(153, 15);
-            label6.Name = "label6";
-            label6.Size = new Size(18, 20);
-            label6.TabIndex = 4;
-            label6.Text = "●";
-            // 
-            // button2
-            // 
-            button2.Location = new Point(538, 17);
-            button2.Name = "button2";
-            button2.Size = new Size(141, 39);
-            button2.TabIndex = 5;
-            button2.Text = "📂Abrir Tática...";
-            button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            button3.BackColor = Color.FromArgb(123, 59, 237);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(374, 15);
-            button3.Name = "button3";
-            button3.Size = new Size(158, 41);
-            button3.TabIndex = 6;
-            button3.Text = " \U0001f9fe+Nova Tática";
-            button3.UseVisualStyleBackColor = false;
-            // 
-            // button4
-            // 
-            button4.BackColor = Color.FromArgb(27, 19, 38);
-            button4.ForeColor = Color.White;
-            button4.Location = new Point(374, 70);
-            button4.Name = "button4";
-            button4.Size = new Size(158, 45);
-            button4.TabIndex = 7;
-            button4.Text = "🏐Prancheta Rápida";
-            button4.UseVisualStyleBackColor = false;
-            // 
-            // panel2
-            // 
-            panel2.BackColor = Color.White;
-            panel2.Controls.Add(button4);
-            panel2.Controls.Add(button3);
-            panel2.Controls.Add(button2);
-            panel2.Controls.Add(label6);
-            panel2.Controls.Add(label5);
-            panel2.Controls.Add(label4);
-            panel2.Controls.Add(label3);
-            panel2.Controls.Add(label2);
-            panel2.Location = new Point(15, 40);
-            panel2.Name = "panel2";
-            panel2.Padding = new Padding(20, 0, 0, 20);
-            panel2.Size = new Size(702, 128);
-            panel2.TabIndex = 1;
-            panel2.Paint += panel2_Paint;
+            panel1.BackColor = Color.FromArgb(254, 254, 255);
+            panel1.Controls.Add(button1);
+            panel1.Controls.Add(label1);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(726, 34);
+            panel1.TabIndex = 0;
             // 
             // FrmInicial
             // 
@@ -725,10 +725,9 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "FrmInicial";
             Text = "Form1";
-            panelTelas.ResumeLayout(false);
-            panelTelas.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             panel6.ResumeLayout(false);
@@ -743,14 +742,17 @@
             panel8.PerformLayout();
             panel9.ResumeLayout(false);
             panel9.PerformLayout();
-            tableLayoutPanel1.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            panelTelas.ResumeLayout(false);
+            panelTelas.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
+        private TableLayoutPanel tableLayoutPanel1;
+        private User_Constrols.MenuLateral menuLateral1;
         private Panel panelTelas;
         private Panel panel7;
         private Panel panel9;
@@ -804,7 +806,5 @@
         private Panel panel1;
         private Button button1;
         private Label label1;
-        private User_Constrols.MenuLateral menuLateral1;
-        private TableLayoutPanel tableLayoutPanel1;
     }
 }
