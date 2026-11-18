@@ -1,0 +1,11 @@
+﻿# Variáveis de ambiente sensíveis
+.env
+
+# Pastas de compilação do Visual Studio
+bin/
+obj/
+
+# Arquivos de usuário do Visual Studio
+*.suo
+*.user
+*.csproj.user
