@@ -16,7 +16,9 @@ namespace Limk.VolleyBall
             string usuario = Environment.GetEnvironmentVariable("DB_USER");
             string senha = Environment.GetEnvironmentVariable("DB_PASSWORD");
 
-            string stringConexao = $"Server={servidor};Port={porta};Database={banco};Uid = {usuario};Pwd={senha};SslMode=none;";
+            MessageBox.Show($"Lido do .env -> Servidor: {servidor} | Banco: {banco} | User: {usuario}", "Debug .env");
+
+            string stringConexao = $"Server={servidor};Port={porta};Database={banco};Uid = {usuario};Pwd={senha};";
 
             MySqlConnection conexao = new MySqlConnection(stringConexao);
             try

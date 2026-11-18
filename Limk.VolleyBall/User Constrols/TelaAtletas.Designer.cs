@@ -43,7 +43,7 @@
             lblPorcentagem = new Label();
             label11 = new Label();
             panel5 = new Panel();
-            dataGridView1 = new DataGridView();
+            dataGridViewAtletas = new DataGridView();
             panel4 = new Panel();
             btnFiltroLibeAtletas = new Button();
             txtbBuscarAtleta = new TextBox();
@@ -74,7 +74,7 @@
             panel6.SuspendLayout();
             panel2.SuspendLayout();
             panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewAtletas).BeginInit();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
             panelFichaAtleta.SuspendLayout();
@@ -245,20 +245,20 @@
             // 
             panel5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel5.BackColor = SystemColors.HighlightText;
-            panel5.Controls.Add(dataGridView1);
+            panel5.Controls.Add(dataGridViewAtletas);
             panel5.Location = new Point(7, 78);
             panel5.Name = "panel5";
             panel5.Size = new Size(411, 312);
             panel5.TabIndex = 7;
             // 
-            // dataGridView1
+            // dataGridViewAtletas
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 0);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(411, 312);
-            dataGridView1.TabIndex = 0;
+            dataGridViewAtletas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewAtletas.Dock = DockStyle.Fill;
+            dataGridViewAtletas.Location = new Point(0, 0);
+            dataGridViewAtletas.Name = "dataGridViewAtletas";
+            dataGridViewAtletas.Size = new Size(411, 312);
+            dataGridViewAtletas.TabIndex = 0;
             // 
             // panel4
             // 
@@ -607,7 +607,7 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewAtletas).EndInit();
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
             panel3.ResumeLayout(false);
@@ -651,7 +651,7 @@
         private Label label9;
         private Label label8;
         private TextBox txtbNomeCompleto;
-        private DataGridView dataGridView1;
+        private DataGridView dataGridViewAtletas;
         private Label label11;
         private Label label10;
         private Panel panel6;
