@@ -47,13 +47,8 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-<<<<<<< HEAD
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
             tableLayoutPanel1.Size = new Size(1057, 811);
-=======
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(1059, 819);
->>>>>>> tela-prancheta-tatica
             tableLayoutPanel1.TabIndex = 0;
             // 
             // menuLateral1
@@ -63,37 +58,23 @@
             menuLateral1.Location = new Point(3, 5);
             menuLateral1.Margin = new Padding(3, 5, 3, 5);
             menuLateral1.Name = "menuLateral1";
-<<<<<<< HEAD
             menuLateral1.Size = new Size(205, 801);
-=======
-            menuLateral1.Size = new Size(205, 813);
->>>>>>> tela-prancheta-tatica
             menuLateral1.TabIndex = 0;
             // 
             // panelTelas
             // 
             panelTelas.Dock = DockStyle.Fill;
-<<<<<<< HEAD
             panelTelas.Location = new Point(214, 4);
             panelTelas.Margin = new Padding(3, 4, 3, 4);
             panelTelas.Name = "panelTelas";
             panelTelas.Size = new Size(840, 803);
-=======
-            panelTelas.Location = new Point(214, 3);
-            panelTelas.Name = "panelTelas";
-            panelTelas.Size = new Size(842, 813);
->>>>>>> tela-prancheta-tatica
             panelTelas.TabIndex = 1;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-<<<<<<< HEAD
             ClientSize = new Size(1057, 811);
-=======
-            ClientSize = new Size(1059, 819);
->>>>>>> tela-prancheta-tatica
             Controls.Add(tableLayoutPanel1);
             Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";

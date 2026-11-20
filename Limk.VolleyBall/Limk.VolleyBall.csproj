@@ -38,14 +38,12 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
     <None Update=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
-</Project>
-=======
+  <ItemGroup>
     <Compile Update="User Constrols\CartaoFaseControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -56,6 +54,4 @@
       <DependentUpon>CartaoFaseControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
->>>>>>> tela-prancheta-tatica

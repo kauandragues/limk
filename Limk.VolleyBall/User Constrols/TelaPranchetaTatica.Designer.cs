@@ -48,10 +48,6 @@
             btnDuplicarFase = new Button();
             btnExcluirFase = new Button();
             flowFases = new FlowLayoutPanel();
-            cartaoFase1 = new CartaoFaseControl();
-            cartaoFase2 = new CartaoFaseControl();
-            cartaoFase3 = new CartaoFaseControl();
-            cartaoFase4 = new CartaoFaseControl();
             panelConteudo = new Panel();
             panelPranchetaTatica = new Panel();
             prancheta = new PranchetaControl();
@@ -85,7 +81,6 @@
             cabecalhoSequencia.SuspendLayout();
             titulosSequencia.SuspendLayout();
             acoesSequencia.SuspendLayout();
-            flowFases.SuspendLayout();
             panelConteudo.SuspendLayout();
             panelPranchetaTatica.SuspendLayout();
             panelPropriedades.SuspendLayout();
@@ -347,10 +342,6 @@
             // flowFases
             // 
             flowFases.AutoScroll = true;
-            flowFases.Controls.Add(cartaoFase1);
-            flowFases.Controls.Add(cartaoFase2);
-            flowFases.Controls.Add(cartaoFase3);
-            flowFases.Controls.Add(cartaoFase4);
             flowFases.Dock = DockStyle.Fill;
             flowFases.Location = new Point(0, 45);
             flowFases.Margin = new Padding(0);
@@ -359,65 +350,6 @@
             flowFases.Size = new Size(818, 107);
             flowFases.TabIndex = 1;
             flowFases.WrapContents = false;
-            // 
-            // cartaoFase1
-            // 
-            cartaoFase1.AccessibleName = "Fase 1: Passe de saque (3 passadores)";
-            cartaoFase1.Duracao = new decimal(new int[] { 21, 0, 0, 65536 });
-            cartaoFase1.Location = new Point(0, 3);
-            cartaoFase1.Margin = new Padding(0, 0, 10, 0);
-            cartaoFase1.Name = "cartaoFase1";
-            cartaoFase1.NomeFase = "Passe de saque (3 passadores)";
-            cartaoFase1.Numero = 1;
-            cartaoFase1.Size = new Size(188, 78);
-            cartaoFase1.TabIndex = 0;
-            cartaoFase1.Tipo = "Recepção";
-            cartaoFase1.Click += CartaoFase_Click;
-            // 
-            // cartaoFase2
-            // 
-            cartaoFase2.AccessibleName = "Fase 2: Saída rápida com central";
-            cartaoFase2.Ativo = true;
-            cartaoFase2.Duracao = new decimal(new int[] { 19, 0, 0, 65536 });
-            cartaoFase2.Inicio = TimeSpan.Parse("00:00:02.1000000");
-            cartaoFase2.Location = new Point(198, 3);
-            cartaoFase2.Margin = new Padding(0, 0, 10, 0);
-            cartaoFase2.Name = "cartaoFase2";
-            cartaoFase2.NomeFase = "Saída rápida com central";
-            cartaoFase2.Numero = 2;
-            cartaoFase2.Size = new Size(188, 78);
-            cartaoFase2.TabIndex = 1;
-            cartaoFase2.Tipo = "Levantamento";
-            cartaoFase2.Click += CartaoFase_Click;
-            // 
-            // cartaoFase3
-            // 
-            cartaoFase3.AccessibleName = "Fase 3: Finalização diagonal curta";
-            cartaoFase3.Duracao = new decimal(new int[] { 22, 0, 0, 65536 });
-            cartaoFase3.Inicio = TimeSpan.Parse("00:00:04");
-            cartaoFase3.Location = new Point(396, 3);
-            cartaoFase3.Margin = new Padding(0, 0, 10, 0);
-            cartaoFase3.Name = "cartaoFase3";
-            cartaoFase3.NomeFase = "Finalização diagonal curta";
-            cartaoFase3.Numero = 3;
-            cartaoFase3.Size = new Size(188, 78);
-            cartaoFase3.TabIndex = 2;
-            cartaoFase3.Tipo = "Ataque";
-            cartaoFase3.Click += CartaoFase_Click;
-            // 
-            // cartaoFase4
-            // 
-            cartaoFase4.AccessibleName = "Fase 4: Fechamento em cesta";
-            cartaoFase4.Inicio = TimeSpan.Parse("00:00:06.2000000");
-            cartaoFase4.Location = new Point(594, 3);
-            cartaoFase4.Margin = new Padding(0, 0, 10, 0);
-            cartaoFase4.Name = "cartaoFase4";
-            cartaoFase4.NomeFase = "Fechamento em cesta";
-            cartaoFase4.Numero = 4;
-            cartaoFase4.Size = new Size(188, 78);
-            cartaoFase4.TabIndex = 3;
-            cartaoFase4.Tipo = "Cobertura";
-            cartaoFase4.Click += CartaoFase_Click;
             // 
             // panelConteudo
             // 
@@ -440,9 +372,9 @@
             panelPranchetaTatica.Name = "panelPranchetaTatica";
             panelPranchetaTatica.Size = new Size(402, 512);
             panelPranchetaTatica.TabIndex = 3;
-            // 
+            //
             // prancheta
-            // 
+            //
             prancheta.Dock = DockStyle.Fill;
             prancheta.Location = new Point(0, 0);
             prancheta.Name = "prancheta";
@@ -820,7 +752,6 @@
             cabecalhoSequencia.PerformLayout();
             titulosSequencia.ResumeLayout(false);
             acoesSequencia.ResumeLayout(false);
-            flowFases.ResumeLayout(false);
             panelConteudo.ResumeLayout(false);
             panelPranchetaTatica.ResumeLayout(false);
             panelPropriedades.ResumeLayout(false);
