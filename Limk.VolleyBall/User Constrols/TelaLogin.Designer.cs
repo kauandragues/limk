@@ -14,7 +14,9 @@ namespace Limk.VolleyBall.User_Constrols
 
         private Panel pnlMarca;
         private TableLayoutPanel layoutMarca;
+        private TableLayoutPanel layoutLogo;
         private PictureBox imgLogo;
+        private Label lblMarca;
         private PictureBox imgQuadra;
         private Label lblPrancheta;
         private Panel pnlConteudo;
@@ -30,7 +32,9 @@ namespace Limk.VolleyBall.User_Constrols
         {
             pnlMarca = new Panel();
             layoutMarca = new TableLayoutPanel();
+            layoutLogo = new TableLayoutPanel();
             imgLogo = new PictureBox();
+            lblMarca = new Label();
             imgQuadra = new PictureBox();
             lblPrancheta = new Label();
             pnlConteudo = new Panel();
@@ -47,6 +51,7 @@ namespace Limk.VolleyBall.User_Constrols
             SuspendLayout();
             pnlMarca.SuspendLayout();
             layoutMarca.SuspendLayout();
+            layoutLogo.SuspendLayout();
             pnlConteudo.SuspendLayout();
             layoutFormulario.SuspendLayout();
 
@@ -68,17 +73,37 @@ namespace Limk.VolleyBall.User_Constrols
             layoutMarca.RowStyles.Add(new RowStyle(SizeType.Absolute, 150F));
             layoutMarca.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layoutMarca.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            layoutMarca.Controls.Add(imgLogo, 0, 0);
+            layoutMarca.Controls.Add(layoutLogo, 0, 0);
             layoutMarca.Controls.Add(imgQuadra, 0, 2);
             layoutMarca.Controls.Add(lblPrancheta, 0, 3);
 
+            layoutLogo.Name = "layoutLogo";
+            layoutLogo.Anchor = AnchorStyles.Left;
+            layoutLogo.Margin = new Padding(0);
+            layoutLogo.Size = new Size(227, 72);
+            layoutLogo.ColumnCount = 2;
+            layoutLogo.RowCount = 1;
+            layoutLogo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 84F));
+            layoutLogo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutLogo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutLogo.Controls.Add(imgLogo, 0, 0);
+            layoutLogo.Controls.Add(lblMarca, 1, 0);
+
             imgLogo.Anchor = AnchorStyles.Left;
             imgLogo.AccessibleName = "LIMK Volleyball";
-            imgLogo.Image = Properties.Resources.teste;
+            imgLogo.Image = Properties.Resources.LogoMenuLateral;
             imgLogo.Margin = new Padding(0);
-            imgLogo.Size = new Size(227, 72);
+            imgLogo.Size = new Size(64, 64);
             imgLogo.SizeMode = PictureBoxSizeMode.Zoom;
             imgLogo.TabStop = false;
+
+            lblMarca.Name = "lblMarca";
+            lblMarca.Dock = DockStyle.Fill;
+            lblMarca.Font = new Font("Segoe UI", 22F, FontStyle.Bold);
+            lblMarca.ForeColor = Color.White;
+            lblMarca.Margin = new Padding(0);
+            lblMarca.Text = "LIMK";
+            lblMarca.TextAlign = ContentAlignment.MiddleLeft;
 
             imgQuadra.Dock = DockStyle.Fill;
             imgQuadra.Image = Properties.Resources.Quadra;
@@ -210,6 +235,7 @@ namespace Limk.VolleyBall.User_Constrols
             Size = new Size(900, 590);
             layoutFormulario.ResumeLayout(false);
             pnlConteudo.ResumeLayout(false);
+            layoutLogo.ResumeLayout(false);
             layoutMarca.ResumeLayout(false);
             pnlMarca.ResumeLayout(false);
             ResumeLayout(true);
