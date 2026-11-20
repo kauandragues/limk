@@ -22,6 +22,21 @@ namespace Limk.VolleyBall.User_Constrols
             InitializeComponent();
         }
 
+        // Os atalhos da tela inicial usam a mesma seleção visual do menu.
+        public void SelecionarTela(UserControl tela)
+        {
+            if (tela is TelaInicial)
+                MudarCorBotao(btnInicio);
+            else if (tela is TelaPranchetaTatica)
+                MudarCorBotao(btnPranchetaTatica);
+            else if (tela is TelaTaticas)
+                MudarCorBotao(btnTaticas);
+            else if (tela is TelaEquipes)
+                MudarCorBotao(btnEquipes);
+            else if (tela is TelaAtletas)
+                MudarCorBotao(btnAtletas);
+        }
+
         private void MudarCorBotao(Button botao)
         {
             if (btnAtual != null)
