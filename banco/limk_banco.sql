@@ -99,6 +99,7 @@ CREATE TABLE tatica (
 CREATE TABLE quadro (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tatica_id INT NOT NULL,
+    nome VARCHAR(100) NOT NULL,
     ordem INT NOT NULL,
     duracao_ms INT NOT NULL DEFAULT 1000,
     rotacao TINYINT UNSIGNED,
@@ -227,7 +228,7 @@ INSERT INTO tatica (id, equipe_id, tipo_tatica_id, sistema_jogo_id, nome, descri
 INSERT INTO tatica (id, equipe_id, tipo_tatica_id, sistema_jogo_id, nome, descricao) VALUES (2, 1, 3, 1, 'Ataque pela entrada', 'Exemplo de aproximação de ataque pela entrada de rede.');
 INSERT INTO tatica (id, equipe_id, tipo_tatica_id, sistema_jogo_id, nome, descricao) VALUES (3, 2, 4, 2, 'Organização defensiva', 'Exemplo de deslocamento defensivo após ataque adversário.');
 INSERT INTO tatica (id, equipe_id, tipo_tatica_id, sistema_jogo_id, nome, descricao) VALUES (4, 2, 6, 2, 'Cobertura do ataque', 'Exemplo de aproximação para cobertura do atacante.');
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (1, 1, 1, 1000, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (1, 1, 'Recepção inicial', 1, 1000, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (1, 1, 1, 4, 'PRINCIPAL', 0.78, 0.88);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (2, 1, 2, 8, 'PRINCIPAL', 0.78, 0.62);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (3, 1, 3, 10, 'PRINCIPAL', 0.22, 0.62);
@@ -241,7 +242,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (11, 1, NULL, 5, 'ADVERSARIO', 0.5, 0.38);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (12, 1, NULL, 6, 'ADVERSARIO', 0.5, 0.12);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (1, 0.5, 0.18);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (2, 1, 2, 1000, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (2, 1, 'Ajuste dos passadores', 2, 1000, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (13, 2, 1, 4, 'PRINCIPAL', 0.805, 0.855);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (14, 2, 2, 8, 'PRINCIPAL', 0.755, 0.595);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (15, 2, 3, 10, 'PRINCIPAL', 0.245, 0.595);
@@ -255,7 +256,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (23, 2, NULL, 5, 'ADVERSARIO', 0.475, 0.405);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (24, 2, NULL, 6, 'ADVERSARIO', 0.525, 0.145);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (2, 0.38, 0.82);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (3, 1, 3, 1000, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (3, 1, 'Preparação para levantamento', 3, 1000, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (25, 3, 1, 4, 'PRINCIPAL', 0.83, 0.83);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (26, 3, 2, 8, 'PRINCIPAL', 0.73, 0.57);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (27, 3, 3, 10, 'PRINCIPAL', 0.27, 0.57);
@@ -269,7 +270,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (35, 3, NULL, 5, 'ADVERSARIO', 0.45, 0.43);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (36, 3, NULL, 6, 'ADVERSARIO', 0.55, 0.17);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (3, 0.68, 0.58);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (4, 2, 1, 1000, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (4, 2, 'Posicionamento inicial', 1, 1000, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (37, 4, 1, 4, 'PRINCIPAL', 0.78, 0.88);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (38, 4, 2, 8, 'PRINCIPAL', 0.78, 0.62);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (39, 4, 3, 10, 'PRINCIPAL', 0.22, 0.62);
@@ -283,7 +284,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (47, 4, NULL, 5, 'ADVERSARIO', 0.5, 0.38);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (48, 4, NULL, 6, 'ADVERSARIO', 0.5, 0.12);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (4, 0.68, 0.58);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (5, 2, 2, 1000, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (5, 2, 'Aproximação do ataque', 2, 1000, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (49, 5, 1, 4, 'PRINCIPAL', 0.805, 0.855);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (50, 5, 2, 8, 'PRINCIPAL', 0.755, 0.595);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (51, 5, 3, 10, 'PRINCIPAL', 0.245, 0.595);
@@ -297,7 +298,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (59, 5, NULL, 5, 'ADVERSARIO', 0.475, 0.405);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (60, 5, NULL, 6, 'ADVERSARIO', 0.525, 0.145);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (5, 0.22, 0.56);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (6, 2, 3, 1000, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (6, 2, 'Finalização pela entrada', 3, 1000, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (61, 6, 1, 4, 'PRINCIPAL', 0.83, 0.83);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (62, 6, 2, 8, 'PRINCIPAL', 0.73, 0.57);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (63, 6, 3, 10, 'PRINCIPAL', 0.27, 0.57);
@@ -311,7 +312,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (71, 6, NULL, 5, 'ADVERSARIO', 0.45, 0.43);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (72, 6, NULL, 6, 'ADVERSARIO', 0.55, 0.17);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (6, 0.3, 0.22);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (7, 3, 1, 1200, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (7, 3, 'Organização defensiva', 1, 1200, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (73, 7, 9, 1, 'PRINCIPAL', 0.78, 0.88);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (74, 7, 10, 2, 'PRINCIPAL', 0.78, 0.62);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (75, 7, 11, 3, 'PRINCIPAL', 0.22, 0.62);
@@ -325,7 +326,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (83, 7, NULL, 5, 'ADVERSARIO', 0.5, 0.38);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (84, 7, NULL, 6, 'ADVERSARIO', 0.5, 0.12);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (7, 0.25, 0.2);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (8, 3, 2, 1200, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (8, 3, 'Ajuste da defesa', 2, 1200, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (85, 8, 9, 1, 'PRINCIPAL', 0.805, 0.855);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (86, 8, 10, 2, 'PRINCIPAL', 0.755, 0.595);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (87, 8, 11, 3, 'PRINCIPAL', 0.245, 0.595);
@@ -339,7 +340,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (95, 8, NULL, 5, 'ADVERSARIO', 0.475, 0.405);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (96, 8, NULL, 6, 'ADVERSARIO', 0.525, 0.145);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (8, 0.72, 0.83);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (9, 3, 3, 1200, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (9, 3, 'Defesa do ataque', 3, 1200, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (97, 9, 9, 1, 'PRINCIPAL', 0.83, 0.83);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (98, 9, 10, 2, 'PRINCIPAL', 0.73, 0.57);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (99, 9, 11, 3, 'PRINCIPAL', 0.27, 0.57);
@@ -353,7 +354,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (107, 9, NULL, 5, 'ADVERSARIO', 0.45, 0.43);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (108, 9, NULL, 6, 'ADVERSARIO', 0.55, 0.17);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (9, 0.62, 0.6);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (10, 4, 1, 1200, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (10, 4, 'Posicionamento de cobertura', 1, 1200, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (109, 10, 9, 1, 'PRINCIPAL', 0.78, 0.88);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (110, 10, 10, 2, 'PRINCIPAL', 0.78, 0.62);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (111, 10, 11, 3, 'PRINCIPAL', 0.22, 0.62);
@@ -367,7 +368,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (119, 10, NULL, 5, 'ADVERSARIO', 0.5, 0.38);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (120, 10, NULL, 6, 'ADVERSARIO', 0.5, 0.12);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (10, 0.22, 0.56);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (11, 4, 2, 1200, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (11, 4, 'Aproximação para cobertura', 2, 1200, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (121, 11, 9, 1, 'PRINCIPAL', 0.805, 0.855);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (122, 11, 10, 2, 'PRINCIPAL', 0.755, 0.595);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (123, 11, 11, 3, 'PRINCIPAL', 0.245, 0.595);
@@ -381,7 +382,7 @@ INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posica
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (131, 11, NULL, 5, 'ADVERSARIO', 0.475, 0.405);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (132, 11, NULL, 6, 'ADVERSARIO', 0.525, 0.145);
 INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (11, 0.22, 0.51);
-INSERT INTO quadro (id, tatica_id, ordem, duracao_ms, rotacao) VALUES (12, 4, 3, 1200, 1);
+INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (12, 4, 'Cobertura do atacante', 3, 1200, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (133, 12, 9, 1, 'PRINCIPAL', 0.83, 0.83);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (134, 12, 10, 2, 'PRINCIPAL', 0.73, 0.57);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (135, 12, 11, 3, 'PRINCIPAL', 0.27, 0.57);
