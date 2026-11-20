@@ -15,7 +15,6 @@ namespace Limk.VolleyBall.User_Constrols
             DoubleBuffered = true;
         }
 
-        // A futura tela de login poderá informar o nome sem alterar o layout.
         public void DefinirUsuario(string? nomeUsuario)
         {
             string nome = string.IsNullOrWhiteSpace(nomeUsuario) ? "visitante" : nomeUsuario.Trim();

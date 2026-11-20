@@ -45,3 +45,8 @@ Para executar o projeto, é necessário ter instalado:
 
 ```bash
 git clone <URL_DO_REPOSITORIO>
+```
+
+2. Para uma instalação nova, importe `banco/limk_banco.sql` no MySQL.
+3. Copie `Limk.VolleyBall/.env.example` para `Limk.VolleyBall/.env` e preencha `DB_SERVER`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`. Use `limk` em `DB_NAME` para o banco criado pelo script.
+4. Abra `Limk.slnx` no Visual Studio e execute o projeto. Na tela de login, use o e-mail e a senha de um usuário cadastrado na tabela `usuario`. A coluna `senha_hash` armazena o hash bcrypt da senha.

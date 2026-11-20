@@ -15,7 +15,19 @@ namespace Limk.VolleyBall
             DotEnv.Load();
 
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+
+            string nomeUsuario;
+            using (var login = new FormLogin())
+            {
+                if (login.ShowDialog() != DialogResult.OK || login.Usuario is not { } usuario)
+                    return;
+
+                nomeUsuario = usuario.Nome;
+            }
+
+            using var principal = new Form1();
+            principal.DefinirUsuario(nomeUsuario);
+            Application.Run(principal);
         }
     }
 }
