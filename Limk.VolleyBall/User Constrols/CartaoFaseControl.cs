@@ -9,6 +9,10 @@ namespace Limk.VolleyBall.User_Constrols
         private string _tipo = string.Empty;
         private TimeSpan _inicio;
         private bool _ativo;
+        private Point _inicioArraste;
+        private bool _mousePressionado;
+
+        public event EventHandler? ArrasteSolicitado;
 
         // Category e DefaultValue organizam estas propriedades no Designer do Visual Studio.
         [Category("Fase"), DefaultValue(0)]
@@ -78,6 +82,32 @@ namespace Limk.VolleyBall.User_Constrols
         {
             // Encaminha o clique do botão para o cartão, usado pela tela da prancheta.
             OnClick(EventArgs.Empty);
+        }
+
+        private void btnSelecionarFase_MouseDown(object? sender, MouseEventArgs e)
+        {
+            _mousePressionado = e.Button == MouseButtons.Left;
+            _inicioArraste = e.Location;
+        }
+
+        private void btnSelecionarFase_MouseMove(object? sender, MouseEventArgs e)
+        {
+            if (!_mousePressionado || e.Button != MouseButtons.Left)
+                return;
+            // Um pequeno movimento ainda conta como clique, seguindo a tolerância do Windows.
+            Size tolerancia = SystemInformation.DragSize;
+            var areaClique = new Rectangle(_inicioArraste.X - tolerancia.Width / 2,
+                _inicioArraste.Y - tolerancia.Height / 2, tolerancia.Width, tolerancia.Height);
+            if (areaClique.Contains(e.Location))
+                return;
+            _mousePressionado = false;
+            btnSelecionarFase.Capture = false;
+            ArrasteSolicitado?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void btnSelecionarFase_MouseUp(object? sender, MouseEventArgs e)
+        {
+            _mousePressionado = false;
         }
 
         private void AtualizarCartao()

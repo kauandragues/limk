@@ -389,6 +389,7 @@
             // 
             // flowFases
             // 
+            flowFases.AllowDrop = true;
             flowFases.AutoScroll = true;
             flowFases.Dock = DockStyle.Fill;
             flowFases.Location = new Point(0, 45);
@@ -398,6 +399,10 @@
             flowFases.Size = new Size(818, 107);
             flowFases.TabIndex = 1;
             flowFases.WrapContents = false;
+            dicasPrancheta.SetToolTip(flowFases, "Arraste os cartões para alterar a ordem dos quadros. Salve a tática para manter a nova sequência.");
+            flowFases.DragEnter += flowFases_DragOver;
+            flowFases.DragOver += flowFases_DragOver;
+            flowFases.DragDrop += flowFases_DragDrop;
             // 
             // panelConteudo
             // 

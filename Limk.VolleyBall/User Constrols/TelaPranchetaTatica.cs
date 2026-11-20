@@ -450,6 +450,63 @@ namespace Limk.VolleyBall.User_Constrols
                 SelecionarFaseVisual(flowFases.Controls.GetChildIndex(cartao));
         }
 
+        private void CartaoFase_ArrasteSolicitado(object? sender, EventArgs e)
+        {
+            if (_pronto && !_operacao && !_apresentando && _tatica.Quadros.Count > 1 && sender is CartaoFaseControl cartao)
+                cartao.DoDragDrop(cartao, DragDropEffects.Move);
+        }
+
+        private CartaoFaseControl? ObterCartaoArrastado(DragEventArgs e)
+        {
+            if (!_pronto || _operacao || _apresentando || (e.AllowedEffect & DragDropEffects.Move) == 0 ||
+                e.Data?.GetData(typeof(CartaoFaseControl)) is not CartaoFaseControl cartao ||
+                !flowFases.Controls.Contains(cartao))
+                return null;
+            return cartao;
+        }
+
+        private void flowFases_DragOver(object? sender, DragEventArgs e)
+        {
+            e.Effect = ObterCartaoArrastado(e) != null ? DragDropEffects.Move : DragDropEffects.None;
+            if (e.Effect == DragDropEffects.None) return;
+            Point ponto = flowFases.PointToClient(new Point(e.X, e.Y));
+            // Rola a sequência ao aproximar o cartão de uma das bordas.
+            int passo = ponto.X < 24 ? -20 : ponto.X > flowFases.ClientSize.Width - 24 ? 20 : 0;
+            if (passo != 0)
+                flowFases.AutoScrollPosition = new Point(Math.Max(0, -flowFases.AutoScrollPosition.X + passo), 0);
+        }
+
+        private void flowFases_DragDrop(object? sender, DragEventArgs e)
+        {
+            CartaoFaseControl? cartao = ObterCartaoArrastado(e);
+            e.Effect = cartao != null ? DragDropEffects.Move : DragDropEffects.None;
+            if (cartao == null) return;
+            Point ponto = flowFases.PointToClient(new Point(e.X, e.Y));
+            int origem = flowFases.Controls.GetChildIndex(cartao);
+            int destino = 0;
+            // Soltar à esquerda do centro insere antes; à direita, depois do cartão.
+            foreach (Control outro in flowFases.Controls)
+            {
+                if (ponto.X < outro.Left + outro.Width / 2) break;
+                destino++;
+            }
+            if (destino > origem) destino--;
+            if (destino == origem) return;
+
+            GuardarFaseAtual();
+            QuadroTatica selecionada = _tatica.Quadros[_indiceFaseSelecionada];
+            QuadroTatica movida = _tatica.Quadros[origem];
+            _tatica.Quadros.RemoveAt(origem);
+            _tatica.Quadros.Insert(destino, movida);
+            _indiceFaseSelecionada = _tatica.Quadros.IndexOf(selecionada);
+            flowFases.Controls.SetChildIndex(cartao, destino);
+            AtualizarSequenciaVisual();
+            flowFases.ScrollControlIntoView(cartao);
+            if (prancheta.ElementoSelecionado == null)
+                labelResumoElemento.Text = $"TÁTICA E FASE\nFase {_indiceFaseSelecionada + 1:00}";
+            MostrarStatus("Sequência reordenada. Clique em Salvar Tática para gravar a nova ordem.");
+        }
+
         private void SelecionarFaseVisual(int indice)
         {
             if (!_pronto || _operacao || indice < 0 || indice >= _tatica.Quadros.Count) return;
@@ -494,6 +551,8 @@ namespace Limk.VolleyBall.User_Constrols
                 {
                     var cartao = new CartaoFaseControl { Margin = new Padding(0, 0, 10, 0) };
                     cartao.Click += CartaoFase_Click;
+                    cartao.ArrasteSolicitado += CartaoFase_ArrasteSolicitado;
+                    dicasPrancheta.SetToolTip(cartao, "Arraste para alterar a ordem dos quadros.");
                     flowFases.Controls.Add(cartao);
                 }
             }

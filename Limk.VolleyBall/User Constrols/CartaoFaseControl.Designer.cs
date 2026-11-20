@@ -39,6 +39,9 @@ namespace Limk.VolleyBall.User_Constrols
             btnSelecionarFase.UseMnemonic = false;
             btnSelecionarFase.UseVisualStyleBackColor = false;
             btnSelecionarFase.Click += btnSelecionarFase_Click;
+            btnSelecionarFase.MouseDown += btnSelecionarFase_MouseDown;
+            btnSelecionarFase.MouseMove += btnSelecionarFase_MouseMove;
+            btnSelecionarFase.MouseUp += btnSelecionarFase_MouseUp;
             //
             // CartaoFaseControl
             //
