@@ -38,7 +38,6 @@
             comboBox1 = new ComboBox();
             textBox1 = new TextBox();
             tableLayoutPanel1 = new TableLayoutPanel();
-            cardTática1 = new CardTática();
             panel2 = new Panel();
             panel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -116,7 +115,7 @@
             comboBox2.Name = "comboBox2";
             comboBox2.Size = new Size(151, 28);
             comboBox2.TabIndex = 6;
-            comboBox2.Text = "Todas as Fases";
+            comboBox2.Text = "Todos os tipos";
             // 
             // comboBox1
             // 
@@ -144,31 +143,22 @@
             // 
             // tableLayoutPanel1
             // 
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             tableLayoutPanel1.ColumnCount = 2;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(cardTática1, 0, 0);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Dock = DockStyle.Top;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 43.5897446F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 56.4102554F));
+            tableLayoutPanel1.RowCount = 0;
             tableLayoutPanel1.Size = new Size(779, 617);
             tableLayoutPanel1.TabIndex = 4;
-            // 
-            // cardTática1
-            // 
-            cardTática1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            cardTática1.BackColor = Color.White;
-            cardTática1.Location = new Point(3, 3);
-            cardTática1.Name = "cardTática1";
-            cardTática1.Size = new Size(383, 262);
-            cardTática1.TabIndex = 0;
             // 
             // panel2
             // 
             panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel2.AutoScroll = true;
             panel2.Controls.Add(tableLayoutPanel1);
             panel2.Location = new Point(23, 183);
             panel2.Name = "panel2";
@@ -209,6 +199,5 @@
         private Button button2;
         private TableLayoutPanel tableLayoutPanel1;
         private Panel panel2;
-        private CardTática cardTática1;
     }
 }

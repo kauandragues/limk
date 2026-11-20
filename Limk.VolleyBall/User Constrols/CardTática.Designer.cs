@@ -50,28 +50,31 @@
             label1.Size = new Size(108, 20);
             label1.TabIndex = 0;
             label1.Text = "Nome da Equipe";
+            label1.UseMnemonic = false;
             // 
             // label2
             // 
-            label2.AutoSize = true;
+            label2.AutoEllipsis = true;
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label2.Font = new Font("Arial", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(31, 71);
             label2.Name = "label2";
-            label2.Size = new Size(203, 27);
+            label2.Size = new Size(548, 27);
             label2.TabIndex = 1;
             label2.Text = "Nome da Técnica";
+            label2.UseMnemonic = false;
             // 
             // label3
             // 
-            label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label3.AutoEllipsis = true;
             label3.ForeColor = Color.DimGray;
             label3.Location = new Point(30, 98);
-            label3.MaximumSize = new Size(500, 0);
             label3.Name = "label3";
             label3.Size = new Size(500, 68);
             label3.TabIndex = 2;
             label3.Text = resources.GetString("label3.Text");
+            label3.UseMnemonic = false;
             // 
             // button1
             // 

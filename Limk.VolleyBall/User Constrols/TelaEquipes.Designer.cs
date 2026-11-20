@@ -56,7 +56,6 @@
             openFileDialog1 = new OpenFileDialog();
             panel4 = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
-            cardEquipes1 = new CardEquipes();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             panel2.SuspendLayout();
@@ -115,7 +114,7 @@
             label3.Name = "label3";
             label3.Size = new Size(166, 17);
             label3.TabIndex = 4;
-            label3.Text = "Equipes no Banco Local";
+            label3.Text = "Suas equipes";
             // 
             // panel1
             // 
@@ -351,27 +350,16 @@
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(cardEquipes1, 0, 4);
             tableLayoutPanel1.Location = new Point(0, 32);
             tableLayoutPanel1.Margin = new Padding(3, 10, 3, 3);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 5;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowCount = 0;
             tableLayoutPanel1.Size = new Size(408, 673);
             tableLayoutPanel1.TabIndex = 6;
-            // 
-            // cardEquipes1
-            // 
-            cardEquipes1.Location = new Point(3, 3);
-            cardEquipes1.Name = "cardEquipes1";
-            cardEquipes1.Size = new Size(402, 119);
-            cardEquipes1.TabIndex = 0;
             // 
             // TelaEquipes
             // 
@@ -430,7 +418,5 @@
         private PictureBox pictureBox4;
         private Panel panel4;
         private TableLayoutPanel tableLayoutPanel1;
-        private CardEquipes cardEquipes1;
-        private CardEquipes cardEquipes2;
     }
 }

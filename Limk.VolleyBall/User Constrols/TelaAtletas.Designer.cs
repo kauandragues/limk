@@ -127,7 +127,7 @@
             label1.Name = "label1";
             label1.Size = new Size(323, 14);
             label1.TabIndex = 3;
-            label1.Text = "Gerencie o elenco de jogadores e posições táticas da sua equipe";
+            label1.Text = "Gerencie o elenco de atletas e posições táticas da sua equipe";
             // 
             // panel1
             // 
@@ -165,7 +165,7 @@
             label13.Name = "label13";
             label13.Size = new Size(63, 15);
             label13.TabIndex = 5;
-            label13.Text = "Vôlei Taubaté";
+            label13.Text = "Suas equipes";
             // 
             // label12
             // 
@@ -185,7 +185,7 @@
             lblQtdAtletas.Name = "lblQtdAtletas";
             lblQtdAtletas.Size = new Size(14, 15);
             lblQtdAtletas.TabIndex = 3;
-            lblQtdAtletas.Text = "8";
+            lblQtdAtletas.Text = "0";
             // 
             // label10
             // 
@@ -219,7 +219,7 @@
             label14.Name = "label14";
             label14.Size = new Size(53, 15);
             label14.TabIndex = 6;
-            label14.Text = "5/5 Táticas";
+            label14.Text = "0 posições no elenco";
             // 
             // lblPorcentagem
             // 
@@ -229,7 +229,7 @@
             lblPorcentagem.Name = "lblPorcentagem";
             lblPorcentagem.Size = new Size(37, 15);
             lblPorcentagem.TabIndex = 2;
-            lblPorcentagem.Text = "100%";
+            lblPorcentagem.Text = "0/5";
             // 
             // label11
             // 
@@ -422,6 +422,7 @@
             dateTimePicker1.Format = DateTimePickerFormat.Short;
             dateTimePicker1.Location = new Point(3, 137);
             dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.ShowCheckBox = true;
             dateTimePicker1.Size = new Size(127, 23);
             dateTimePicker1.TabIndex = 20;
             // 
