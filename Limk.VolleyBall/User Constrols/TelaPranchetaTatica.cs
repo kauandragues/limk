@@ -27,6 +27,16 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnAdicionarBola_Click(object sender, EventArgs e)
         {
+            // Cada quadro tem uma bola. Um novo clique seleciona a bola que já existe.
+            foreach (PosicaoElementos elemento in prancheta.Elementos)
+            {
+                if (elemento is PosicaoBola)
+                {
+                    prancheta.SelecionarElemento(elemento);
+                    return;
+                }
+            }
+
             PosicaoBola bola = new PosicaoBola
             {
                 X = 0.5f,
