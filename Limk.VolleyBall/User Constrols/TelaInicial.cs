@@ -28,15 +28,15 @@ namespace Limk.VolleyBall.User_Constrols
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
 
-            await AtualizarEstatisticasAsync();
+            await AtualizarInicioAsync();
         }
 
         private async void btnAtualizar_Click(object? sender, EventArgs e)
         {
-            await AtualizarEstatisticasAsync();
+            await AtualizarInicioAsync();
         }
 
-        private async Task AtualizarEstatisticasAsync()
+        private async Task AtualizarInicioAsync()
         {
             if (_carregando)
                 return;
@@ -58,6 +58,8 @@ namespace Limk.VolleyBall.User_Constrols
                 lblTotalAtletas.Text = resumo.Atletas.ToString("N0");
                 lblTotalTaticas.Text = resumo.Taticas.ToString("N0");
                 lblTotalQuadros.Text = resumo.Quadros.ToString("N0");
+                ExibirTaticas(resumo.UltimasTaticas);
+                ExibirEquipes(resumo.EquipesCadastradas);
                 lblStatusBanco.Text = $"Dados do banco conectado · atualizado às {DateTime.Now:HH:mm}";
             }
             catch (Exception)
@@ -69,6 +71,12 @@ namespace Limk.VolleyBall.User_Constrols
                 lblTotalAtletas.Text = "—";
                 lblTotalTaticas.Text = "—";
                 lblTotalQuadros.Text = "—";
+                LimparCartoes(layoutListaTaticas);
+                LimparCartoes(layoutListaEquipes);
+                lblEstadoTaticas.Text = "Não foi possível carregar as táticas.";
+                lblEstadoEquipes.Text = "Não foi possível carregar as equipes.";
+                lblEstadoTaticas.Visible = true;
+                lblEstadoEquipes.Visible = true;
                 lblStatusBanco.ForeColor = Color.FromArgb(160, 70, 35);
                 lblStatusBanco.Text = "Não foi possível consultar o banco. Verifique a conexão e clique em Atualizar.";
             }
@@ -78,6 +86,55 @@ namespace Limk.VolleyBall.User_Constrols
                 if (!IsDisposed)
                     btnAtualizar.Enabled = true;
             }
+        }
+
+        private void ExibirTaticas(List<TaticaInicio> taticas)
+        {
+            layoutListaTaticas.SuspendLayout();
+            LimparCartoes(layoutListaTaticas);
+            lblEstadoTaticas.Text = "Nenhuma tática cadastrada. Use Nova tática para abrir a prancheta.";
+            lblEstadoTaticas.Visible = taticas.Count == 0;
+
+            foreach (TaticaInicio tatica in taticas)
+            {
+                CartaoTaticaInicio cartao = new CartaoTaticaInicio();
+                cartao.ExibirTatica(tatica);
+                cartao.Dock = DockStyle.Top;
+                int linha = layoutListaTaticas.RowCount;
+                layoutListaTaticas.RowCount++;
+                layoutListaTaticas.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                layoutListaTaticas.Controls.Add(cartao, 0, linha);
+            }
+            layoutListaTaticas.ResumeLayout(true);
+        }
+
+        private void ExibirEquipes(List<EquipeInicio> equipes)
+        {
+            layoutListaEquipes.SuspendLayout();
+            LimparCartoes(layoutListaEquipes);
+            lblEstadoEquipes.Text = "Nenhuma equipe cadastrada.";
+            lblEstadoEquipes.Visible = equipes.Count == 0;
+
+            foreach (EquipeInicio equipe in equipes)
+            {
+                CartaoEquipeInicio cartao = new CartaoEquipeInicio();
+                cartao.ExibirEquipe(equipe);
+                cartao.Dock = DockStyle.Top;
+                int linha = layoutListaEquipes.RowCount;
+                layoutListaEquipes.RowCount++;
+                layoutListaEquipes.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                layoutListaEquipes.Controls.Add(cartao, 0, linha);
+            }
+            layoutListaEquipes.ResumeLayout(true);
+        }
+
+        private void LimparCartoes(TableLayoutPanel lista)
+        {
+            // Remove os cartões anteriores antes de atualizar os dados.
+            while (lista.Controls.Count > 0)
+                lista.Controls[0].Dispose();
+            lista.RowStyles.Clear();
+            lista.RowCount = 0;
         }
 
         private void btnUsuario_Click(object? sender, EventArgs e)
