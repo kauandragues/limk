@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace Limk.VolleyBall.Backend
 {
-    internal sealed record UsuarioAutenticado(int Id, string Nome, string Email);
+    public sealed record UsuarioAutenticado(int Id, string Nome, string Email);
 
     internal sealed class FalhaAutenticacaoException(Exception causa)
         : Exception("Não foi possível consultar o banco de dados para entrar.", causa)

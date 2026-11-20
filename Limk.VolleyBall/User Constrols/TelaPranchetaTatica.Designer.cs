@@ -127,7 +127,8 @@
             labelNomeTatica.Name = "labelNomeTatica";
             labelNomeTatica.Size = new Size(333, 19);
             labelNomeTatica.TabIndex = 0;
-            labelNomeTatica.Text = "Rotação 1 - Saída Rápida Com Central (P1)";
+            labelNomeTatica.Text = "Nova tática";
+            labelNomeTatica.UseMnemonic = false;
             // 
             // labelTitulo
             // 

@@ -90,13 +90,15 @@
             // 
             // label8
             // 
-            label8.AutoSize = true;
+            label8.AutoEllipsis = true;
+            label8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label8.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label8.Location = new Point(84, 6);
             label8.Name = "label8";
-            label8.Size = new Size(134, 28);
+            label8.Size = new Size(300, 28);
             label8.TabIndex = 8;
             label8.Text = "Vôlei Taubaté";
+            label8.UseMnemonic = false;
             // 
             // pictureBox3
             // 

@@ -47,7 +47,9 @@ namespace Limk.VolleyBall.User_Constrols
                 : new Padding(LogicalToDeviceUnits(28));
             layoutMarca.RowStyles[0].Height = LogicalToDeviceUnits(compacto ? 56 : 72);
             layoutMarca.RowStyles[2].Height = compacto ? 0 : LogicalToDeviceUnits(150);
-            imgLogo.Size = LogicalToDeviceUnits(compacto ? new Size(158, 50) : new Size(227, 72));
+            layoutLogo.Size = LogicalToDeviceUnits(compacto ? new Size(190, 50) : new Size(227, 72));
+            layoutLogo.ColumnStyles[0].Width = LogicalToDeviceUnits(compacto ? 56 : 84);
+            imgLogo.Size = LogicalToDeviceUnits(compacto ? new Size(42, 42) : new Size(64, 64));
             imgQuadra.Visible = !compacto;
             lblPrancheta.Visible = !compacto;
             ResumeLayout(true);

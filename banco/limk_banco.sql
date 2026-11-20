@@ -145,9 +145,12 @@ CREATE TABLE tatica_favorita (
     FOREIGN KEY (tatica_id) REFERENCES tatica(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT INTO usuario (id, nome, email, senha_hash) VALUES (1, 'Ana Lima', 'ana@limk.example', '$2b$12$AYeDZA9dEfqnKrcfsQrNZu9PPMYDC6xTNPUdkocvK7JpCyk9K2b6m');
-INSERT INTO usuario (id, nome, email, senha_hash) VALUES (2, 'Bruno Alves', 'bruno@limk.example', '$2b$12$QekERk/8eAdD/7pjnOLKTeIuFSS8GecytsLQX81ljMaBzCK0GfLe2');
-INSERT INTO usuario (id, nome, email, senha_hash) VALUES (3, 'Carla Mendes', 'carla@limk.example', '$2b$12$ryzYgLHJ4Z0POt/Gwg.qWefwcuKLEVlHVaekPZ7MYvyXAa0qoMjHi');
+-- Contas de demonstracao para desenvolvimento.
+-- Senha de Ana, Bruno e Carla no login: Limk@Teste2026!
+-- O banco armazena apenas os hashes bcrypt dessa senha.
+INSERT INTO usuario (id, nome, email, senha_hash) VALUES (1, 'Ana Lima', 'ana@limk.example', '$2a$12$Kt3qTUbIJ1/UZW9NfchKdug/OYWTAwpKCar0Bl1Et1CoBNIlgVl1O');
+INSERT INTO usuario (id, nome, email, senha_hash) VALUES (2, 'Bruno Alves', 'bruno@limk.example', '$2a$12$gwvYYMqLKmnuWzu4iBIoz.IkwvvshsJTFVh.kKAP.W05NgpbEZtae');
+INSERT INTO usuario (id, nome, email, senha_hash) VALUES (3, 'Carla Mendes', 'carla@limk.example', '$2a$12$p7jWkJ8Hx9od3y7n/Wea1OpZUdmbSRkcNgjoA0gu4XvnLufVkhUq6');
 INSERT INTO preferencia_usuario (usuario_id, cor_atleta_principal, cor_atleta_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (1, '#6935D3', '#E53935', '#FFD700', 1000);
 INSERT INTO preferencia_usuario (usuario_id, cor_atleta_principal, cor_atleta_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (2, '#1565C0', '#E53935', '#FFD700', 1500);
 INSERT INTO preferencia_usuario (usuario_id, cor_atleta_principal, cor_atleta_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (3, '#00897B', '#E53935', '#FFD700', 1200);

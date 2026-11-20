@@ -3,8 +3,9 @@ using System.ComponentModel;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public partial class TelaInicial : UserControl
+    public partial class TelaInicial : UserControl, ITelaUsuario
     {
+        private UsuarioAutenticado? _usuario;
         private bool _carregando;
 
         public event EventHandler<UserControl>? TelaSolicitada;
@@ -15,9 +16,10 @@ namespace Limk.VolleyBall.User_Constrols
             DoubleBuffered = true;
         }
 
-        public void DefinirUsuario(string? nomeUsuario)
+        public void DefinirUsuario(UsuarioAutenticado usuario)
         {
-            string nome = string.IsNullOrWhiteSpace(nomeUsuario) ? "visitante" : nomeUsuario.Trim();
+            _usuario = usuario;
+            string nome = usuario.Nome;
             lblBoasVindas.Text = $"Bem-vindo, {nome}!";
             btnUsuario.Text = $"Usuário: {nome} ▾";
         }
@@ -37,7 +39,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private async Task AtualizarInicioAsync()
         {
-            if (_carregando)
+            if (_carregando || _usuario == null)
                 return;
 
             _carregando = true;
@@ -47,7 +49,7 @@ namespace Limk.VolleyBall.User_Constrols
 
             try
             {
-                ResumoInicio resumo = await DadosInicio.CarregarAsync();
+                ResumoInicio resumo = await DadosInicio.CarregarAsync(_usuario.Id);
 
                 // O usuário pode abrir outra tela enquanto a consulta está em andamento.
                 if (IsDisposed)
@@ -59,7 +61,7 @@ namespace Limk.VolleyBall.User_Constrols
                 lblTotalQuadros.Text = resumo.Quadros.ToString("N0");
                 ExibirTaticas(resumo.UltimasTaticas);
                 ExibirEquipes(resumo.EquipesCadastradas);
-                lblStatusBanco.Text = $"Dados do banco conectado · atualizado às {DateTime.Now:HH:mm}";
+                lblStatusBanco.Text = $"Dados das suas equipes · atualizado às {DateTime.Now:HH:mm}";
             }
             catch (Exception)
             {
@@ -91,7 +93,7 @@ namespace Limk.VolleyBall.User_Constrols
         {
             layoutListaTaticas.SuspendLayout();
             LimparCartoes(layoutListaTaticas);
-            lblEstadoTaticas.Text = "Nenhuma tática cadastrada. Use Nova tática para abrir a prancheta.";
+            lblEstadoTaticas.Text = "Nenhuma tática nas equipes às quais você tem acesso.";
             lblEstadoTaticas.Visible = taticas.Count == 0;
 
             foreach (TaticaInicio tatica in taticas)
@@ -111,7 +113,7 @@ namespace Limk.VolleyBall.User_Constrols
         {
             layoutListaEquipes.SuspendLayout();
             LimparCartoes(layoutListaEquipes);
-            lblEstadoEquipes.Text = "Nenhuma equipe cadastrada.";
+            lblEstadoEquipes.Text = "Nenhuma equipe vinculada ao seu usuário.";
             lblEstadoEquipes.Visible = equipes.Count == 0;
 
             foreach (EquipeInicio equipe in equipes)
