@@ -1,84 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-
 namespace Limk.VolleyBall.User_Constrols
 {
     public partial class MenuLateral : UserControl
     {
-        private Button btnAtual = null;
+        private Button? btnAtual;
 
-        private Color corBtnPadrao = Color.FromArgb(30, 21, 42);
-        private Color corBtnAtual = Color.FromArgb(54, 44, 66);
+        private static readonly Color CorSelecionada = Color.FromArgb(92, 48, 154);
+        private static readonly Color CorHover = Color.FromArgb(52, 37, 71);
 
-        public event EventHandler<UserControl> OnMenuSelecionado;
+        public event EventHandler<UserControl>? OnMenuSelecionado;
 
         public MenuLateral()
         {
             InitializeComponent();
+
+            foreach (Button botao in new[] { btnInicio, btnPranchetaTatica, btnTaticas, btnAtletas, btnEquipes })
+            {
+                botao.BackColor = BackColor;
+                botao.ForeColor = Color.FromArgb(244, 239, 250);
+                botao.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+                botao.TextAlign = ContentAlignment.MiddleLeft;
+                botao.Padding = new Padding(12, 0, 4, 0);
+                botao.Cursor = Cursors.Hand;
+                botao.FlatAppearance.MouseOverBackColor = CorHover;
+                botao.FlatAppearance.MouseDownBackColor = CorSelecionada;
+            }
+
+            SelecionarBotao(btnInicio);
         }
 
         // Os atalhos da tela inicial usam a mesma seleção visual do menu.
         public void SelecionarTela(UserControl tela)
         {
             if (tela is TelaInicial)
-                MudarCorBotao(btnInicio);
+                SelecionarBotao(btnInicio);
             else if (tela is TelaPranchetaTatica)
-                MudarCorBotao(btnPranchetaTatica);
+                SelecionarBotao(btnPranchetaTatica);
             else if (tela is TelaTaticas)
-                MudarCorBotao(btnTaticas);
+                SelecionarBotao(btnTaticas);
             else if (tela is TelaEquipes)
-                MudarCorBotao(btnEquipes);
+                SelecionarBotao(btnEquipes);
             else if (tela is TelaAtletas)
-                MudarCorBotao(btnAtletas);
+                SelecionarBotao(btnAtletas);
         }
 
-        private void MudarCorBotao(Button botao)
+        private void SelecionarBotao(Button botao)
         {
             if (btnAtual != null)
             {
-                btnAtual.BackColor = corBtnPadrao;
+                btnAtual.BackColor = BackColor;
+                btnAtual.FlatAppearance.MouseOverBackColor = CorHover;
+                btnAtual.FlatAppearance.BorderSize = 0;
             }
 
-            botao.BackColor = corBtnAtual;
+            botao.BackColor = CorSelecionada;
+            botao.FlatAppearance.MouseOverBackColor = CorSelecionada;
+            botao.FlatAppearance.BorderColor = Color.FromArgb(185, 146, 248);
+            botao.FlatAppearance.BorderSize = 1;
             btnAtual = botao;
         }
 
-        private void btnPranchetaTatica_Click(object sender, EventArgs e)
+        private void btnPranchetaTatica_Click(object? sender, EventArgs e)
         {
-            MudarCorBotao((Button)sender);
+            SelecionarBotao(btnPranchetaTatica);
 
             OnMenuSelecionado?.Invoke(this, new TelaPranchetaTatica());
         }
 
-        private void btnInicio_Click_1(object sender, EventArgs e)
+        private void btnInicio_Click_1(object? sender, EventArgs e)
         {
-            MudarCorBotao((Button)sender);
+            SelecionarBotao(btnInicio);
 
             OnMenuSelecionado?.Invoke(this, new TelaInicial());
         }
 
-        private void btnTaticas_Click(object sender, EventArgs e)
+        private void btnTaticas_Click(object? sender, EventArgs e)
         {
-            MudarCorBotao((Button)sender);
+            SelecionarBotao(btnTaticas);
 
             OnMenuSelecionado?.Invoke(this, new TelaTaticas());
         }
 
-        private void btnEquipes_Click(object sender, EventArgs e)
+        private void btnEquipes_Click(object? sender, EventArgs e)
         {
-            MudarCorBotao((Button)sender);
+            SelecionarBotao(btnEquipes);
 
             OnMenuSelecionado?.Invoke(this, new TelaEquipes());
         }
 
-        private void btnAtletas_Click(object sender, EventArgs e)
+        private void btnAtletas_Click(object? sender, EventArgs e)
         {
-            MudarCorBotao((Button)sender);
+            SelecionarBotao(btnAtletas);
 
             OnMenuSelecionado?.Invoke(this, new TelaAtletas());
         }

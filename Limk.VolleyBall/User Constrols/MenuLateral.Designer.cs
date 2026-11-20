@@ -1,4 +1,4 @@
-﻿namespace Limk.VolleyBall.User_Constrols
+namespace Limk.VolleyBall.User_Constrols
 {
     partial class MenuLateral
     {
@@ -32,6 +32,7 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             btnAtletas = new Button();
             pictureBox1 = new PictureBox();
+            lblMarca = new Label();
             btnPranchetaTatica = new Button();
             btnInicio = new Button();
             btnEquipes = new Button();
@@ -43,116 +44,137 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.FromArgb(30, 21, 42);
+            panel1.AutoScroll = true;
             panel1.Controls.Add(tableLayoutPanel1);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(162, 517);
+            panel1.Size = new Size(200, 517);
             panel1.TabIndex = 0;
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel1.Dock = DockStyle.Top;
+            tableLayoutPanel1.Padding = new Padding(12, 12, 12, 12);
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 56F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.Controls.Add(btnAtletas, 0, 4);
             tableLayoutPanel1.Controls.Add(pictureBox1, 0, 0);
+            tableLayoutPanel1.Controls.Add(lblMarca, 1, 0);
+            tableLayoutPanel1.SetColumnSpan(btnInicio, 2);
+            tableLayoutPanel1.SetColumnSpan(btnPranchetaTatica, 2);
+            tableLayoutPanel1.SetColumnSpan(btnTaticas, 2);
+            tableLayoutPanel1.SetColumnSpan(btnAtletas, 2);
+            tableLayoutPanel1.SetColumnSpan(btnEquipes, 2);
             tableLayoutPanel1.Controls.Add(btnPranchetaTatica, 0, 2);
             tableLayoutPanel1.Controls.Add(btnInicio, 0, 1);
             tableLayoutPanel1.Controls.Add(btnEquipes, 0, 5);
             tableLayoutPanel1.Controls.Add(btnTaticas, 0, 3);
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 7;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 21.7519112F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 9.935333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 9.935333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 9.935333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 9.935333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 9.935333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 28.5714264F));
-            tableLayoutPanel1.Size = new Size(158, 517);
+            tableLayoutPanel1.RowCount = 6;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 112F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            tableLayoutPanel1.Size = new Size(200, 376);
             tableLayoutPanel1.TabIndex = 6;
             // 
             // btnAtletas
             // 
-            btnAtletas.Dock = DockStyle.Top;
+            btnAtletas.Dock = DockStyle.Fill;
             btnAtletas.FlatAppearance.BorderSize = 0;
             btnAtletas.FlatStyle = FlatStyle.Flat;
-            btnAtletas.Location = new Point(3, 268);
+            btnAtletas.Location = new Point(12, 271);
+            btnAtletas.Margin = new Padding(0, 3, 0, 3);
             btnAtletas.Name = "btnAtletas";
-            btnAtletas.Size = new Size(152, 43);
-            btnAtletas.TabIndex = 4;
-            btnAtletas.Text = "ATLETAS";
-            btnAtletas.UseVisualStyleBackColor = true;
+            btnAtletas.Size = new Size(176, 42);
+            btnAtletas.TabIndex = 3;
+            btnAtletas.Text = "Atletas";
+            btnAtletas.UseVisualStyleBackColor = false;
             btnAtletas.Click += btnAtletas_Click;
             // 
             // pictureBox1
             // 
             pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Image = Properties.Resources.teste;
-            pictureBox1.Location = new Point(3, 3);
+            pictureBox1.Image = Properties.Resources.LogoMenuLateral;
+            pictureBox1.Location = new Point(12, 12);
+            pictureBox1.Margin = new Padding(4, 16, 2, 20);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(152, 106);
+            pictureBox1.Size = new Size(50, 76);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
+            //
+            // lblMarca
+            //
+            lblMarca.Anchor = AnchorStyles.Left;
+            lblMarca.AutoSize = true;
+            lblMarca.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblMarca.ForeColor = Color.White;
+            lblMarca.Margin = new Padding(6, 16, 0, 20);
+            lblMarca.Name = "lblMarca";
+            lblMarca.Text = "LIMK";
             // 
             // btnPranchetaTatica
             // 
-            btnPranchetaTatica.BackColor = Color.FromArgb(30, 21, 42);
-            btnPranchetaTatica.Dock = DockStyle.Top;
+            btnPranchetaTatica.Dock = DockStyle.Fill;
             btnPranchetaTatica.FlatAppearance.BorderSize = 0;
             btnPranchetaTatica.FlatStyle = FlatStyle.Flat;
-            btnPranchetaTatica.Location = new Point(3, 166);
+            btnPranchetaTatica.Location = new Point(12, 175);
+            btnPranchetaTatica.Margin = new Padding(0, 3, 0, 3);
             btnPranchetaTatica.Name = "btnPranchetaTatica";
-            btnPranchetaTatica.Size = new Size(152, 43);
+            btnPranchetaTatica.Size = new Size(176, 42);
             btnPranchetaTatica.TabIndex = 1;
-            btnPranchetaTatica.Text = "PRANCHETA TÁTICA";
+            btnPranchetaTatica.Text = "Prancheta tática";
             btnPranchetaTatica.UseVisualStyleBackColor = false;
             btnPranchetaTatica.Click += btnPranchetaTatica_Click;
             // 
             // btnInicio
             // 
-            btnInicio.BackColor = Color.FromArgb(30, 21, 42);
-            btnInicio.Dock = DockStyle.Top;
+            btnInicio.Dock = DockStyle.Fill;
             btnInicio.FlatAppearance.BorderSize = 0;
             btnInicio.FlatStyle = FlatStyle.Flat;
-            btnInicio.ForeColor = Color.Black;
-            btnInicio.Location = new Point(3, 115);
+            btnInicio.Location = new Point(12, 127);
+            btnInicio.Margin = new Padding(0, 3, 0, 3);
             btnInicio.Name = "btnInicio";
-            btnInicio.Size = new Size(152, 43);
+            btnInicio.Size = new Size(176, 42);
             btnInicio.TabIndex = 0;
-            btnInicio.TabStop = false;
-            btnInicio.Text = "INÍCIO";
+            btnInicio.Text = "Início";
             btnInicio.UseVisualStyleBackColor = false;
             btnInicio.Click += btnInicio_Click_1;
             // 
             // btnEquipes
             // 
-            btnEquipes.Dock = DockStyle.Top;
+            btnEquipes.Dock = DockStyle.Fill;
             btnEquipes.FlatAppearance.BorderSize = 0;
             btnEquipes.FlatStyle = FlatStyle.Flat;
-            btnEquipes.Location = new Point(3, 319);
+            btnEquipes.Location = new Point(12, 319);
+            btnEquipes.Margin = new Padding(0, 3, 0, 3);
             btnEquipes.Name = "btnEquipes";
-            btnEquipes.Size = new Size(152, 43);
-            btnEquipes.TabIndex = 3;
-            btnEquipes.Text = "EQUIPES";
-            btnEquipes.UseVisualStyleBackColor = true;
+            btnEquipes.Size = new Size(176, 42);
+            btnEquipes.TabIndex = 4;
+            btnEquipes.Text = "Equipes";
+            btnEquipes.UseVisualStyleBackColor = false;
             btnEquipes.Click += btnEquipes_Click;
             // 
             // btnTaticas
             // 
-            btnTaticas.Dock = DockStyle.Top;
+            btnTaticas.Dock = DockStyle.Fill;
             btnTaticas.FlatAppearance.BorderSize = 0;
             btnTaticas.FlatStyle = FlatStyle.Flat;
-            btnTaticas.Location = new Point(3, 217);
+            btnTaticas.Location = new Point(12, 223);
+            btnTaticas.Margin = new Padding(0, 3, 0, 3);
             btnTaticas.Name = "btnTaticas";
-            btnTaticas.Size = new Size(152, 43);
+            btnTaticas.Size = new Size(176, 42);
             btnTaticas.TabIndex = 2;
-            btnTaticas.Text = "TÁTICAS";
-            btnTaticas.UseVisualStyleBackColor = true;
+            btnTaticas.Text = "Táticas";
+            btnTaticas.UseVisualStyleBackColor = false;
             btnTaticas.Click += btnTaticas_Click;
             // 
             // MenuLateral
@@ -162,7 +184,7 @@
             BackColor = Color.FromArgb(30, 21, 42);
             Controls.Add(panel1);
             Name = "MenuLateral";
-            Size = new Size(162, 517);
+            Size = new Size(200, 517);
             panel1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -173,6 +195,7 @@
 
         private Panel panel1;
         private PictureBox pictureBox1;
+        private Label lblMarca;
         private Button btnInicio;
         private Button btnPranchetaTatica;
         private Button btnTaticas;
