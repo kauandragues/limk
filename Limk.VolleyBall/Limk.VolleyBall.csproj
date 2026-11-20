@@ -38,9 +38,24 @@
   </ItemGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <None Update=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
 </Project>
+=======
+    <Compile Update="User Constrols\CartaoFaseControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="User Constrols\CartaoFaseControl.Designer.cs">
+      <DependentUpon>CartaoFaseControl.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="User Constrols\CartaoFaseControl.resx">
+      <DependentUpon>CartaoFaseControl.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
+>>>>>>> tela-prancheta-tatica
