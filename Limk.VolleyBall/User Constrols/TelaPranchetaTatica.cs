@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public partial class TelaPranchetaTatica : UserControl
+    public partial class TelaPranchetaTatica : UserControl, ITelaUsuario
     {
         // O índice começa em 0; o número mostrado no cartão começa em 1.
         private int _indiceFaseSelecionada;
@@ -23,6 +23,15 @@ namespace Limk.VolleyBall.User_Constrols
 
             InicializarSequenciaVisual();
             AdicionarAtleta(0.25f, 0.5f);
+        }
+
+        public void DefinirUsuario(UsuarioAutenticado usuario)
+        {
+            // A prancheta é uma edição local; não carrega táticas de outros usuários.
+            prancheta.Atletas.Clear();
+            prancheta.Elementos.Clear();
+            prancheta.SelecionarElemento(null);
+            labelNomeTatica.Text = $"Nova tática · {usuario.Nome}";
         }
 
         private void btnAdicionarBola_Click(object sender, EventArgs e)
