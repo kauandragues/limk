@@ -17,8 +17,8 @@ CREATE TABLE usuario (
 
 CREATE TABLE preferencia_usuario (
     usuario_id INT PRIMARY KEY,
-    cor_jogador_principal CHAR(7) NOT NULL DEFAULT '#6935D3',
-    cor_jogador_adversario CHAR(7) NOT NULL DEFAULT '#E53935',
+    cor_atleta_principal CHAR(7) NOT NULL DEFAULT '#6935D3',
+    cor_atleta_adversario CHAR(7) NOT NULL DEFAULT '#E53935',
     cor_bola CHAR(7) NOT NULL DEFAULT '#FFD700',
     duracao_quadro_padrao_ms INT NOT NULL DEFAULT 1000,
     FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
@@ -148,9 +148,9 @@ CREATE TABLE tatica_favorita (
 INSERT INTO usuario (id, nome, email, senha_hash) VALUES (1, 'Ana Lima', 'ana@limk.example', '$2b$12$AYeDZA9dEfqnKrcfsQrNZu9PPMYDC6xTNPUdkocvK7JpCyk9K2b6m');
 INSERT INTO usuario (id, nome, email, senha_hash) VALUES (2, 'Bruno Alves', 'bruno@limk.example', '$2b$12$QekERk/8eAdD/7pjnOLKTeIuFSS8GecytsLQX81ljMaBzCK0GfLe2');
 INSERT INTO usuario (id, nome, email, senha_hash) VALUES (3, 'Carla Mendes', 'carla@limk.example', '$2b$12$ryzYgLHJ4Z0POt/Gwg.qWefwcuKLEVlHVaekPZ7MYvyXAa0qoMjHi');
-INSERT INTO preferencia_usuario (usuario_id, cor_jogador_principal, cor_jogador_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (1, '#6935D3', '#E53935', '#FFD700', 1000);
-INSERT INTO preferencia_usuario (usuario_id, cor_jogador_principal, cor_jogador_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (2, '#1565C0', '#E53935', '#FFD700', 1500);
-INSERT INTO preferencia_usuario (usuario_id, cor_jogador_principal, cor_jogador_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (3, '#00897B', '#E53935', '#FFD700', 1200);
+INSERT INTO preferencia_usuario (usuario_id, cor_atleta_principal, cor_atleta_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (1, '#6935D3', '#E53935', '#FFD700', 1000);
+INSERT INTO preferencia_usuario (usuario_id, cor_atleta_principal, cor_atleta_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (2, '#1565C0', '#E53935', '#FFD700', 1500);
+INSERT INTO preferencia_usuario (usuario_id, cor_atleta_principal, cor_atleta_adversario, cor_bola, duracao_quadro_padrao_ms) VALUES (3, '#00897B', '#E53935', '#FFD700', 1200);
 INSERT INTO equipe (id, nome, escudo) VALUES (1, 'LIMK Campinas', NULL);
 INSERT INTO equipe (id, nome, escudo) VALUES (2, 'Vôlei Hortolândia', NULL);
 INSERT INTO usuario_equipe (usuario_id, equipe_id) VALUES (1, 1);
