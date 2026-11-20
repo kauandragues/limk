@@ -111,14 +111,14 @@ namespace Limk.VolleyBall.User_Constrols
             foreach (Atleta atleta in prancheta.Atletas)
             {
                 proximoId = Math.Max(proximoId, atleta.Id + 1);
-                proximoNumero = Math.Max(proximoNumero, atleta.Numero + 1);
+                proximoNumero = Math.Max(proximoNumero, atleta.NumeroCamisa + 1);
             }
 
             Atleta novoAtleta = new Atleta
             {
                 Id = proximoId,
                 Nome = $"Atleta {proximoNumero}",
-                Numero = proximoNumero
+                NumeroCamisa = proximoNumero
             };
             prancheta.Atletas.Add(novoAtleta);
 
@@ -183,8 +183,8 @@ namespace Limk.VolleyBall.User_Constrols
                     else
                     {
                         comboAtletaVinculado.SelectedItem = atleta;
-                        textNumeroCamisa.Text = atleta.Numero.ToString();
-                        labelResumoElemento.Text = $"#{atleta.Numero}  •  ATLETA\n{atleta.Nome}";
+                        textNumeroCamisa.Text = atleta.NumeroCamisa.ToString();
+                        labelResumoElemento.Text = $"#{atleta.NumeroCamisa}  •  ATLETA\n{atleta.Nome}";
                     }
                 }
                 else
@@ -215,7 +215,7 @@ namespace Limk.VolleyBall.User_Constrols
         {
             Atleta? atleta = comboAtletaVinculado.SelectedItem as Atleta;
             if (atleta != null)
-                textNumeroCamisa.Text = atleta.Numero.ToString();
+                textNumeroCamisa.Text = atleta.NumeroCamisa.ToString();
         }
 
         private void btnAplicarPropriedades_Click(object? sender, EventArgs e)
@@ -238,7 +238,7 @@ namespace Limk.VolleyBall.User_Constrols
                 }
                 posicaoAtleta.AtletaId = atleta.Id;
                 posicaoAtleta.Lado = comboLadoAtleta.SelectedIndex == 1 ? LadoAtleta.Adversario : LadoAtleta.Principal;
-                atleta.Numero = numero;
+                atleta.NumeroCamisa = numero;
             }
 
             // Atualiza somente a prévia em memória, sem salvar no banco.
@@ -649,7 +649,7 @@ namespace Limk.VolleyBall.User_Constrols
                     {
                         Atleta? atleta = Atletas.Find(j => j.Id == posicaoAtleta.AtletaId);
                         if (atleta != null)
-                            DesenharNumeroAtleta(g, atleta.Numero, circulo, preenchimento.Color);
+                            DesenharNumeroAtleta(g, atleta.NumeroCamisa, circulo, preenchimento.Color);
                     }
                 }
             }

@@ -108,9 +108,7 @@ namespace Limk.VolleyBall.Backend
         {
             var lista = new List<Atleta>();
 
-            string sql = @"
-                SELECT 
-                    a.id, a.nome, a.apelido, a.numero_camisa, a.data_nascimento, a.idEquipe, a.eh_titular,
+            string sql = @"SELECT  a.id, a.nome, a.apelido, a.numero_camisa, a.data_nascimento, a.idEquipe, a.titular,
                     e.nome AS nome_equipe,
                     GROUP_CONCAT(DISTINCT p.nome ORDER BY p.id SEPARATOR ', ') AS posicoes
                 FROM atleta a
@@ -118,7 +116,7 @@ namespace Limk.VolleyBall.Backend
                 LEFT JOIN atleta_posicao ap ON a.id = ap.atleta_id
                 LEFT JOIN posicao p ON ap.posicao_id = p.id
                 WHERE a.idEquipe = @idEquipe
-                GROUP BY a.id, a.nome, a.apelido, a.numero_camisa, a.data_nascimento, a.idEquipe, a.eh_titular, e.nome
+                GROUP BY a.id, a.nome, a.apelido, a.numero_camisa, a.data_nascimento, a.idEquipe, a.titular, e.nome
                 ORDER BY a.numero_camisa, a.nome;";
 
             using (MySqlConnection conexao = ConexaoBD.ObterConexao())
@@ -144,7 +142,7 @@ namespace Limk.VolleyBall.Backend
                                     : (DateTime?)null,
                                 IdEquipe = Convert.ToInt32(reader["idEquipe"]),
                                 NomeEquipe = reader["nome_equipe"]?.ToString() ?? string.Empty,
-                                Titular = reader["titular"] != DBNull.Value && Convert.ToBoolean(reader["eh_titular"])
+                                Titular = reader["titular"] != DBNull.Value && Convert.ToBoolean(reader["titular"])
                             };
 
                             string posicoesStr = reader["posicoes"]?.ToString();
