@@ -112,11 +112,12 @@
             panelTelas.Location = new Point(0, 0);
             panelTelas.Margin = new Padding(3, 4, 3, 4);
             panelTelas.Name = "panelTelas";
-            panelTelas.Size = new Size(433, 368);
+            panelTelas.Size = new Size(726, 592);
             panelTelas.TabIndex = 2;
             // 
             // panel7
             // 
+            panel7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panel7.BackColor = Color.White;
             panel7.Controls.Add(panel9);
             panel7.Controls.Add(panel8);
@@ -201,6 +202,7 @@
             // 
             // panel5
             // 
+            panel5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panel5.BackColor = Color.White;
             panel5.Controls.Add(button18);
             panel5.Controls.Add(button14);
@@ -288,6 +290,8 @@
             // 
             // panel4
             // 
+            panel4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel4.BackColor = Color.White;
             panel4.Controls.Add(button9);
             panel4.Controls.Add(button10);
             panel4.Controls.Add(button11);
@@ -363,6 +367,8 @@
             // 
             // panel6
             // 
+            panel6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel6.BackColor = Color.White;
             panel6.Controls.Add(button15);
             panel6.Controls.Add(button16);
             panel6.Controls.Add(button17);
@@ -438,6 +444,8 @@
             // 
             // panel3
             // 
+            panel3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel3.BackColor = Color.White;
             panel3.Controls.Add(button8);
             panel3.Controls.Add(button7);
             panel3.Controls.Add(button6);
@@ -513,6 +521,7 @@
             // 
             // button5
             // 
+            button5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             button5.BackColor = Color.FromArgb(248, 249, 254);
             button5.Font = new Font("Segoe UI", 8F);
             button5.ForeColor = Color.FromArgb(99, 14, 212);
@@ -525,6 +534,7 @@
             // 
             // label9
             // 
+            label9.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label9.AutoSize = true;
             label9.BackColor = Color.FromArgb(241, 245, 249);
             label9.ForeColor = Color.FromArgb(71, 85, 105);
@@ -546,6 +556,7 @@
             // 
             // label7
             // 
+            label7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label7.AutoSize = true;
             label7.Location = new Point(57, 176);
             label7.Name = "label7";
@@ -659,7 +670,7 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(433, 34);
+            panel1.Size = new Size(726, 34);
             panel1.TabIndex = 0;
             // 
             // button1
@@ -691,7 +702,7 @@
             Controls.Add(panelTelas);
             Margin = new Padding(3, 4, 3, 4);
             Name = "TelaInicial";
-            Size = new Size(433, 368);
+            Size = new Size(726, 592);
             panelTelas.ResumeLayout(false);
             panelTelas.PerformLayout();
             panel7.ResumeLayout(false);
