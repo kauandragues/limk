@@ -60,7 +60,14 @@ namespace Limk.VolleyBall.User_Constrols
                 {
                     try
                     {
-                        string query = "SELECT numero_camisa, nome, apelido, data_nascimento FROM atleta";
+                        // Dados pessoais ficam no atleta; camisa, equipe e titular ficam no vínculo.
+                        string query = @"SELECT ea.numero_camisa, a.nome, a.apelido,
+                                                a.data_nascimento, e.nome AS equipe, ea.titular
+                                         FROM atleta AS a
+                                         LEFT JOIN equipe_atleta AS ea
+                                             ON ea.atleta_id = a.id AND ea.ativo = TRUE
+                                         LEFT JOIN equipe AS e ON e.id = ea.equipe_id
+                                         ORDER BY a.nome, e.nome";
 
                         using (MySqlDataAdapter adapter = new MySqlDataAdapter(query, conexao))
                         {
