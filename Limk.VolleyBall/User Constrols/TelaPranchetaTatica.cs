@@ -518,7 +518,8 @@ namespace Limk.VolleyBall.User_Constrols
             if (!_pronto || _operacao || _apresentando || _emTransicao || indice == _indiceFaseSelecionada ||
                 indice < 0 || indice >= _tatica.Quadros.Count) return;
             GuardarFaseAtual();
-            IniciarTransicao(indice);
+            _indiceFaseSelecionada = indice;
+            MostrarFaseAtual();
         }
 
         private void btnExecutarSequencia_Click(object? sender, EventArgs e) => AlternarApresentacao();
