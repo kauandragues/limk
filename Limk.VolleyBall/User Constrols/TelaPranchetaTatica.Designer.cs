@@ -31,7 +31,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            btnDadosTatica = new Button();
             labelStatusPrancheta = new Label();
             timerSequencia = new System.Windows.Forms.Timer(components);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TelaPranchetaTatica));
@@ -60,6 +59,25 @@
             layoutPropriedades = new TableLayoutPanel();
             labelTituloPropriedades = new Label();
             labelResumoElemento = new Label();
+            layoutDadosTatica = new TableLayoutPanel();
+            labelNomeTaticaPropriedade = new Label();
+            textNomeTatica = new TextBox();
+            labelEquipeTatica = new Label();
+            comboEquipeTatica = new ComboBox();
+            labelTipoTatica = new Label();
+            comboTipoTatica = new ComboBox();
+            labelSistemaTatica = new Label();
+            comboSistemaTatica = new ComboBox();
+            labelDescricaoTatica = new Label();
+            textDescricaoTatica = new TextBox();
+            labelDadosFase = new Label();
+            labelNomeFase = new Label();
+            textNomeFase = new TextBox();
+            layoutTempoFase = new TableLayoutPanel();
+            labelDuracaoFase = new Label();
+            numericDuracaoFase = new NumericUpDown();
+            labelRotacaoFase = new Label();
+            comboRotacaoFase = new ComboBox();
             layoutCamposAtleta = new TableLayoutPanel();
             labelAtletaVinculado = new Label();
             comboAtletaVinculado = new ComboBox();
@@ -92,6 +110,9 @@
             panelPranchetaTatica.SuspendLayout();
             panelPropriedades.SuspendLayout();
             layoutPropriedades.SuspendLayout();
+            layoutDadosTatica.SuspendLayout();
+            layoutTempoFase.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericDuracaoFase).BeginInit();
             layoutCamposAtleta.SuspendLayout();
             layoutCoordenadas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericCoordenadaX).BeginInit();
@@ -103,7 +124,6 @@
             // panelCabecalho
             // 
             panelCabecalho.BackColor = Color.White;
-            panelCabecalho.Controls.Add(btnDadosTatica);
             panelCabecalho.Controls.Add(labelStatusPrancheta);
             panelCabecalho.Controls.Add(btnSalvarTatica);
             panelCabecalho.Controls.Add(labelNomeTatica);
@@ -129,21 +149,6 @@
             btnSalvarTatica.UseVisualStyleBackColor = false;
             btnSalvarTatica.Click += btnSalvarTatica_Click;
             //
-            // btnDadosTatica
-            //
-            btnDadosTatica.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnDadosTatica.BackColor = Color.White;
-            btnDadosTatica.FlatStyle = FlatStyle.Flat;
-            btnDadosTatica.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
-            btnDadosTatica.ForeColor = Color.FromArgb(92, 48, 154);
-            btnDadosTatica.Location = new Point(510, 26);
-            btnDadosTatica.Name = "btnDadosTatica";
-            btnDadosTatica.Size = new Size(142, 37);
-            btnDadosTatica.TabIndex = 2;
-            btnDadosTatica.Text = "Dados / fase";
-            btnDadosTatica.UseVisualStyleBackColor = false;
-            btnDadosTatica.Click += btnDadosTatica_Click;
-            //
             // labelStatusPrancheta
             //
             labelStatusPrancheta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -166,7 +171,7 @@
             labelNomeTatica.Font = new Font("Arial", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             labelNomeTatica.Location = new Point(194, 34);
             labelNomeTatica.Name = "labelNomeTatica";
-            labelNomeTatica.Size = new Size(300, 28);
+            labelNomeTatica.Size = new Size(450, 28);
             labelNomeTatica.TabIndex = 0;
             labelNomeTatica.Text = "Nova tática";
             labelNomeTatica.UseMnemonic = false;
@@ -446,17 +451,19 @@
             layoutPropriedades.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             layoutPropriedades.Controls.Add(labelTituloPropriedades, 0, 0);
             layoutPropriedades.Controls.Add(labelResumoElemento, 0, 1);
-            layoutPropriedades.Controls.Add(layoutCamposAtleta, 0, 2);
-            layoutPropriedades.Controls.Add(labelTituloCoordenadas, 0, 3);
-            layoutPropriedades.Controls.Add(layoutCoordenadas, 0, 4);
-            layoutPropriedades.Controls.Add(btnAplicarPropriedades, 0, 5);
-            layoutPropriedades.Controls.Add(btnRemoverElemento, 0, 6);
-            layoutPropriedades.Controls.Add(labelMensagemPropriedades, 0, 7);
+            layoutPropriedades.Controls.Add(layoutDadosTatica, 0, 2);
+            layoutPropriedades.Controls.Add(layoutCamposAtleta, 0, 3);
+            layoutPropriedades.Controls.Add(labelTituloCoordenadas, 0, 4);
+            layoutPropriedades.Controls.Add(layoutCoordenadas, 0, 5);
+            layoutPropriedades.Controls.Add(btnAplicarPropriedades, 0, 6);
+            layoutPropriedades.Controls.Add(btnRemoverElemento, 0, 7);
+            layoutPropriedades.Controls.Add(labelMensagemPropriedades, 0, 8);
             layoutPropriedades.Dock = DockStyle.Top;
             layoutPropriedades.Location = new Point(12, 12);
             layoutPropriedades.Margin = new Padding(0);
             layoutPropriedades.Name = "layoutPropriedades";
-            layoutPropriedades.RowCount = 8;
+            layoutPropriedades.RowCount = 9;
+            layoutPropriedades.RowStyles.Add(new RowStyle());
             layoutPropriedades.RowStyles.Add(new RowStyle());
             layoutPropriedades.RowStyles.Add(new RowStyle());
             layoutPropriedades.RowStyles.Add(new RowStyle());
@@ -491,8 +498,215 @@
             labelResumoElemento.Name = "labelResumoElemento";
             labelResumoElemento.Size = new Size(179, 56);
             labelResumoElemento.TabIndex = 1;
-            labelResumoElemento.Text = "NENHUM ELEMENTO\nSelecione na quadra";
+            labelResumoElemento.Text = "TÁTICA E FASE\nFase 01";
             labelResumoElemento.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // layoutDadosTatica
+            //
+            layoutDadosTatica.AutoSize = true;
+            layoutDadosTatica.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutDadosTatica.ColumnCount = 1;
+            layoutDadosTatica.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutDadosTatica.Controls.Add(labelNomeTaticaPropriedade, 0, 0);
+            layoutDadosTatica.Controls.Add(textNomeTatica, 0, 1);
+            layoutDadosTatica.Controls.Add(labelEquipeTatica, 0, 2);
+            layoutDadosTatica.Controls.Add(comboEquipeTatica, 0, 3);
+            layoutDadosTatica.Controls.Add(labelTipoTatica, 0, 4);
+            layoutDadosTatica.Controls.Add(comboTipoTatica, 0, 5);
+            layoutDadosTatica.Controls.Add(labelSistemaTatica, 0, 6);
+            layoutDadosTatica.Controls.Add(comboSistemaTatica, 0, 7);
+            layoutDadosTatica.Controls.Add(labelDescricaoTatica, 0, 8);
+            layoutDadosTatica.Controls.Add(textDescricaoTatica, 0, 9);
+            layoutDadosTatica.Controls.Add(labelDadosFase, 0, 10);
+            layoutDadosTatica.Controls.Add(labelNomeFase, 0, 11);
+            layoutDadosTatica.Controls.Add(textNomeFase, 0, 12);
+            layoutDadosTatica.Controls.Add(layoutTempoFase, 0, 13);
+            layoutDadosTatica.Dock = DockStyle.Top;
+            layoutDadosTatica.Font = new Font("Segoe UI", 8.5F);
+            layoutDadosTatica.Margin = new Padding(0, 0, 0, 9);
+            layoutDadosTatica.Name = "layoutDadosTatica";
+            layoutDadosTatica.RowCount = 14;
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.RowStyles.Add(new RowStyle());
+            layoutDadosTatica.TabIndex = 2;
+            //
+            // labelNomeTaticaPropriedade
+            //
+            labelNomeTaticaPropriedade.AutoSize = true;
+            labelNomeTaticaPropriedade.Dock = DockStyle.Top;
+            labelNomeTaticaPropriedade.Margin = new Padding(0, 0, 0, 3);
+            labelNomeTaticaPropriedade.Name = "labelNomeTaticaPropriedade";
+            labelNomeTaticaPropriedade.Text = "Nome da tática";
+            //
+            // textNomeTatica
+            //
+            textNomeTatica.Dock = DockStyle.Top;
+            textNomeTatica.Margin = new Padding(0, 0, 0, 8);
+            textNomeTatica.MaxLength = 100;
+            textNomeTatica.Name = "textNomeTatica";
+            textNomeTatica.TabIndex = 0;
+            //
+            // labelEquipeTatica
+            //
+            labelEquipeTatica.AutoSize = true;
+            labelEquipeTatica.Dock = DockStyle.Top;
+            labelEquipeTatica.Margin = new Padding(0, 0, 0, 3);
+            labelEquipeTatica.Name = "labelEquipeTatica";
+            labelEquipeTatica.Text = "Equipe";
+            //
+            // comboEquipeTatica
+            //
+            comboEquipeTatica.Dock = DockStyle.Top;
+            comboEquipeTatica.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboEquipeTatica.Margin = new Padding(0, 0, 0, 8);
+            comboEquipeTatica.Name = "comboEquipeTatica";
+            comboEquipeTatica.TabIndex = 1;
+            comboEquipeTatica.SelectedIndexChanged += comboEquipeTatica_SelectedIndexChanged;
+            //
+            // labelTipoTatica
+            //
+            labelTipoTatica.AutoSize = true;
+            labelTipoTatica.Dock = DockStyle.Top;
+            labelTipoTatica.Margin = new Padding(0, 0, 0, 3);
+            labelTipoTatica.Name = "labelTipoTatica";
+            labelTipoTatica.Text = "Tipo de tática";
+            //
+            // comboTipoTatica
+            //
+            comboTipoTatica.Dock = DockStyle.Top;
+            comboTipoTatica.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboTipoTatica.Margin = new Padding(0, 0, 0, 8);
+            comboTipoTatica.Name = "comboTipoTatica";
+            comboTipoTatica.TabIndex = 2;
+            //
+            // labelSistemaTatica
+            //
+            labelSistemaTatica.AutoSize = true;
+            labelSistemaTatica.Dock = DockStyle.Top;
+            labelSistemaTatica.Margin = new Padding(0, 0, 0, 3);
+            labelSistemaTatica.Name = "labelSistemaTatica";
+            labelSistemaTatica.Text = "Sistema de jogo";
+            //
+            // comboSistemaTatica
+            //
+            comboSistemaTatica.Dock = DockStyle.Top;
+            comboSistemaTatica.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboSistemaTatica.Margin = new Padding(0, 0, 0, 8);
+            comboSistemaTatica.Name = "comboSistemaTatica";
+            comboSistemaTatica.TabIndex = 3;
+            //
+            // labelDescricaoTatica
+            //
+            labelDescricaoTatica.AutoSize = true;
+            labelDescricaoTatica.Dock = DockStyle.Top;
+            labelDescricaoTatica.Margin = new Padding(0, 0, 0, 3);
+            labelDescricaoTatica.Name = "labelDescricaoTatica";
+            labelDescricaoTatica.Text = "Descrição";
+            //
+            // textDescricaoTatica
+            //
+            textDescricaoTatica.Dock = DockStyle.Top;
+            textDescricaoTatica.Height = 55;
+            textDescricaoTatica.Margin = new Padding(0, 0, 0, 10);
+            textDescricaoTatica.MaxLength = 65535;
+            textDescricaoTatica.Multiline = true;
+            textDescricaoTatica.Name = "textDescricaoTatica";
+            textDescricaoTatica.ScrollBars = ScrollBars.Vertical;
+            textDescricaoTatica.TabIndex = 4;
+            //
+            // labelDadosFase
+            //
+            labelDadosFase.AutoSize = true;
+            labelDadosFase.Dock = DockStyle.Top;
+            labelDadosFase.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            labelDadosFase.ForeColor = Color.FromArgb(124, 58, 237);
+            labelDadosFase.Margin = new Padding(0, 0, 0, 8);
+            labelDadosFase.Name = "labelDadosFase";
+            labelDadosFase.Text = "FASE SELECIONADA";
+            //
+            // labelNomeFase
+            //
+            labelNomeFase.AutoSize = true;
+            labelNomeFase.Dock = DockStyle.Top;
+            labelNomeFase.Margin = new Padding(0, 0, 0, 3);
+            labelNomeFase.Name = "labelNomeFase";
+            labelNomeFase.Text = "Nome da fase";
+            //
+            // textNomeFase
+            //
+            textNomeFase.Dock = DockStyle.Top;
+            textNomeFase.Margin = new Padding(0, 0, 0, 8);
+            textNomeFase.MaxLength = 100;
+            textNomeFase.Name = "textNomeFase";
+            textNomeFase.TabIndex = 5;
+            //
+            // layoutTempoFase
+            //
+            layoutTempoFase.AutoSize = true;
+            layoutTempoFase.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutTempoFase.ColumnCount = 2;
+            layoutTempoFase.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutTempoFase.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutTempoFase.Controls.Add(labelDuracaoFase, 0, 0);
+            layoutTempoFase.Controls.Add(labelRotacaoFase, 1, 0);
+            layoutTempoFase.Controls.Add(numericDuracaoFase, 0, 1);
+            layoutTempoFase.Controls.Add(comboRotacaoFase, 1, 1);
+            layoutTempoFase.Dock = DockStyle.Top;
+            layoutTempoFase.Margin = new Padding(0);
+            layoutTempoFase.Name = "layoutTempoFase";
+            layoutTempoFase.RowCount = 2;
+            layoutTempoFase.RowStyles.Add(new RowStyle());
+            layoutTempoFase.RowStyles.Add(new RowStyle());
+            layoutTempoFase.TabIndex = 6;
+            //
+            // labelDuracaoFase
+            //
+            labelDuracaoFase.AutoSize = true;
+            labelDuracaoFase.Dock = DockStyle.Top;
+            labelDuracaoFase.Margin = new Padding(0, 0, 5, 3);
+            labelDuracaoFase.Name = "labelDuracaoFase";
+            labelDuracaoFase.Text = "Duração (s)";
+            //
+            // labelRotacaoFase
+            //
+            labelRotacaoFase.AutoSize = true;
+            labelRotacaoFase.Dock = DockStyle.Top;
+            labelRotacaoFase.Margin = new Padding(0, 0, 0, 3);
+            labelRotacaoFase.Name = "labelRotacaoFase";
+            labelRotacaoFase.Text = "Rotação";
+            //
+            // numericDuracaoFase
+            //
+            numericDuracaoFase.DecimalPlaces = 3;
+            numericDuracaoFase.Dock = DockStyle.Top;
+            numericDuracaoFase.Increment = 0.1M;
+            numericDuracaoFase.Margin = new Padding(0, 0, 5, 0);
+            numericDuracaoFase.Minimum = 0.001M;
+            numericDuracaoFase.Maximum = 2147483.647M;
+            numericDuracaoFase.Name = "numericDuracaoFase";
+            numericDuracaoFase.TabIndex = 0;
+            numericDuracaoFase.Value = 1M;
+            //
+            // comboRotacaoFase
+            //
+            comboRotacaoFase.Dock = DockStyle.Top;
+            comboRotacaoFase.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboRotacaoFase.Items.AddRange(new object[] { "Nenhuma", "P1", "P2", "P3", "P4", "P5", "P6" });
+            comboRotacaoFase.Margin = new Padding(0);
+            comboRotacaoFase.Name = "comboRotacaoFase";
+            comboRotacaoFase.TabIndex = 1;
             // 
             // layoutCamposAtleta
             // 
@@ -828,6 +1042,11 @@
             panelPropriedades.PerformLayout();
             layoutPropriedades.ResumeLayout(false);
             layoutPropriedades.PerformLayout();
+            layoutDadosTatica.ResumeLayout(false);
+            layoutDadosTatica.PerformLayout();
+            layoutTempoFase.ResumeLayout(false);
+            layoutTempoFase.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericDuracaoFase).EndInit();
             layoutCamposAtleta.ResumeLayout(false);
             layoutCamposAtleta.PerformLayout();
             layoutCoordenadas.ResumeLayout(false);
@@ -848,7 +1067,6 @@
         private Panel panelPropriedades;
         private Panel panelFerramentas;
         private Panel panelPranchetaTatica;
-        private Button btnDadosTatica;
         private Label labelStatusPrancheta;
         private System.Windows.Forms.Timer timerSequencia;
         private Label labelTitulo;
@@ -870,6 +1088,25 @@
         private TableLayoutPanel layoutPropriedades;
         private Label labelResumoElemento;
         private TableLayoutPanel layoutCamposAtleta;
+        private TableLayoutPanel layoutDadosTatica;
+        private Label labelNomeTaticaPropriedade;
+        private TextBox textNomeTatica;
+        private Label labelEquipeTatica;
+        private ComboBox comboEquipeTatica;
+        private Label labelTipoTatica;
+        private ComboBox comboTipoTatica;
+        private Label labelSistemaTatica;
+        private ComboBox comboSistemaTatica;
+        private Label labelDescricaoTatica;
+        private TextBox textDescricaoTatica;
+        private Label labelDadosFase;
+        private Label labelNomeFase;
+        private TextBox textNomeFase;
+        private TableLayoutPanel layoutTempoFase;
+        private Label labelDuracaoFase;
+        private NumericUpDown numericDuracaoFase;
+        private Label labelRotacaoFase;
+        private ComboBox comboRotacaoFase;
         private TableLayoutPanel layoutCoordenadas;
         private Label labelCoordenadaX;
         private Label labelCoordenadaY;

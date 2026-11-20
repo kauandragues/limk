@@ -22,7 +22,6 @@ namespace Limk.VolleyBall.User_Constrols
         private bool _operacao;
         private bool _apresentando;
         private bool _atualizandoPropriedades;
-        private bool _dadosInformados;
 
         public TelaPranchetaTatica()
         {
@@ -30,6 +29,7 @@ namespace Limk.VolleyBall.User_Constrols
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
             _tatica.Quadros.Add(new QuadroTatica { Nome = "Fase 1" });
+            AtualizarPropriedades();
             AtualizarSequenciaVisual();
         }
 
@@ -68,7 +68,6 @@ namespace Limk.VolleyBall.User_Constrols
                 if (_taticaParaAbrir > 0)
                 {
                     _tatica = await DadosPrancheta.CarregarAsync(_usuario.Id, _taticaParaAbrir, token);
-                    _dadosInformados = true;
                 }
                 else
                 {
@@ -81,12 +80,13 @@ namespace Limk.VolleyBall.User_Constrols
                     ? await DadosPrancheta.CarregarElencoAsync(_usuario.Id, _tatica.EquipeId, token) : new List<AtletaDaEquipe>();
                 if (IsDisposed || token.IsCancellationRequested)
                     return;
+                PrepararCamposTatica();
                 _pronto = true;
                 _indiceFaseSelecionada = 0;
                 MostrarFaseAtual();
                 MostrarStatus(_equipes.Rows.Count == 0
                     ? "Seu usuário não possui equipe vinculada para salvar táticas."
-                    : "Use Dados / fase para editar nome, equipe, duração e rotação.");
+                    : "Sem um elemento selecionado, edite a tática e a fase nas propriedades à direita.");
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested) { }
             catch (UnauthorizedAccessException erro) { if (!IsDisposed) MostrarStatus(erro.Message, true); }
@@ -111,6 +111,7 @@ namespace Limk.VolleyBall.User_Constrols
         {
             if (!_pronto || _indiceFaseSelecionada >= _tatica.Quadros.Count)
                 return;
+            GuardarDadosTatica();
             QuadroTatica quadro = _tatica.Quadros[_indiceFaseSelecionada];
             quadro.Atletas.Clear();
             quadro.Bola = null;
@@ -129,6 +130,7 @@ namespace Limk.VolleyBall.User_Constrols
                     });
                 }
             }
+            AtualizarSequenciaVisual();
         }
 
         private void MostrarFaseAtual()
@@ -150,55 +152,99 @@ namespace Limk.VolleyBall.User_Constrols
             if (quadro.Bola != null)
                 prancheta.Elementos.Add(new PosicaoBola { X = quadro.Bola.X, Y = quadro.Bola.Y });
             labelNomeTatica.Text = _tatica.Nome;
+            PreencherDadosTatica();
             AtualizarPropriedades();
             AtualizarSequenciaVisual();
             prancheta.Invalidate();
         }
 
-        private async void btnDadosTatica_Click(object? sender, EventArgs e)
+        private void PrepararCamposTatica()
         {
-            await EditarDadosAsync();
+            _atualizandoPropriedades = true;
+            comboEquipeTatica.DisplayMember = "nome";
+            comboEquipeTatica.ValueMember = "id";
+            comboEquipeTatica.DataSource = _equipes.Copy();
+            PreencherOpcional(comboTipoTatica, _tipos);
+            PreencherOpcional(comboSistemaTatica, _sistemas);
+            _atualizandoPropriedades = false;
         }
 
-        private async Task<bool> EditarDadosAsync()
+        private static void PreencherOpcional(ComboBox combo, DataTable origem)
         {
-            if (!_pronto || _operacao || _apresentando || _equipes.Rows.Count == 0)
-                return false;
+            DataTable opcoes = origem.Copy();
+            DataRow vazio = opcoes.NewRow();
+            vazio["id"] = 0;
+            vazio["nome"] = "Sem definição";
+            opcoes.Rows.InsertAt(vazio, 0);
+            combo.DisplayMember = "nome";
+            combo.ValueMember = "id";
+            combo.DataSource = opcoes;
+        }
+
+        private void PreencherDadosTatica()
+        {
+            _atualizandoPropriedades = true;
+            QuadroTatica fase = _tatica.Quadros[_indiceFaseSelecionada];
+            textNomeTatica.Text = _tatica.Nome;
+            textDescricaoTatica.Text = _tatica.Descricao;
+            comboEquipeTatica.SelectedValue = _tatica.EquipeId;
+            comboTipoTatica.SelectedValue = _tatica.TipoTaticaId ?? 0;
+            comboSistemaTatica.SelectedValue = _tatica.SistemaJogoId ?? 0;
+            textNomeFase.Text = fase.Nome;
+            numericDuracaoFase.Value = Math.Clamp(fase.DuracaoMs / 1000m, numericDuracaoFase.Minimum, numericDuracaoFase.Maximum);
+            comboRotacaoFase.SelectedIndex = fase.Rotacao ?? 0;
+            _atualizandoPropriedades = false;
+        }
+
+        private void GuardarDadosTatica()
+        {
+            // Os campos permanecem preenchidos ao selecionar um atleta ou a bola.
+            // Também guardamos o que foi digitado antes de salvar ou trocar de fase.
+            _tatica.Nome = textNomeTatica.Text.Trim();
+            _tatica.Descricao = textDescricaoTatica.Text.Trim();
+            _tatica.TipoTaticaId = comboTipoTatica.SelectedValue is int tipo && tipo > 0 ? tipo : null;
+            _tatica.SistemaJogoId = comboSistemaTatica.SelectedValue is int sistema && sistema > 0 ? sistema : null;
+            QuadroTatica fase = _tatica.Quadros[_indiceFaseSelecionada];
+            fase.Nome = textNomeFase.Text.Trim();
+            fase.DuracaoMs = (int)(numericDuracaoFase.Value * 1000);
+            fase.Rotacao = comboRotacaoFase.SelectedIndex > 0 ? comboRotacaoFase.SelectedIndex : null;
+            labelNomeTatica.Text = _tatica.Nome;
+        }
+
+        private async void comboEquipeTatica_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (_atualizandoPropriedades || !_pronto || _operacao || _apresentando || _tatica.Id > 0 ||
+                comboEquipeTatica.SelectedValue is not int equipeId || equipeId == _tatica.EquipeId)
+                return;
             GuardarFaseAtual();
-            using var formulario = new FormDadosTatica(_tatica.Copiar(), _indiceFaseSelecionada, _equipes, _tipos, _sistemas);
-            if (formulario.ShowDialog(FindForm()) != DialogResult.OK)
-                return false;
-            int equipeAnterior = _tatica.EquipeId;
-            _tatica = formulario.Dados;
-            _dadosInformados = true;
-            MostrarStatus("Dados atualizados na edição. Clique em Salvar tática para gravar no banco.");
-            if (_tatica.EquipeId != equipeAnterior)
+            _tatica.EquipeId = equipeId;
+            // Uma nova equipe não pode herdar os vínculos do elenco anterior.
+            foreach (QuadroTatica quadro in _tatica.Quadros)
+                foreach (AtletaQuadro atleta in quadro.Atletas)
+                {
+                    atleta.EquipeAtletaId = null;
+                    atleta.Nome = $"Atleta {atleta.NumeroCamisa}";
+                }
+            _elenco.Clear();
+            _operacao = true;
+            AtualizarAcoes();
+            try
             {
-                // Uma nova equipe não pode herdar os vínculos do elenco anterior.
-                foreach (QuadroTatica quadro in _tatica.Quadros)
-                    foreach (AtletaQuadro atleta in quadro.Atletas)
-                    {
-                        atleta.EquipeAtletaId = null;
-                        atleta.Nome = $"Atleta {atleta.NumeroCamisa}";
-                    }
-                _elenco.Clear();
-                _operacao = true;
-                AtualizarAcoes();
-                try { _elenco = await DadosPrancheta.CarregarElencoAsync(_usuario!.Id, _tatica.EquipeId, _encerramento.Token); }
-                catch (OperationCanceledException) { return false; }
-                catch (FalhaPranchetaException) { if (!IsDisposed) MostrarStatus("Não foi possível carregar o elenco da equipe.", true); }
-                finally { _operacao = false; }
+                _elenco = await DadosPrancheta.CarregarElencoAsync(_usuario!.Id, equipeId, _encerramento.Token);
+                if (!IsDisposed) MostrarStatus("Equipe atualizada na edição. Clique em Salvar tática para gravar no banco.");
             }
-            if (IsDisposed) return false;
-            MostrarFaseAtual();
-            return true;
+            catch (OperationCanceledException) { }
+            catch (FalhaPranchetaException) { if (!IsDisposed) MostrarStatus("Não foi possível carregar o elenco da equipe.", true); }
+            finally
+            {
+                _operacao = false;
+                if (!IsDisposed) MostrarFaseAtual();
+            }
         }
 
         private async void btnSalvarTatica_Click(object? sender, EventArgs e)
         {
             if (!_pronto || _operacao || _apresentando || _usuario == null || _equipes.Rows.Count == 0)
-                return;
-            if (!_dadosInformados && !await EditarDadosAsync())
                 return;
             GuardarFaseAtual();
             CancellationToken token = _encerramento.Token;
@@ -215,7 +261,14 @@ namespace Limk.VolleyBall.User_Constrols
                 }
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested) { }
-            catch (ArgumentException erro) { if (!IsDisposed) MostrarStatus(erro.Message, true); }
+            catch (ArgumentException erro)
+            {
+                if (!IsDisposed)
+                {
+                    prancheta.SelecionarElemento(null);
+                    MostrarStatus(erro.Message, true);
+                }
+            }
             catch (UnauthorizedAccessException erro) { if (!IsDisposed) MostrarStatus(erro.Message, true); }
             catch (Exception) { if (!IsDisposed) MostrarStatus("Não foi possível salvar. A edição foi mantida; verifique a conexão e tente novamente.", true); }
             finally
@@ -255,7 +308,11 @@ namespace Limk.VolleyBall.User_Constrols
         {
             _atualizandoPropriedades = true;
             PosicaoElementos? elemento = prancheta.ElementoSelecionado;
+            layoutDadosTatica.Visible = elemento == null;
             layoutCamposAtleta.Visible = elemento is PosicaoAtleta;
+            labelTituloCoordenadas.Visible = elemento != null;
+            layoutCoordenadas.Visible = elemento != null;
+            btnRemoverElemento.Visible = elemento != null;
             textNumeroCamisa.Clear();
             comboAtletaVinculado.Items.Clear();
             comboAtletaVinculado.Items.Add(new AtletaDaEquipe());
@@ -280,8 +337,8 @@ namespace Limk.VolleyBall.User_Constrols
                 }
                 comboLadoAtleta.SelectedIndex = posicao.Lado == LadoAtleta.Adversario ? 1 : 0;
             }
-            else labelResumoElemento.Text = elemento is PosicaoBola ? "BOLA\nPosição na quadra" : "NENHUM ELEMENTO\nSelecione na quadra";
-            labelMensagemPropriedades.Text = elemento == null ? "Clique em um atleta ou em uma bola para ver suas propriedades." : "As alterações pertencem somente à fase selecionada.";
+            else labelResumoElemento.Text = elemento is PosicaoBola ? "BOLA\nPosição na quadra" : $"TÁTICA E FASE\nFase {_indiceFaseSelecionada + 1:00}";
+            labelMensagemPropriedades.Text = elemento == null ? "Clique em Salvar Tática para gravar os dados e as fases no banco." : "As alterações pertencem somente à fase selecionada.";
             labelMensagemPropriedades.ForeColor = Color.FromArgb(100, 116, 139);
             _atualizandoPropriedades = false;
             AtualizarCoordenadas();
@@ -305,7 +362,22 @@ namespace Limk.VolleyBall.User_Constrols
         {
             if (!_pronto || _operacao || _apresentando) return;
             var elemento = prancheta.ElementoSelecionado;
-            if (elemento == null) return;
+            if (elemento == null)
+            {
+                GuardarFaseAtual();
+                try
+                {
+                    DadosPrancheta.Validar(_tatica);
+                    labelMensagemPropriedades.Text = "Dados aplicados na edição. Clique em Salvar Tática para gravar.";
+                    labelMensagemPropriedades.ForeColor = Color.FromArgb(100, 116, 139);
+                }
+                catch (ArgumentException erro)
+                {
+                    labelMensagemPropriedades.Text = erro.Message;
+                    labelMensagemPropriedades.ForeColor = Color.FromArgb(180, 40, 60);
+                }
+                return;
+            }
             if (elemento is PosicaoAtleta posicao)
             {
                 if (!int.TryParse(textNumeroCamisa.Text, out int numero) || numero < 1 || numero > 99)
@@ -364,6 +436,7 @@ namespace Limk.VolleyBall.User_Constrols
         private void btnExcluirFase_Click(object? sender, EventArgs e)
         {
             if (!_pronto || _operacao || _apresentando || _tatica.Quadros.Count <= 1) return;
+            GuardarDadosTatica();
             _tatica.Quadros.RemoveAt(_indiceFaseSelecionada);
             _indiceFaseSelecionada = Math.Min(_indiceFaseSelecionada, _tatica.Quadros.Count - 1);
             MostrarFaseAtual();
@@ -445,7 +518,8 @@ namespace Limk.VolleyBall.User_Constrols
         {
             bool editar = _pronto && !_operacao && !_apresentando;
             btnSalvarTatica.Enabled = editar && _equipes.Rows.Count > 0;
-            btnDadosTatica.Enabled = editar && _equipes.Rows.Count > 0;
+            layoutDadosTatica.Enabled = editar;
+            comboEquipeTatica.Enabled = editar && _tatica.Id == 0 && _equipes.Rows.Count > 0;
             btnAdicionarAtleta.Enabled = editar; btnAdicionarBola.Enabled = editar;
             btnNovaFase.Enabled = editar; btnDuplicarFase.Enabled = editar;
             btnExcluirFase.Enabled = editar && _tatica.Quadros.Count > 1;
@@ -456,7 +530,7 @@ namespace Limk.VolleyBall.User_Constrols
             prancheta.Enabled = editar;
             layoutCoordenadas.Enabled = editar && prancheta.ElementoSelecionado != null;
             layoutCamposAtleta.Enabled = editar;
-            btnAplicarPropriedades.Enabled = editar && prancheta.ElementoSelecionado != null;
+            btnAplicarPropriedades.Enabled = editar;
             btnRemoverElemento.Enabled = editar && prancheta.ElementoSelecionado != null;
         }
     }

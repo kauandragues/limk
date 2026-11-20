@@ -76,18 +76,17 @@ Dois usuários vinculados à mesma equipe compartilham acesso aos dados dela. A 
 ## Usando a prancheta
 
 1. Abra **Prancheta Tática** para iniciar uma tática com uma fase vazia.
-2. Use **Dados / fase** para informar nome, equipe, tipo e sistema de jogo da tática, além do nome, duração e rotação da fase selecionada. Tipo, sistema e rotação são opcionais. A equipe de uma tática já salva não pode ser trocada.
+2. Com nenhum elemento selecionado, use o painel **Propriedades** à direita para informar nome, equipe, tipo e sistema de jogo da tática, além do nome, duração e rotação da fase selecionada. Clique em uma área vazia da quadra para voltar a esses campos. Tipo, sistema e rotação são opcionais. A equipe de uma tática já salva não pode ser trocada.
 3. Adicione atletas e a bola. Ao selecionar um atleta, você pode vinculá-lo ao elenco da equipe, escolher o lado e ajustar o número e a posição. Também é possível usar atletas sem vínculo cadastrado. Cada fase aceita uma bola.
 4. Use **Nova fase** para criar uma fase vazia ou **Duplicar** para copiar a fase selecionada. Cada fase mantém seus próprios elementos: mover um atleta ou alterar seu número em uma cópia não modifica a original nem o cadastro do elenco.
-5. Clique em **Salvar Tática** para gravar. O primeiro salvamento pede os dados da tática; os seguintes atualizam a mesma tática. Salve antes de sair da tela para manter a edição.
+5. **Aplicar alterações** atualiza a edição. **Salvar Tática** grava os dados e as fases no banco, incluindo o que foi digitado no painel. Ao trocar de fase, os campos também são mantidos na edição. Salve antes de sair da tela para manter a edição no banco.
 6. Abra uma tática pelo repositório **Táticas** ou pelos cartões do início. **Executar** apresenta as fases respeitando a duração de cada uma; **Parar** permite retomar a edição. O botão **Apresentar** do repositório abre e inicia a sequência.
 
 ### Organização do código
 
 - `Backend/Tatica.cs`, `QuadroTatica.cs` e `AtletaQuadro.cs` representam os dados editados. Os métodos `Copiar()` criam cópias independentes das fases, atletas e bola.
 - `Backend/DadosPrancheta.cs` concentra as consultas e gravações no MySQL, a validação dos dados e a verificação de acesso às equipes do usuário.
-- `User Constrols/TelaPranchetaTatica.cs` liga os botões aos dados e transfere os elementos entre a fase selecionada e o desenho. O layout continua em `TelaPranchetaTatica.Designer.cs`.
-- `FormDadosTatica.cs` trata a edição dos dados da tática e da fase; seu layout está em `FormDadosTatica.Designer.cs`.
+- `User Constrols/TelaPranchetaTatica.cs` liga os botões aos dados e transfere os elementos entre a fase selecionada e o desenho. O painel de propriedades alterna entre tática/fase, atleta e bola conforme a seleção. Todo o layout continua em `TelaPranchetaTatica.Designer.cs`.
 
 O salvamento utiliza as tabelas existentes `tatica`, `quadro`, `atleta_quadro` e `bola_quadro`. Nome, descrição e referências da tática são gravados junto com todas as fases em uma transação: uma falha desfaz a gravação inteira. Ao atualizar, as fases são substituídas dentro dessa transação, preservando o ID da tática e seus favoritos. Os números são guardados em cada fase, mesmo que o elenco mude depois. As coordenadas permanecem normalizadas entre 0 e 1.
 

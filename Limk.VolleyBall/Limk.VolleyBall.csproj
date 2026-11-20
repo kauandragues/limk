@@ -90,12 +90,4 @@
       <DependentUpon>CartaoEquipeInicio.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Update="FormDadosTatica.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="FormDadosTatica.Designer.cs">
-      <DependentUpon>FormDadosTatica.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
 </Project>
