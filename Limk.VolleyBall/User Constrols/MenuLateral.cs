@@ -13,7 +13,7 @@ namespace Limk.VolleyBall.User_Constrols
         {
             InitializeComponent();
 
-            foreach (Button botao in new[] { btnInicio, btnPranchetaTatica, btnTaticas, btnAtletas, btnEquipes })
+            foreach (Button botao in new[] { btnInicio, btnPranchetaTatica, btnTaticas, btnAtletas, btnEquipes, btnConfiguracoes })
             {
                 botao.BackColor = BackColor;
                 botao.ForeColor = Color.FromArgb(244, 239, 250);
@@ -26,6 +26,17 @@ namespace Limk.VolleyBall.User_Constrols
             }
 
             SelecionarBotao(btnInicio);
+        }
+
+        internal int ObterLarguraMinima()
+        {
+            int larguraIcone = (int)tableLayoutPanel1.ColumnStyles[0].Width;
+            int larguraMarca = lblMarca.GetPreferredSize(Size.Empty).Width + lblMarca.Margin.Horizontal;
+
+            int larguraCabecalho = tableLayoutPanel1.Padding.Horizontal + larguraIcone + larguraMarca +
+                SystemInformation.VerticalScrollBarWidth;
+            int larguraRodape = panelRodape.Padding.Horizontal + btnConfiguracoes.GetPreferredSize(Size.Empty).Width;
+            return Math.Max(larguraCabecalho, larguraRodape);
         }
 
         // Os atalhos da tela inicial usam a mesma seleção visual do menu.
@@ -41,6 +52,8 @@ namespace Limk.VolleyBall.User_Constrols
                 SelecionarBotao(btnEquipes);
             else if (tela is TelaAtletas)
                 SelecionarBotao(btnAtletas);
+            else if (tela is TelaConfiguracoes)
+                SelecionarBotao(btnConfiguracoes);
         }
 
         private void SelecionarBotao(Button botao)
@@ -92,6 +105,13 @@ namespace Limk.VolleyBall.User_Constrols
             SelecionarBotao(btnAtletas);
 
             OnMenuSelecionado?.Invoke(this, new TelaAtletas());
+        }
+
+        private void btnConfiguracoes_Click(object? sender, EventArgs e)
+        {
+            SelecionarBotao(btnConfiguracoes);
+
+            OnMenuSelecionado?.Invoke(this, new TelaConfiguracoes());
         }
     }
 }

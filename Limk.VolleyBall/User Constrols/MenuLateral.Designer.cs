@@ -37,8 +37,11 @@ namespace Limk.VolleyBall.User_Constrols
             btnInicio = new Button();
             btnEquipes = new Button();
             btnTaticas = new Button();
+            panelRodape = new Panel();
+            btnConfiguracoes = new Button();
             panel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            panelRodape.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -49,7 +52,7 @@ namespace Limk.VolleyBall.User_Constrols
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(200, 517);
+            panel1.Size = new Size(200, 449);
             panel1.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -176,17 +179,43 @@ namespace Limk.VolleyBall.User_Constrols
             btnTaticas.Text = "Táticas";
             btnTaticas.UseVisualStyleBackColor = false;
             btnTaticas.Click += btnTaticas_Click;
-            // 
+            //
+            // panelRodape
+            //
+            panelRodape.Controls.Add(btnConfiguracoes);
+            panelRodape.Dock = DockStyle.Bottom;
+            panelRodape.Location = new Point(0, 449);
+            panelRodape.Name = "panelRodape";
+            panelRodape.Padding = new Padding(12, 12, 12, 12);
+            panelRodape.Size = new Size(200, 68);
+            panelRodape.TabIndex = 1;
+            //
+            // btnConfiguracoes
+            //
+            btnConfiguracoes.AccessibleName = "Configurações";
+            btnConfiguracoes.Dock = DockStyle.Fill;
+            btnConfiguracoes.FlatAppearance.BorderSize = 0;
+            btnConfiguracoes.FlatStyle = FlatStyle.Flat;
+            btnConfiguracoes.Location = new Point(12, 12);
+            btnConfiguracoes.Name = "btnConfiguracoes";
+            btnConfiguracoes.Size = new Size(176, 44);
+            btnConfiguracoes.TabIndex = 0;
+            btnConfiguracoes.Text = "⚙️ Configurações";
+            btnConfiguracoes.UseVisualStyleBackColor = false;
+            btnConfiguracoes.Click += btnConfiguracoes_Click;
+            //
             // MenuLateral
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(30, 21, 42);
             Controls.Add(panel1);
+            Controls.Add(panelRodape);
             Name = "MenuLateral";
             Size = new Size(200, 517);
             panel1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
+            panelRodape.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
@@ -202,5 +231,7 @@ namespace Limk.VolleyBall.User_Constrols
         private Button btnAtletas;
         private Button btnEquipes;
         private TableLayoutPanel tableLayoutPanel1;
+        private Panel panelRodape;
+        private Button btnConfiguracoes;
     }
 }

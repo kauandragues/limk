@@ -45,6 +45,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="User Constrols\TelaConfiguracoes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="User Constrols\TelaConfiguracoes.Designer.cs">
+      <DependentUpon>TelaConfiguracoes.cs</DependentUpon>
+    </Compile>
     <Compile Update="User Constrols\TelaLogin.cs">
       <SubType>UserControl</SubType>
     </Compile>

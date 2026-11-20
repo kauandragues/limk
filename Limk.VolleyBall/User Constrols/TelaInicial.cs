@@ -143,6 +143,11 @@ namespace Limk.VolleyBall.User_Constrols
             menuUsuario.Show(btnUsuario, new Point(0, btnUsuario.Height));
         }
 
+        private void itemConfiguracoes_Click(object? sender, EventArgs e)
+        {
+            TelaSolicitada?.Invoke(this, new TelaConfiguracoes());
+        }
+
         private void btnPrancheta_Click(object? sender, EventArgs e)
         {
             TelaSolicitada?.Invoke(this, new TelaPranchetaTatica());

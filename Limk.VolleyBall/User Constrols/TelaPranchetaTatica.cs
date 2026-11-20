@@ -12,6 +12,8 @@ namespace Limk.VolleyBall.User_Constrols
     {
         // O índice começa em 0; o número mostrado no cartão começa em 1.
         private int _indiceFaseSelecionada;
+        private PreferenciasUsuario _preferencias = PreferenciasUsuario.Padrao;
+        private CancellationTokenSource? _carregamentoPreferencias;
 
         public TelaPranchetaTatica()
         {
@@ -32,6 +34,46 @@ namespace Limk.VolleyBall.User_Constrols
             prancheta.Elementos.Clear();
             prancheta.SelecionarElemento(null);
             labelNomeTatica.Text = $"Nova tática · {usuario.Nome}";
+            AplicarPreferencias(PreferenciasUsuario.Padrao);
+            _ = CarregarPreferenciasAsync(usuario.Id);
+        }
+
+        private async Task CarregarPreferenciasAsync(int usuarioId)
+        {
+            _carregamentoPreferencias?.Cancel();
+            using var carregamento = new CancellationTokenSource();
+            _carregamentoPreferencias = carregamento;
+            btnNovaFase.Enabled = false;
+
+            try
+            {
+                PreferenciasUsuario preferencias = await DadosPreferenciasUsuario.CarregarAsync(usuarioId, carregamento.Token);
+                if (!carregamento.IsCancellationRequested)
+                    AplicarPreferencias(preferencias);
+            }
+            catch (OperationCanceledException) when (carregamento.IsCancellationRequested)
+            {
+                // A tela foi fechada ou uma nova consulta foi iniciada.
+            }
+            catch (FalhaPreferenciasUsuarioException)
+            {
+                // A edição local continua com os valores padrão durante uma falha de conexão.
+            }
+            finally
+            {
+                if (ReferenceEquals(_carregamentoPreferencias, carregamento))
+                {
+                    _carregamentoPreferencias = null;
+                    if (!carregamento.IsCancellationRequested)
+                        btnNovaFase.Enabled = true;
+                }
+            }
+        }
+
+        private void AplicarPreferencias(PreferenciasUsuario preferencias)
+        {
+            _preferencias = preferencias;
+            prancheta.AplicarPreferencias(preferencias);
         }
 
         private void btnAdicionarBola_Click(object sender, EventArgs e)
@@ -131,6 +173,7 @@ namespace Limk.VolleyBall.User_Constrols
 
                 if (elemento is PosicaoAtleta posicaoAtleta)
                 {
+                    comboLadoAtleta.SelectedIndex = posicaoAtleta.Lado == LadoAtleta.Adversario ? 1 : 0;
                     // Procura o cadastro cujo Id corresponde ao AtletaId desta posição.
                     Atleta? atleta = prancheta.Atletas.Find(j => j.Id == posicaoAtleta.AtletaId);
                     if (atleta == null)
@@ -194,6 +237,7 @@ namespace Limk.VolleyBall.User_Constrols
                     return;
                 }
                 posicaoAtleta.AtletaId = atleta.Id;
+                posicaoAtleta.Lado = comboLadoAtleta.SelectedIndex == 1 ? LadoAtleta.Adversario : LadoAtleta.Principal;
                 atleta.Numero = numero;
             }
 
@@ -234,7 +278,7 @@ namespace Limk.VolleyBall.User_Constrols
             {
                 NomeFase = "Nova fase",
                 Tipo = "Preparação",
-                Duracao = 2m
+                Duracao = _preferencias.DuracaoQuadroPadraoMs / 1000m
             };
             AdicionarCartao(novaFase, flowFases.Controls.Count);
         }
@@ -356,11 +400,23 @@ namespace Limk.VolleyBall.User_Constrols
         private PosicaoElementos? _selecionado;
         private bool _arrastando;
         private PointF _offsetArraste;
+        private Color _corAtletaPrincipal;
+        private Color _corAtletaAdversario;
+        private Color _corBola;
 
         public PranchetaControl()
         {
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
+            AplicarPreferencias(PreferenciasUsuario.Padrao);
+        }
+
+        internal void AplicarPreferencias(PreferenciasUsuario preferencias)
+        {
+            _corAtletaPrincipal = ColorTranslator.FromHtml(preferencias.CorAtletaPrincipal);
+            _corAtletaAdversario = ColorTranslator.FromHtml(preferencias.CorAtletaAdversario);
+            _corBola = ColorTranslator.FromHtml(preferencias.CorBola);
+            Invalidate();
         }
 
         public void SelecionarElemento(PosicaoElementos? elemento)
@@ -563,14 +619,19 @@ namespace Limk.VolleyBall.User_Constrols
 
                 // Desenha na ordem da lista; os últimos ficam por cima.
                 using var contorno = new Pen(Color.White, 2f);
+                using var contornoSelecao = new Pen(Color.FromArgb(25, 35, 58), 2f);
+                using var preenchimento = new SolidBrush(_corAtletaPrincipal);
 
                 foreach (PosicaoElementos posicao in Elementos)
                 {
                     PointF centro = PosicaoParaCena(posicao, area);
                     float raio = ObterRaioElemento(posicao, area);
-                    Brush preenchimento = posicao is PosicaoBola
-                        ? Brushes.Gold
-                        : Brushes.RoyalBlue;
+                    preenchimento.Color = posicao switch
+                    {
+                        PosicaoBola => _corBola,
+                        PosicaoAtleta { Lado: LadoAtleta.Adversario } => _corAtletaAdversario,
+                        _ => _corAtletaPrincipal
+                    };
 
                     RectangleF circulo = new RectangleF(
                         centro.X - raio,
@@ -579,19 +640,16 @@ namespace Limk.VolleyBall.User_Constrols
                         raio * 2f
                     );
 
-                    g.FillEllipse(
-                        ReferenceEquals(posicao, _selecionado)
-                            ? Brushes.OrangeRed
-                            : preenchimento,
-                        circulo
-                    );
+                    g.FillEllipse(preenchimento, circulo);
                     g.DrawEllipse(contorno, circulo);
+                    if (ReferenceEquals(posicao, _selecionado))
+                        g.DrawEllipse(contornoSelecao, RectangleF.Inflate(circulo, 3f, 3f));
 
                     if (posicao is PosicaoAtleta posicaoAtleta)
                     {
                         Atleta? atleta = Atletas.Find(j => j.Id == posicaoAtleta.AtletaId);
                         if (atleta != null)
-                            DesenharNumeroAtleta(g, atleta.Numero, circulo);
+                            DesenharNumeroAtleta(g, atleta.Numero, circulo, preenchimento.Color);
                     }
                 }
             }
@@ -602,7 +660,7 @@ namespace Limk.VolleyBall.User_Constrols
             }
         }
 
-        private void DesenharNumeroAtleta(Graphics g, int numero, RectangleF circulo)
+        private void DesenharNumeroAtleta(Graphics g, int numero, RectangleF circulo, Color corFundo)
         {
             // A fonte usa as coordenadas da cena; o zoom já é aplicado pelo Graphics.
             using var fonte = new Font(
@@ -618,7 +676,9 @@ namespace Limk.VolleyBall.User_Constrols
                 FormatFlags = StringFormatFlags.NoWrap
             };
 
-            g.DrawString(numero.ToString(), fonte, Brushes.White, circulo, formato);
+            int luminancia = (299 * corFundo.R + 587 * corFundo.G + 114 * corFundo.B) / 1000;
+            Brush corNumero = luminancia >= 145 ? Brushes.Black : Brushes.White;
+            g.DrawString(numero.ToString(), fonte, corNumero, circulo, formato);
         }
 
         private RectangleF ObterAreaQuadra()

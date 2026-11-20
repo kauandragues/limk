@@ -16,6 +16,14 @@ namespace Limk.VolleyBall
             menuLateral1.Enabled = false;
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            ColumnStyle colunaMenu = tableLayoutPanel1.ColumnStyles[0];
+            colunaMenu.Width = Math.Max(colunaMenu.Width, menuLateral1.ObterLarguraMinima());
+
+            base.OnLoad(e);
+        }
+
         private void MenuLateral_OnMenuSelecionado(object? sender, UserControl TelaExibir)
         {
             MostrarTela(TelaExibir);

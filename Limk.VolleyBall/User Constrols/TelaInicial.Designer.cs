@@ -138,8 +138,8 @@ namespace Limk.VolleyBall.User_Constrols
             // itemConfiguracoes
             //
             itemConfiguracoes.Name = "itemConfiguracoes";
-            itemConfiguracoes.Enabled = false;
-            itemConfiguracoes.Text = "Configurações do usuário (em breve)";
+            itemConfiguracoes.Text = "Configurações do usuário";
+            itemConfiguracoes.Click += itemConfiguracoes_Click;
             //
             // pnlConteudo
             //

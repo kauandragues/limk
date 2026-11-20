@@ -13,9 +13,10 @@
         /// <param name="disposing">true se for necessário descartar os recursos gerenciados; caso contrário, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                _carregamentoPreferencias?.Cancel();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -60,6 +61,8 @@
             comboAtletaVinculado = new ComboBox();
             labelNumeroCamisa = new Label();
             textNumeroCamisa = new TextBox();
+            labelLadoAtleta = new Label();
+            comboLadoAtleta = new ComboBox();
             labelTituloCoordenadas = new Label();
             layoutCoordenadas = new TableLayoutPanel();
             labelCoordenadaX = new Label();
@@ -462,11 +465,15 @@
             layoutCamposAtleta.Controls.Add(comboAtletaVinculado, 0, 1);
             layoutCamposAtleta.Controls.Add(labelNumeroCamisa, 0, 2);
             layoutCamposAtleta.Controls.Add(textNumeroCamisa, 0, 3);
+            layoutCamposAtleta.Controls.Add(labelLadoAtleta, 0, 4);
+            layoutCamposAtleta.Controls.Add(comboLadoAtleta, 0, 5);
             layoutCamposAtleta.Dock = DockStyle.Top;
             layoutCamposAtleta.Location = new Point(0, 89);
             layoutCamposAtleta.Margin = new Padding(0, 0, 0, 9);
             layoutCamposAtleta.Name = "layoutCamposAtleta";
-            layoutCamposAtleta.RowCount = 4;
+            layoutCamposAtleta.RowCount = 6;
+            layoutCamposAtleta.RowStyles.Add(new RowStyle());
+            layoutCamposAtleta.RowStyles.Add(new RowStyle());
             layoutCamposAtleta.RowStyles.Add(new RowStyle());
             layoutCamposAtleta.RowStyles.Add(new RowStyle());
             layoutCamposAtleta.RowStyles.Add(new RowStyle());
@@ -524,6 +531,28 @@
             textNumeroCamisa.Name = "textNumeroCamisa";
             textNumeroCamisa.Size = new Size(179, 23);
             textNumeroCamisa.TabIndex = 1;
+            //
+            // labelLadoAtleta
+            //
+            labelLadoAtleta.AutoSize = true;
+            labelLadoAtleta.Dock = DockStyle.Top;
+            labelLadoAtleta.Font = new Font("Segoe UI", 7.5F);
+            labelLadoAtleta.ForeColor = Color.FromArgb(25, 35, 58);
+            labelLadoAtleta.Margin = new Padding(0, 0, 0, 9);
+            labelLadoAtleta.Name = "labelLadoAtleta";
+            labelLadoAtleta.Text = "LADO DO ATLETA";
+            //
+            // comboLadoAtleta
+            //
+            comboLadoAtleta.AccessibleName = "Lado do atleta";
+            comboLadoAtleta.BackColor = Color.FromArgb(247, 248, 252);
+            comboLadoAtleta.Dock = DockStyle.Top;
+            comboLadoAtleta.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboLadoAtleta.Font = new Font("Segoe UI", 8.5F);
+            comboLadoAtleta.Items.AddRange(new object[] { "Principal", "Adversário" });
+            comboLadoAtleta.Margin = new Padding(0, 0, 0, 9);
+            comboLadoAtleta.Name = "comboLadoAtleta";
+            comboLadoAtleta.TabIndex = 2;
             // 
             // labelTituloCoordenadas
             // 
@@ -789,6 +818,8 @@
         private Label labelTituloPropriedades;
         private TextBox textNumeroCamisa;
         private Label labelNumeroCamisa;
+        private ComboBox comboLadoAtleta;
+        private Label labelLadoAtleta;
         private ComboBox comboAtletaVinculado;
         private Label labelAtletaVinculado;
         private Label labelTituloCoordenadas;
