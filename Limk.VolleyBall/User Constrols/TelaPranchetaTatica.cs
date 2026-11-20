@@ -1,247 +1,328 @@
-﻿using Limk.VolleyBall.Backend;
-using System;
-using System.Collections.Generic;
+using Limk.VolleyBall.Backend;
 using System.ComponentModel;
-using System.Drawing;
+using System.Data;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 
 namespace Limk.VolleyBall.User_Constrols
 {
     public partial class TelaPranchetaTatica : UserControl, ITelaUsuario
     {
-        // O índice começa em 0; o número mostrado no cartão começa em 1.
+        private UsuarioAutenticado? _usuario;
+        private Tatica _tatica = new Tatica();
         private int _indiceFaseSelecionada;
         private PreferenciasUsuario _preferencias = PreferenciasUsuario.Padrao;
-        private CancellationTokenSource? _carregamentoPreferencias;
+        private readonly CancellationTokenSource _encerramento = new CancellationTokenSource();
+        private readonly int _taticaParaAbrir;
+        private readonly bool _apresentarAoAbrir;
+        private DataTable _equipes = new DataTable();
+        private DataTable _tipos = new DataTable();
+        private DataTable _sistemas = new DataTable();
+        private List<AtletaDaEquipe> _elenco = new List<AtletaDaEquipe>();
+        private bool _pronto;
+        private bool _operacao;
+        private bool _apresentando;
+        private bool _atualizandoPropriedades;
+        private bool _dadosInformados;
 
         public TelaPranchetaTatica()
         {
             InitializeComponent();
-
-            // No Designer, mostra somente os controles, sem criar atletas de exemplo.
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
+            _tatica.Quadros.Add(new QuadroTatica { Nome = "Fase 1" });
+            AtualizarSequenciaVisual();
+        }
 
-            InicializarSequenciaVisual();
-            AdicionarAtleta(0.25f, 0.5f);
+        public TelaPranchetaTatica(int taticaId, bool apresentar = false) : this()
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(taticaId);
+            _taticaParaAbrir = taticaId;
+            _apresentarAoAbrir = apresentar;
         }
 
         public void DefinirUsuario(UsuarioAutenticado usuario)
         {
-            // A prancheta é uma edição local; não carrega táticas de outros usuários.
-            prancheta.Atletas.Clear();
-            prancheta.Elementos.Clear();
-            prancheta.SelecionarElemento(null);
-            labelNomeTatica.Text = $"Nova tática · {usuario.Nome}";
-            AplicarPreferencias(PreferenciasUsuario.Padrao);
-            _ = CarregarPreferenciasAsync(usuario.Id);
+            _usuario = usuario;
+            labelNomeTatica.Text = "Nova tática";
         }
 
-        private async Task CarregarPreferenciasAsync(int usuarioId)
+        private async void TelaPranchetaTatica_Load(object? sender, EventArgs e)
         {
-            _carregamentoPreferencias?.Cancel();
-            using var carregamento = new CancellationTokenSource();
-            _carregamentoPreferencias = carregamento;
-            btnNovaFase.Enabled = false;
-
+            if (_usuario == null || _pronto || _operacao || DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
+            CancellationToken token = _encerramento.Token;
+            _operacao = true;
+            AtualizarAcoes();
+            MostrarStatus("Carregando a tática e suas equipes...");
             try
             {
-                PreferenciasUsuario preferencias = await DadosPreferenciasUsuario.CarregarAsync(usuarioId, carregamento.Token);
-                if (!carregamento.IsCancellationRequested)
-                    AplicarPreferencias(preferencias);
+                _equipes = await DadosUsuario.CarregarEquipesAsync(_usuario.Id);
+                _tipos = await DadosPrancheta.CarregarTiposAsync(token);
+                _sistemas = await DadosPrancheta.CarregarSistemasAsync(token);
+                try { _preferencias = await DadosPreferenciasUsuario.CarregarAsync(_usuario.Id, token); }
+                catch (FalhaPreferenciasUsuarioException) { _preferencias = PreferenciasUsuario.Padrao; }
+                if (IsDisposed || token.IsCancellationRequested)
+                    return;
+                prancheta.AplicarPreferencias(_preferencias);
+
+                if (_taticaParaAbrir > 0)
+                {
+                    _tatica = await DadosPrancheta.CarregarAsync(_usuario.Id, _taticaParaAbrir, token);
+                    _dadosInformados = true;
+                }
+                else
+                {
+                    _tatica.EquipeId = _equipes.Rows.Count > 0 ? Convert.ToInt32(_equipes.Rows[0]["id"]) : 0;
+                    _tatica.Quadros[0].DuracaoMs = _preferencias.DuracaoQuadroPadraoMs;
+                }
+                if (_tatica.Quadros.Count == 0)
+                    _tatica.Quadros.Add(new QuadroTatica { Nome = "Fase 1", DuracaoMs = _preferencias.DuracaoQuadroPadraoMs });
+                _elenco = _tatica.EquipeId > 0
+                    ? await DadosPrancheta.CarregarElencoAsync(_usuario.Id, _tatica.EquipeId, token) : new List<AtletaDaEquipe>();
+                if (IsDisposed || token.IsCancellationRequested)
+                    return;
+                _pronto = true;
+                _indiceFaseSelecionada = 0;
+                MostrarFaseAtual();
+                MostrarStatus(_equipes.Rows.Count == 0
+                    ? "Seu usuário não possui equipe vinculada para salvar táticas."
+                    : "Use Dados / fase para editar nome, equipe, duração e rotação.");
             }
-            catch (OperationCanceledException) when (carregamento.IsCancellationRequested)
-            {
-                // A tela foi fechada ou uma nova consulta foi iniciada.
-            }
-            catch (FalhaPreferenciasUsuarioException)
-            {
-                // A edição local continua com os valores padrão durante uma falha de conexão.
-            }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+            catch (UnauthorizedAccessException erro) { if (!IsDisposed) MostrarStatus(erro.Message, true); }
+            catch (Exception) { if (!IsDisposed) MostrarStatus("Não foi possível carregar a prancheta. Verifique a conexão e abra a tela novamente.", true); }
             finally
             {
-                if (ReferenceEquals(_carregamentoPreferencias, carregamento))
+                _operacao = false;
+                if (!IsDisposed) AtualizarSequenciaVisual();
+            }
+            if (_pronto && _apresentarAoAbrir && !IsDisposed)
+                AlternarApresentacao();
+        }
+
+        private void MostrarStatus(string mensagem, bool erro = false)
+        {
+            labelStatusPrancheta.ForeColor = erro ? Color.FromArgb(180, 40, 60) : Color.FromArgb(100, 116, 139);
+            labelStatusPrancheta.Text = mensagem;
+        }
+
+        // A quadra é a edição da fase selecionada. Antes de trocar de fase, copiamos seus elementos.
+        private void GuardarFaseAtual()
+        {
+            if (!_pronto || _indiceFaseSelecionada >= _tatica.Quadros.Count)
+                return;
+            QuadroTatica quadro = _tatica.Quadros[_indiceFaseSelecionada];
+            quadro.Atletas.Clear();
+            quadro.Bola = null;
+            foreach (PosicaoElementos elemento in prancheta.Elementos)
+            {
+                if (elemento is PosicaoBola bola)
+                    quadro.Bola = new PosicaoBola { X = bola.X, Y = bola.Y };
+                else if (elemento is PosicaoAtleta posicao)
                 {
-                    _carregamentoPreferencias = null;
-                    if (!carregamento.IsCancellationRequested)
-                        btnNovaFase.Enabled = true;
+                    Atleta? atleta = prancheta.Atletas.Find(a => a.Id == posicao.AtletaId);
+                    if (atleta == null) continue;
+                    quadro.Atletas.Add(new AtletaQuadro
+                    {
+                        EquipeAtletaId = posicao.EquipeAtletaId, Nome = atleta.Nome,
+                        NumeroCamisa = atleta.NumeroCamisa, Lado = posicao.Lado, X = posicao.X, Y = posicao.Y
+                    });
                 }
             }
         }
 
-        private void AplicarPreferencias(PreferenciasUsuario preferencias)
+        private void MostrarFaseAtual()
         {
-            _preferencias = preferencias;
-            prancheta.AplicarPreferencias(preferencias);
+            prancheta.SelecionarElemento(null);
+            prancheta.Elementos.Clear();
+            prancheta.Atletas.Clear();
+            QuadroTatica quadro = _tatica.Quadros[_indiceFaseSelecionada];
+            foreach (AtletaQuadro salvo in quadro.Atletas)
+            {
+                // Este ID liga os dois objetos do desenho; o vínculo persistido é EquipeAtletaId.
+                int idLocal = prancheta.Atletas.Count + 1;
+                prancheta.Atletas.Add(new Atleta { Id = idLocal, Nome = salvo.Nome, NumeroCamisa = salvo.NumeroCamisa });
+                prancheta.Elementos.Add(new PosicaoAtleta
+                {
+                    AtletaId = idLocal, EquipeAtletaId = salvo.EquipeAtletaId, Lado = salvo.Lado, X = salvo.X, Y = salvo.Y
+                });
+            }
+            if (quadro.Bola != null)
+                prancheta.Elementos.Add(new PosicaoBola { X = quadro.Bola.X, Y = quadro.Bola.Y });
+            labelNomeTatica.Text = _tatica.Nome;
+            AtualizarPropriedades();
+            AtualizarSequenciaVisual();
+            prancheta.Invalidate();
+        }
+
+        private async void btnDadosTatica_Click(object? sender, EventArgs e)
+        {
+            await EditarDadosAsync();
+        }
+
+        private async Task<bool> EditarDadosAsync()
+        {
+            if (!_pronto || _operacao || _apresentando || _equipes.Rows.Count == 0)
+                return false;
+            GuardarFaseAtual();
+            using var formulario = new FormDadosTatica(_tatica.Copiar(), _indiceFaseSelecionada, _equipes, _tipos, _sistemas);
+            if (formulario.ShowDialog(FindForm()) != DialogResult.OK)
+                return false;
+            int equipeAnterior = _tatica.EquipeId;
+            _tatica = formulario.Dados;
+            _dadosInformados = true;
+            MostrarStatus("Dados atualizados na edição. Clique em Salvar tática para gravar no banco.");
+            if (_tatica.EquipeId != equipeAnterior)
+            {
+                // Uma nova equipe não pode herdar os vínculos do elenco anterior.
+                foreach (QuadroTatica quadro in _tatica.Quadros)
+                    foreach (AtletaQuadro atleta in quadro.Atletas)
+                    {
+                        atleta.EquipeAtletaId = null;
+                        atleta.Nome = $"Atleta {atleta.NumeroCamisa}";
+                    }
+                _elenco.Clear();
+                _operacao = true;
+                AtualizarAcoes();
+                try { _elenco = await DadosPrancheta.CarregarElencoAsync(_usuario!.Id, _tatica.EquipeId, _encerramento.Token); }
+                catch (OperationCanceledException) { return false; }
+                catch (FalhaPranchetaException) { if (!IsDisposed) MostrarStatus("Não foi possível carregar o elenco da equipe.", true); }
+                finally { _operacao = false; }
+            }
+            if (IsDisposed) return false;
+            MostrarFaseAtual();
+            return true;
+        }
+
+        private async void btnSalvarTatica_Click(object? sender, EventArgs e)
+        {
+            if (!_pronto || _operacao || _apresentando || _usuario == null || _equipes.Rows.Count == 0)
+                return;
+            if (!_dadosInformados && !await EditarDadosAsync())
+                return;
+            GuardarFaseAtual();
+            CancellationToken token = _encerramento.Token;
+            _operacao = true;
+            AtualizarAcoes();
+            MostrarStatus("Salvando a tática e suas fases...");
+            try
+            {
+                int id = await DadosPrancheta.SalvarAsync(_usuario.Id, _tatica, token);
+                if (!IsDisposed)
+                {
+                    _tatica.Id = id;
+                    MostrarStatus("Tática salva no banco de dados.");
+                }
+            }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+            catch (ArgumentException erro) { if (!IsDisposed) MostrarStatus(erro.Message, true); }
+            catch (UnauthorizedAccessException erro) { if (!IsDisposed) MostrarStatus(erro.Message, true); }
+            catch (Exception) { if (!IsDisposed) MostrarStatus("Não foi possível salvar. A edição foi mantida; verifique a conexão e tente novamente.", true); }
+            finally
+            {
+                _operacao = false;
+                if (!IsDisposed) AtualizarAcoes();
+            }
         }
 
         private void btnAdicionarBola_Click(object sender, EventArgs e)
         {
-            // Cada quadro tem uma bola. Um novo clique seleciona a bola que já existe.
-            foreach (PosicaoElementos elemento in prancheta.Elementos)
-            {
-                if (elemento is PosicaoBola)
-                {
-                    prancheta.SelecionarElemento(elemento);
-                    return;
-                }
-            }
-
-            PosicaoBola bola = new PosicaoBola
-            {
-                X = 0.5f,
-                Y = 0.5f
-            };
+            if (!_pronto || _operacao || _apresentando) return;
+            var existente = prancheta.Elementos.OfType<PosicaoBola>().FirstOrDefault();
+            if (existente != null) { prancheta.SelecionarElemento(existente); return; }
+            var bola = new PosicaoBola { X = 0.5f, Y = 0.5f };
             prancheta.Elementos.Add(bola);
             prancheta.SelecionarElemento(bola);
         }
 
         private void btnAdicionarAtleta_Click(object sender, EventArgs e)
         {
-            AdicionarAtleta(0.5f, 0.5f);
-        }
-
-        private void AdicionarAtleta(float x, float y)
-        {
-            int proximoId = 1;
-            int proximoNumero = 1;
-
-            // Encontra valores livres, mesmo quando algum atleta foi removido da quadra.
-            foreach (Atleta atleta in prancheta.Atletas)
-            {
-                proximoId = Math.Max(proximoId, atleta.Id + 1);
-                proximoNumero = Math.Max(proximoNumero, atleta.NumeroCamisa + 1);
-            }
-
-            Atleta novoAtleta = new Atleta
-            {
-                Id = proximoId,
-                Nome = $"Atleta {proximoNumero}",
-                NumeroCamisa = proximoNumero
-            };
-            prancheta.Atletas.Add(novoAtleta);
-
-            // O cadastro guarda o número; a posição guarda apenas o vínculo e as coordenadas.
-            PosicaoAtleta posicao = new PosicaoAtleta
-            {
-                AtletaId = novoAtleta.Id,
-                X = x,
-                Y = y
-            };
+            if (!_pronto || _operacao || _apresentando) return;
+            int numero = Enumerable.Range(1, 99).FirstOrDefault(n => !prancheta.Elementos.OfType<PosicaoAtleta>()
+                .Where(p => p.Lado == LadoAtleta.Principal).Any(p => prancheta.Atletas.Find(a => a.Id == p.AtletaId)?.NumeroCamisa == n));
+            if (numero == 0) { MostrarStatus("Não há números disponíveis para outro atleta deste lado.", true); return; }
+            int id = prancheta.Atletas.Count == 0 ? 1 : prancheta.Atletas.Max(a => a.Id) + 1;
+            prancheta.Atletas.Add(new Atleta { Id = id, Nome = $"Atleta {numero}", NumeroCamisa = numero });
+            var posicao = new PosicaoAtleta { AtletaId = id, X = 0.5f, Y = 0.5f };
             prancheta.Elementos.Add(posicao);
             prancheta.SelecionarElemento(posicao);
         }
 
-        private void prancheta_SelecaoAlterada(object? sender, EventArgs e)
-        {
-            AtualizarPropriedades();
-        }
-
-        private void prancheta_PosicaoAlterada(object? sender, EventArgs e)
-        {
-            AtualizarCoordenadas();
-        }
+        private void prancheta_SelecaoAlterada(object? sender, EventArgs e) => AtualizarPropriedades();
+        private void prancheta_PosicaoAlterada(object? sender, EventArgs e) => AtualizarCoordenadas();
 
         private void AtualizarPropriedades()
         {
+            _atualizandoPropriedades = true;
             PosicaoElementos? elemento = prancheta.ElementoSelecionado;
-            bool temSelecao = elemento != null;
-
             layoutCamposAtleta.Visible = elemento is PosicaoAtleta;
-            layoutCoordenadas.Enabled = temSelecao;
-            btnAplicarPropriedades.Enabled = temSelecao;
-            btnRemoverElemento.Enabled = temSelecao;
-            labelMensagemPropriedades.ForeColor = Color.FromArgb(126, 144, 171);
             textNumeroCamisa.Clear();
             comboAtletaVinculado.Items.Clear();
-
-            foreach (Atleta atleta in prancheta.Atletas)
-            {
+            comboAtletaVinculado.Items.Add(new AtletaDaEquipe());
+            foreach (AtletaDaEquipe atleta in _elenco)
                 comboAtletaVinculado.Items.Add(atleta);
-            }
-            comboAtletaVinculado.SelectedIndex = -1;
-
-            if (elemento == null)
+            comboAtletaVinculado.SelectedIndex = 0;
+            comboLadoAtleta.SelectedIndex = 0;
+            if (elemento is PosicaoAtleta posicao)
             {
-                labelResumoElemento.Text = "NENHUM ELEMENTO\nSelecione na quadra";
-                labelMensagemPropriedades.Text = "Clique em um atleta ou em uma bola para ver suas propriedades.";
-            }
-            else
-            {
-                labelMensagemPropriedades.Text = "As coordenadas acompanham o arraste na quadra.";
-
-                if (elemento is PosicaoAtleta posicaoAtleta)
+                Atleta? atleta = prancheta.Atletas.Find(a => a.Id == posicao.AtletaId);
+                if (atleta != null)
                 {
-                    comboLadoAtleta.SelectedIndex = posicaoAtleta.Lado == LadoAtleta.Adversario ? 1 : 0;
-                    // Procura o cadastro cujo Id corresponde ao AtletaId desta posição.
-                    Atleta? atleta = prancheta.Atletas.Find(j => j.Id == posicaoAtleta.AtletaId);
-                    if (atleta == null)
+                    AtletaDaEquipe? vinculo = _elenco.Find(a => a.EquipeAtletaId == posicao.EquipeAtletaId);
+                    if (vinculo == null && posicao.EquipeAtletaId.HasValue)
                     {
-                        labelResumoElemento.Text = "ATLETA\nSem atleta vinculado";
+                        vinculo = new AtletaDaEquipe { EquipeAtletaId = posicao.EquipeAtletaId.Value, Nome = atleta.Nome, NumeroCamisa = atleta.NumeroCamisa };
+                        comboAtletaVinculado.Items.Add(vinculo);
                     }
-                    else
-                    {
-                        comboAtletaVinculado.SelectedItem = atleta;
-                        textNumeroCamisa.Text = atleta.NumeroCamisa.ToString();
-                        labelResumoElemento.Text = $"#{atleta.NumeroCamisa}  •  ATLETA\n{atleta.Nome}";
-                    }
+                    if (vinculo != null) comboAtletaVinculado.SelectedItem = vinculo;
+                    textNumeroCamisa.Text = atleta.NumeroCamisa.ToString();
+                    labelResumoElemento.Text = $"#{atleta.NumeroCamisa}  •  ATLETA\n{atleta.Nome}";
                 }
-                else
-                {
-                    labelResumoElemento.Text = "BOLA\nPosição na quadra";
-                }
+                comboLadoAtleta.SelectedIndex = posicao.Lado == LadoAtleta.Adversario ? 1 : 0;
             }
-
+            else labelResumoElemento.Text = elemento is PosicaoBola ? "BOLA\nPosição na quadra" : "NENHUM ELEMENTO\nSelecione na quadra";
+            labelMensagemPropriedades.Text = elemento == null ? "Clique em um atleta ou em uma bola para ver suas propriedades." : "As alterações pertencem somente à fase selecionada.";
+            labelMensagemPropriedades.ForeColor = Color.FromArgb(100, 116, 139);
+            _atualizandoPropriedades = false;
             AtualizarCoordenadas();
+            AtualizarAcoes();
         }
 
         private void AtualizarCoordenadas()
         {
-            PosicaoElementos? elemento = prancheta.ElementoSelecionado;
-            if (elemento == null)
-            {
-                numericCoordenadaX.Value = 0;
-                numericCoordenadaY.Value = 0;
-                return;
-            }
-
-            // A posição usa 0 a 1; os campos da tela mostram 0% a 100%.
-            numericCoordenadaX.Value = (decimal)Math.Clamp(elemento.X, 0f, 1f) * 100m;
-            numericCoordenadaY.Value = (decimal)Math.Clamp(elemento.Y, 0f, 1f) * 100m;
+            var elemento = prancheta.ElementoSelecionado;
+            numericCoordenadaX.Value = elemento == null ? 0 : (decimal)Math.Clamp(elemento.X, 0f, 1f) * 100m;
+            numericCoordenadaY.Value = elemento == null ? 0 : (decimal)Math.Clamp(elemento.Y, 0f, 1f) * 100m;
         }
 
         private void comboAtletaVinculado_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            Atleta? atleta = comboAtletaVinculado.SelectedItem as Atleta;
-            if (atleta != null)
+            if (!_atualizandoPropriedades && comboAtletaVinculado.SelectedItem is AtletaDaEquipe atleta && atleta.EquipeAtletaId > 0)
                 textNumeroCamisa.Text = atleta.NumeroCamisa.ToString();
         }
 
         private void btnAplicarPropriedades_Click(object? sender, EventArgs e)
         {
-            PosicaoElementos? elemento = prancheta.ElementoSelecionado;
-            if (elemento == null)
-                return;
-
-            if (elemento is PosicaoAtleta posicaoAtleta)
+            if (!_pronto || _operacao || _apresentando) return;
+            var elemento = prancheta.ElementoSelecionado;
+            if (elemento == null) return;
+            if (elemento is PosicaoAtleta posicao)
             {
-                Atleta? atleta = comboAtletaVinculado.SelectedItem as Atleta;
-                int numero;
-
-                // TryParse verifica o texto sem causar erro quando ele não é um número.
-                if (atleta == null || !int.TryParse(textNumeroCamisa.Text, out numero) || numero < 0 || numero > 999)
-                {
-                    labelMensagemPropriedades.ForeColor = Color.FromArgb(231, 46, 89);
-                    labelMensagemPropriedades.Text = "Escolha um atleta e informe um número entre 0 e 999.";
-                    return;
-                }
-                posicaoAtleta.AtletaId = atleta.Id;
-                posicaoAtleta.Lado = comboLadoAtleta.SelectedIndex == 1 ? LadoAtleta.Adversario : LadoAtleta.Principal;
+                if (!int.TryParse(textNumeroCamisa.Text, out int numero) || numero < 1 || numero > 99)
+                { labelMensagemPropriedades.Text = "Informe um número entre 1 e 99."; return; }
+                LadoAtleta lado = comboLadoAtleta.SelectedIndex == 1 ? LadoAtleta.Adversario : LadoAtleta.Principal;
+                var escolhido = comboAtletaVinculado.SelectedItem as AtletaDaEquipe;
+                int? vinculo = escolhido != null && escolhido.EquipeAtletaId > 0 ? escolhido.EquipeAtletaId : null;
+                bool repetido = prancheta.Elementos.OfType<PosicaoAtleta>().Any(outro => outro != posicao &&
+                    ((outro.Lado == lado && prancheta.Atletas.Find(a => a.Id == outro.AtletaId)?.NumeroCamisa == numero) ||
+                    (vinculo.HasValue && outro.EquipeAtletaId == vinculo)));
+                if (repetido) { labelMensagemPropriedades.Text = "O número ou o atleta já está em uso nesta fase."; return; }
+                var atleta = prancheta.Atletas.Find(a => a.Id == posicao.AtletaId)!;
                 atleta.NumeroCamisa = numero;
+                atleta.Nome = vinculo.HasValue ? escolhido!.Nome : $"Atleta {numero}";
+                posicao.EquipeAtletaId = vinculo;
+                posicao.Lado = lado;
             }
-
-            // Atualiza somente a prévia em memória, sem salvar no banco.
             elemento.X = (float)(numericCoordenadaX.Value / 100m);
             elemento.Y = (float)(numericCoordenadaY.Value / 100m);
             prancheta.Invalidate();
@@ -250,133 +331,133 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnRemoverElemento_Click(object? sender, EventArgs e)
         {
-            PosicaoElementos? elemento = prancheta.ElementoSelecionado;
-            if (elemento == null)
-                return;
-
+            if (!_pronto || _operacao || _apresentando) return;
+            var elemento = prancheta.ElementoSelecionado;
+            if (elemento == null) return;
             prancheta.Elementos.Remove(elemento);
+            if (elemento is PosicaoAtleta posicao)
+                prancheta.Atletas.RemoveAll(a => a.Id == posicao.AtletaId);
             prancheta.SelecionarElemento(null);
-        }
-
-        private void InicializarSequenciaVisual()
-        {
-            for (int i = 0; i < flowFases.Controls.Count; i++)
-            {
-                CartaoFaseControl cartao = (CartaoFaseControl)flowFases.Controls[i];
-                if (cartao.Ativo)
-                {
-                    _indiceFaseSelecionada = i;
-                    break;
-                }
-            }
-            AtualizarSequenciaVisual();
+            prancheta.Invalidate();
         }
 
         private void btnNovaFase_Click(object? sender, EventArgs e)
         {
-            CartaoFaseControl novaFase = new CartaoFaseControl
-            {
-                NomeFase = "Nova fase",
-                Tipo = "Preparação",
-                Duracao = _preferencias.DuracaoQuadroPadraoMs / 1000m
-            };
-            AdicionarCartao(novaFase, flowFases.Controls.Count);
-        }
-
-        private void AdicionarCartao(CartaoFaseControl cartao, int indice)
-        {
-            cartao.Margin = new Padding(0, 0, 10, 0);
-            cartao.Click += CartaoFase_Click;
-            flowFases.Controls.Add(cartao);
-            flowFases.Controls.SetChildIndex(cartao, indice);
-            _indiceFaseSelecionada = indice;
-            AtualizarSequenciaVisual();
-        }
-
-        private void btnFaseAnterior_Click(object? sender, EventArgs e)
-        {
-            SelecionarFaseVisual(_indiceFaseSelecionada - 1);
-        }
-
-        private void btnProximaFase_Click(object? sender, EventArgs e)
-        {
-            SelecionarFaseVisual(_indiceFaseSelecionada + 1);
+            if (!_pronto || _operacao || _apresentando) return;
+            GuardarFaseAtual();
+            _tatica.Quadros.Add(new QuadroTatica { Nome = $"Fase {_tatica.Quadros.Count + 1}", DuracaoMs = _preferencias.DuracaoQuadroPadraoMs });
+            _indiceFaseSelecionada = _tatica.Quadros.Count - 1;
+            MostrarFaseAtual();
         }
 
         private void btnDuplicarFase_Click(object? sender, EventArgs e)
         {
-            if (flowFases.Controls.Count == 0)
-                return;
-
-            CartaoFaseControl faseAtual = (CartaoFaseControl)flowFases.Controls[_indiceFaseSelecionada];
-            CartaoFaseControl copia = new CartaoFaseControl
-            {
-                NomeFase = faseAtual.NomeFase + " (cópia)",
-                Tipo = faseAtual.Tipo,
-                Duracao = faseAtual.Duracao
-            };
-            AdicionarCartao(copia, _indiceFaseSelecionada + 1);
+            if (!_pronto || _operacao || _apresentando) return;
+            GuardarFaseAtual();
+            QuadroTatica copia = _tatica.Quadros[_indiceFaseSelecionada].Copiar();
+            copia.Nome = (copia.Nome.Length > 91 ? copia.Nome.Substring(0, 91) : copia.Nome) + " (cópia)";
+            _tatica.Quadros.Insert(_indiceFaseSelecionada + 1, copia);
+            _indiceFaseSelecionada++;
+            MostrarFaseAtual();
         }
 
         private void btnExcluirFase_Click(object? sender, EventArgs e)
         {
-            // Mantém ao menos uma fase na sequência.
-            if (flowFases.Controls.Count <= 1)
-                return;
-
-            Control cartao = flowFases.Controls[_indiceFaseSelecionada];
-            flowFases.Controls.Remove(cartao);
-            cartao.Dispose();
-            _indiceFaseSelecionada = Math.Min(_indiceFaseSelecionada, flowFases.Controls.Count - 1);
-            AtualizarSequenciaVisual();
+            if (!_pronto || _operacao || _apresentando || _tatica.Quadros.Count <= 1) return;
+            _tatica.Quadros.RemoveAt(_indiceFaseSelecionada);
+            _indiceFaseSelecionada = Math.Min(_indiceFaseSelecionada, _tatica.Quadros.Count - 1);
+            MostrarFaseAtual();
         }
 
+        private void btnFaseAnterior_Click(object? sender, EventArgs e) => SelecionarFaseVisual(_indiceFaseSelecionada - 1);
+        private void btnProximaFase_Click(object? sender, EventArgs e) => SelecionarFaseVisual(_indiceFaseSelecionada + 1);
         private void CartaoFase_Click(object? sender, EventArgs e)
         {
-            CartaoFaseControl? cartao = sender as CartaoFaseControl;
-            if (cartao != null)
+            if (sender is CartaoFaseControl cartao && !_apresentando)
                 SelecionarFaseVisual(flowFases.Controls.GetChildIndex(cartao));
         }
 
         private void SelecionarFaseVisual(int indice)
         {
-            if (indice < 0 || indice >= flowFases.Controls.Count)
-                return;
-
+            if (!_pronto || _operacao || indice < 0 || indice >= _tatica.Quadros.Count) return;
+            GuardarFaseAtual();
             _indiceFaseSelecionada = indice;
-            AtualizarSequenciaVisual();
+            MostrarFaseAtual();
+        }
+
+        private void btnExecutarSequencia_Click(object? sender, EventArgs e) => AlternarApresentacao();
+        private void AlternarApresentacao()
+        {
+            if (!_pronto || _operacao) return;
+            if (_apresentando) { PararApresentacao(); return; }
+            GuardarFaseAtual();
+            _apresentando = true;
+            SelecionarFaseVisual(0);
+            timerSequencia.Interval = _tatica.Quadros[0].DuracaoMs;
+            timerSequencia.Start();
+            AtualizarAcoes();
+        }
+
+        private void timerSequencia_Tick(object? sender, EventArgs e)
+        {
+            if (_indiceFaseSelecionada + 1 >= _tatica.Quadros.Count) { PararApresentacao(); return; }
+            SelecionarFaseVisual(_indiceFaseSelecionada + 1);
+            timerSequencia.Interval = _tatica.Quadros[_indiceFaseSelecionada].DuracaoMs;
+        }
+
+        private void PararApresentacao()
+        {
+            timerSequencia.Stop();
+            _apresentando = false;
+            AtualizarAcoes();
         }
 
         private void AtualizarSequenciaVisual()
         {
-            // Nesta prévia, os próprios cartões guardam os dados das fases.
+            if (flowFases.Controls.Count != _tatica.Quadros.Count)
+            {
+                while (flowFases.Controls.Count > 0) flowFases.Controls[0].Dispose();
+                foreach (QuadroTatica fase in _tatica.Quadros)
+                {
+                    var cartao = new CartaoFaseControl { Margin = new Padding(0, 0, 10, 0) };
+                    cartao.Click += CartaoFase_Click;
+                    flowFases.Controls.Add(cartao);
+                }
+            }
             TimeSpan inicio = TimeSpan.Zero;
-            for (int i = 0; i < flowFases.Controls.Count; i++)
+            for (int i = 0; i < _tatica.Quadros.Count; i++)
             {
-                CartaoFaseControl cartao = (CartaoFaseControl)flowFases.Controls[i];
-                cartao.Numero = i + 1;
-                cartao.Inicio = inicio;
-                cartao.Ativo = i == _indiceFaseSelecionada;
+                var fase = _tatica.Quadros[i];
+                var cartao = (CartaoFaseControl)flowFases.Controls[i];
+                cartao.Numero = i + 1; cartao.NomeFase = fase.Nome; cartao.Ativo = i == _indiceFaseSelecionada;
+                cartao.Tipo = fase.Rotacao.HasValue ? $"Rotação P{fase.Rotacao}" : "Sem rotação";
+                cartao.Duracao = fase.DuracaoMs / 1000m; cartao.Inicio = inicio;
                 cartao.Name = $"cartaoFase{i + 1}";
-                cartao.TabIndex = i;
-                cartao.AccessibleName = $"Fase {i + 1}: {cartao.NomeFase}";
-                inicio = inicio.Add(TimeSpan.FromSeconds((double)cartao.Duracao));
+                inicio = inicio.Add(TimeSpan.FromMilliseconds(fase.DuracaoMs));
             }
-
-            btnFaseAnterior.Enabled = _indiceFaseSelecionada > 0;
-            btnProximaFase.Enabled = _indiceFaseSelecionada < flowFases.Controls.Count - 1;
-            btnExcluirFase.Enabled = flowFases.Controls.Count > 1;
-            btnDuplicarFase.Enabled = flowFases.Controls.Count > 0;
-
-            if (flowFases.Controls.Count == 0)
-            {
-                labelResumoSequencia.Text = "Prévia visual • Nenhuma fase";
-            }
-            else
-            {
-                labelResumoSequencia.Text = $"Prévia visual • {flowFases.Controls.Count} fases • Fase {_indiceFaseSelecionada + 1:00} selecionada";
+            labelResumoSequencia.Text = $"{_tatica.Quadros.Count} fases · Fase {_indiceFaseSelecionada + 1:00} selecionada";
+            if (flowFases.Controls.Count > _indiceFaseSelecionada)
                 flowFases.ScrollControlIntoView(flowFases.Controls[_indiceFaseSelecionada]);
-            }
+            AtualizarAcoes();
+        }
+
+        private void AtualizarAcoes()
+        {
+            bool editar = _pronto && !_operacao && !_apresentando;
+            btnSalvarTatica.Enabled = editar && _equipes.Rows.Count > 0;
+            btnDadosTatica.Enabled = editar && _equipes.Rows.Count > 0;
+            btnAdicionarAtleta.Enabled = editar; btnAdicionarBola.Enabled = editar;
+            btnNovaFase.Enabled = editar; btnDuplicarFase.Enabled = editar;
+            btnExcluirFase.Enabled = editar && _tatica.Quadros.Count > 1;
+            btnFaseAnterior.Enabled = editar && _indiceFaseSelecionada > 0;
+            btnProximaFase.Enabled = editar && _indiceFaseSelecionada + 1 < _tatica.Quadros.Count;
+            btnExecutarSequencia.Enabled = _pronto && !_operacao;
+            btnExecutarSequencia.Text = _apresentando ? "■ Parar" : "▶ Executar";
+            prancheta.Enabled = editar;
+            layoutCoordenadas.Enabled = editar && prancheta.ElementoSelecionado != null;
+            layoutCamposAtleta.Enabled = editar;
+            btnAplicarPropriedades.Enabled = editar && prancheta.ElementoSelecionado != null;
+            btnRemoverElemento.Enabled = editar && prancheta.ElementoSelecionado != null;
         }
     }
 

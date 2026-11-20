@@ -13,9 +13,10 @@
         /// <param name="disposing">true se for necessário descartar os recursos gerenciados; caso contrário, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && !IsDisposed)
             {
-                _carregamentoPreferencias?.Cancel();
+                _encerramento.Cancel();
+                _encerramento.Dispose();
                 components?.Dispose();
             }
             base.Dispose(disposing);
@@ -30,6 +31,9 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            btnDadosTatica = new Button();
+            labelStatusPrancheta = new Label();
+            timerSequencia = new System.Windows.Forms.Timer(components);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TelaPranchetaTatica));
             panelCabecalho = new Panel();
             btnSalvarTatica = new Button();
@@ -99,13 +103,15 @@
             // panelCabecalho
             // 
             panelCabecalho.BackColor = Color.White;
+            panelCabecalho.Controls.Add(btnDadosTatica);
+            panelCabecalho.Controls.Add(labelStatusPrancheta);
             panelCabecalho.Controls.Add(btnSalvarTatica);
             panelCabecalho.Controls.Add(labelNomeTatica);
             panelCabecalho.Controls.Add(labelTitulo);
             panelCabecalho.Dock = DockStyle.Top;
             panelCabecalho.Location = new Point(0, 0);
             panelCabecalho.Name = "panelCabecalho";
-            panelCabecalho.Size = new Size(842, 86);
+            panelCabecalho.Size = new Size(842, 112);
             panelCabecalho.TabIndex = 1;
             // 
             // btnSalvarTatica
@@ -121,14 +127,46 @@
             btnSalvarTatica.TabIndex = 1;
             btnSalvarTatica.Text = "💾 Salvar Tática";
             btnSalvarTatica.UseVisualStyleBackColor = false;
+            btnSalvarTatica.Click += btnSalvarTatica_Click;
+            //
+            // btnDadosTatica
+            //
+            btnDadosTatica.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDadosTatica.BackColor = Color.White;
+            btnDadosTatica.FlatStyle = FlatStyle.Flat;
+            btnDadosTatica.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
+            btnDadosTatica.ForeColor = Color.FromArgb(92, 48, 154);
+            btnDadosTatica.Location = new Point(510, 26);
+            btnDadosTatica.Name = "btnDadosTatica";
+            btnDadosTatica.Size = new Size(142, 37);
+            btnDadosTatica.TabIndex = 2;
+            btnDadosTatica.Text = "Dados / fase";
+            btnDadosTatica.UseVisualStyleBackColor = false;
+            btnDadosTatica.Click += btnDadosTatica_Click;
+            //
+            // labelStatusPrancheta
+            //
+            labelStatusPrancheta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            labelStatusPrancheta.AutoEllipsis = true;
+            labelStatusPrancheta.Font = new Font("Segoe UI", 9F);
+            labelStatusPrancheta.ForeColor = Color.FromArgb(100, 116, 139);
+            labelStatusPrancheta.Location = new Point(20, 76);
+            labelStatusPrancheta.Name = "labelStatusPrancheta";
+            labelStatusPrancheta.Size = new Size(800, 28);
+            labelStatusPrancheta.Text = "Salve a tática para guardar suas fases no banco de dados.";
+            //
+            // timerSequencia
+            //
+            timerSequencia.Tick += timerSequencia_Tick;
             // 
             // labelNomeTatica
             // 
-            labelNomeTatica.AutoSize = true;
+            labelNomeTatica.AutoEllipsis = true;
+            labelNomeTatica.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             labelNomeTatica.Font = new Font("Arial", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             labelNomeTatica.Location = new Point(194, 34);
             labelNomeTatica.Name = "labelNomeTatica";
-            labelNomeTatica.Size = new Size(333, 19);
+            labelNomeTatica.Size = new Size(300, 28);
             labelNomeTatica.TabIndex = 0;
             labelNomeTatica.Text = "Nova tática";
             labelNomeTatica.UseMnemonic = false;
@@ -218,7 +256,7 @@
             labelResumoSequencia.Name = "labelResumoSequencia";
             labelResumoSequencia.Size = new Size(430, 20);
             labelResumoSequencia.TabIndex = 1;
-            labelResumoSequencia.Text = "Prévia visual • 4 fases • Fase 02 selecionada";
+            labelResumoSequencia.Text = "1 fase · Fase 01 selecionada";
             // 
             // acoesSequencia
             // 
@@ -288,8 +326,9 @@
             btnExecutarSequencia.Size = new Size(83, 29);
             btnExecutarSequencia.TabIndex = 2;
             btnExecutarSequencia.Text = "▶ Executar";
-            dicasPrancheta.SetToolTip(btnExecutarSequencia, "Execução da jogada disponível em uma próxima etapa.");
+            dicasPrancheta.SetToolTip(btnExecutarSequencia, "Apresenta a sequência usando a duração de cada fase. Clique novamente para parar.");
             btnExecutarSequencia.UseVisualStyleBackColor = false;
+            btnExecutarSequencia.Click += btnExecutarSequencia_Click;
             // 
             // btnProximaFase
             // 
@@ -773,6 +812,7 @@
             Controls.Add(panelSequencia);
             Controls.Add(panelCabecalho);
             Name = "TelaPranchetaTatica";
+            Load += TelaPranchetaTatica_Load;
             Size = new Size(842, 813);
             panelCabecalho.ResumeLayout(false);
             panelCabecalho.PerformLayout();
@@ -808,6 +848,9 @@
         private Panel panelPropriedades;
         private Panel panelFerramentas;
         private Panel panelPranchetaTatica;
+        private Button btnDadosTatica;
+        private Label labelStatusPrancheta;
+        private System.Windows.Forms.Timer timerSequencia;
         private Label labelTitulo;
         private Button btnSalvarTatica;
         private Label labelNomeTatica;
