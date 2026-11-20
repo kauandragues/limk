@@ -1,6 +1,7 @@
 using Limk.VolleyBall.Backend;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
 
 namespace Limk.VolleyBall.User_Constrols
@@ -21,6 +22,11 @@ namespace Limk.VolleyBall.User_Constrols
         private bool _pronto;
         private bool _operacao;
         private bool _apresentando;
+        private bool _emTransicao;
+        private int _indiceFaseDestino = -1;
+        private int _duracaoTransicaoMs;
+        private readonly Stopwatch _tempoTransicao = new Stopwatch();
+        private readonly List<MovimentoElemento> _movimentos = new List<MovimentoElemento>();
         private bool _atualizandoPropriedades;
 
         public TelaPranchetaTatica()
@@ -109,7 +115,7 @@ namespace Limk.VolleyBall.User_Constrols
         // A quadra é a edição da fase selecionada. Antes de trocar de fase, copiamos seus elementos.
         private void GuardarFaseAtual()
         {
-            if (!_pronto || _indiceFaseSelecionada >= _tatica.Quadros.Count)
+            if (!_pronto || _emTransicao || _apresentando || _indiceFaseSelecionada >= _tatica.Quadros.Count)
                 return;
             GuardarDadosTatica();
             QuadroTatica quadro = _tatica.Quadros[_indiceFaseSelecionada];
@@ -191,7 +197,7 @@ namespace Limk.VolleyBall.User_Constrols
             comboTipoTatica.SelectedValue = _tatica.TipoTaticaId ?? 0;
             comboSistemaTatica.SelectedValue = _tatica.SistemaJogoId ?? 0;
             textNomeFase.Text = fase.Nome;
-            numericDuracaoFase.Value = Math.Clamp(fase.DuracaoMs / 1000m, numericDuracaoFase.Minimum, numericDuracaoFase.Maximum);
+            numericDuracaoFase.Value = Math.Clamp(fase.DuracaoMs, numericDuracaoFase.Minimum, numericDuracaoFase.Maximum);
             comboRotacaoFase.SelectedIndex = fase.Rotacao ?? 0;
             _atualizandoPropriedades = false;
         }
@@ -206,14 +212,14 @@ namespace Limk.VolleyBall.User_Constrols
             _tatica.SistemaJogoId = comboSistemaTatica.SelectedValue is int sistema && sistema > 0 ? sistema : null;
             QuadroTatica fase = _tatica.Quadros[_indiceFaseSelecionada];
             fase.Nome = textNomeFase.Text.Trim();
-            fase.DuracaoMs = (int)(numericDuracaoFase.Value * 1000);
+            fase.DuracaoMs = (int)numericDuracaoFase.Value;
             fase.Rotacao = comboRotacaoFase.SelectedIndex > 0 ? comboRotacaoFase.SelectedIndex : null;
             labelNomeTatica.Text = _tatica.Nome;
         }
 
         private async void comboEquipeTatica_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (_atualizandoPropriedades || !_pronto || _operacao || _apresentando || _tatica.Id > 0 ||
+            if (_atualizandoPropriedades || !_pronto || _operacao || _apresentando || _emTransicao || _tatica.Id > 0 ||
                 comboEquipeTatica.SelectedValue is not int equipeId || equipeId == _tatica.EquipeId)
                 return;
             GuardarFaseAtual();
@@ -244,7 +250,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private async void btnSalvarTatica_Click(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando || _usuario == null || _equipes.Rows.Count == 0)
+            if (!_pronto || _operacao || _apresentando || _emTransicao || _usuario == null || _equipes.Rows.Count == 0)
                 return;
             GuardarFaseAtual();
             CancellationToken token = _encerramento.Token;
@@ -280,7 +286,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnAdicionarBola_Click(object sender, EventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando) return;
+            if (!_pronto || _operacao || _apresentando || _emTransicao) return;
             var existente = prancheta.Elementos.OfType<PosicaoBola>().FirstOrDefault();
             if (existente != null) { prancheta.SelecionarElemento(existente); return; }
             var bola = new PosicaoBola { X = 0.5f, Y = 0.5f };
@@ -290,7 +296,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnAdicionarAtleta_Click(object sender, EventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando) return;
+            if (!_pronto || _operacao || _apresentando || _emTransicao) return;
             int numero = Enumerable.Range(1, 99).FirstOrDefault(n => !prancheta.Elementos.OfType<PosicaoAtleta>()
                 .Where(p => p.Lado == LadoAtleta.Principal).Any(p => prancheta.Atletas.Find(a => a.Id == p.AtletaId)?.NumeroCamisa == n));
             if (numero == 0) { MostrarStatus("Não há números disponíveis para outro atleta deste lado.", true); return; }
@@ -360,7 +366,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnAplicarPropriedades_Click(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando) return;
+            if (!_pronto || _operacao || _apresentando || _emTransicao) return;
             var elemento = prancheta.ElementoSelecionado;
             if (elemento == null)
             {
@@ -403,7 +409,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnRemoverElemento_Click(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando) return;
+            if (!_pronto || _operacao || _apresentando || _emTransicao) return;
             var elemento = prancheta.ElementoSelecionado;
             if (elemento == null) return;
             prancheta.Elementos.Remove(elemento);
@@ -415,7 +421,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnNovaFase_Click(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando) return;
+            if (!_pronto || _operacao || _apresentando || _emTransicao) return;
             GuardarFaseAtual();
             _tatica.Quadros.Add(new QuadroTatica { Nome = $"Fase {_tatica.Quadros.Count + 1}", DuracaoMs = _preferencias.DuracaoQuadroPadraoMs });
             _indiceFaseSelecionada = _tatica.Quadros.Count - 1;
@@ -424,7 +430,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnDuplicarFase_Click(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando) return;
+            if (!_pronto || _operacao || _apresentando || _emTransicao) return;
             GuardarFaseAtual();
             QuadroTatica copia = _tatica.Quadros[_indiceFaseSelecionada].Copiar();
             copia.Nome = (copia.Nome.Length > 91 ? copia.Nome.Substring(0, 91) : copia.Nome) + " (cópia)";
@@ -435,7 +441,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnExcluirFase_Click(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando || _tatica.Quadros.Count <= 1) return;
+            if (!_pronto || _operacao || _apresentando || _emTransicao || _tatica.Quadros.Count <= 1) return;
             GuardarDadosTatica();
             _tatica.Quadros.RemoveAt(_indiceFaseSelecionada);
             _indiceFaseSelecionada = Math.Min(_indiceFaseSelecionada, _tatica.Quadros.Count - 1);
@@ -446,19 +452,19 @@ namespace Limk.VolleyBall.User_Constrols
         private void btnProximaFase_Click(object? sender, EventArgs e) => SelecionarFaseVisual(_indiceFaseSelecionada + 1);
         private void CartaoFase_Click(object? sender, EventArgs e)
         {
-            if (sender is CartaoFaseControl cartao && !_apresentando)
+            if (sender is CartaoFaseControl cartao && !_apresentando && !_emTransicao)
                 SelecionarFaseVisual(flowFases.Controls.GetChildIndex(cartao));
         }
 
         private void CartaoFase_ArrasteSolicitado(object? sender, EventArgs e)
         {
-            if (_pronto && !_operacao && !_apresentando && _tatica.Quadros.Count > 1 && sender is CartaoFaseControl cartao)
+            if (_pronto && !_operacao && !_apresentando && !_emTransicao && _tatica.Quadros.Count > 1 && sender is CartaoFaseControl cartao)
                 cartao.DoDragDrop(cartao, DragDropEffects.Move);
         }
 
         private CartaoFaseControl? ObterCartaoArrastado(DragEventArgs e)
         {
-            if (!_pronto || _operacao || _apresentando || (e.AllowedEffect & DragDropEffects.Move) == 0 ||
+            if (!_pronto || _operacao || _apresentando || _emTransicao || (e.AllowedEffect & DragDropEffects.Move) == 0 ||
                 e.Data?.GetData(typeof(CartaoFaseControl)) is not CartaoFaseControl cartao ||
                 !flowFases.Controls.Contains(cartao))
                 return null;
@@ -509,37 +515,130 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void SelecionarFaseVisual(int indice)
         {
-            if (!_pronto || _operacao || indice < 0 || indice >= _tatica.Quadros.Count) return;
+            if (!_pronto || _operacao || _apresentando || _emTransicao || indice == _indiceFaseSelecionada ||
+                indice < 0 || indice >= _tatica.Quadros.Count) return;
             GuardarFaseAtual();
-            _indiceFaseSelecionada = indice;
-            MostrarFaseAtual();
+            IniciarTransicao(indice);
         }
 
         private void btnExecutarSequencia_Click(object? sender, EventArgs e) => AlternarApresentacao();
         private void AlternarApresentacao()
         {
             if (!_pronto || _operacao) return;
-            if (_apresentando) { PararApresentacao(); return; }
+            if (_apresentando || _emTransicao) { PararApresentacao(); return; }
             GuardarFaseAtual();
             _apresentando = true;
-            SelecionarFaseVisual(0);
-            timerSequencia.Interval = _tatica.Quadros[0].DuracaoMs;
+            _indiceFaseSelecionada = 0;
+            MostrarFaseAtual();
+            IniciarEtapaApresentacao();
+        }
+
+        private void IniciarEtapaApresentacao()
+        {
+            if (_indiceFaseSelecionada + 1 < _tatica.Quadros.Count)
+                IniciarTransicao(_indiceFaseSelecionada + 1);
+            else
+            {
+                // O último quadro permanece visível pela duração configurada.
+                _duracaoTransicaoMs = _tatica.Quadros[_indiceFaseSelecionada].DuracaoMs;
+                _tempoTransicao.Restart();
+                timerSequencia.Start();
+                AtualizarAcoes();
+            }
+        }
+
+        private void IniciarTransicao(int indiceDestino)
+        {
+            prancheta.SelecionarElemento(null);
+            _movimentos.Clear();
+            QuadroTatica destino = _tatica.Quadros[indiceDestino];
+            foreach (PosicaoElementos elemento in prancheta.Elementos)
+            {
+                PointF? pontoDestino = null;
+                if (elemento is PosicaoBola && destino.Bola != null)
+                    pontoDestino = new PointF(destino.Bola.X, destino.Bola.Y);
+                else if (elemento is PosicaoAtleta posicao)
+                {
+                    Atleta? cadastro = prancheta.Atletas.Find(a => a.Id == posicao.AtletaId);
+                    // O vínculo identifica o atleta mesmo que seu número mude entre os quadros.
+                    // Sem vínculo, número e lado identificam o círculo.
+                    AtletaQuadro? proximo = posicao.EquipeAtletaId.HasValue
+                        ? destino.Atletas.Find(a => a.EquipeAtletaId == posicao.EquipeAtletaId)
+                        : destino.Atletas.Find(a => !a.EquipeAtletaId.HasValue &&
+                            a.Lado == posicao.Lado && a.NumeroCamisa == cadastro?.NumeroCamisa);
+                    if (proximo != null)
+                        pontoDestino = new PointF(proximo.X, proximo.Y);
+                }
+                if (pontoDestino.HasValue)
+                    _movimentos.Add(new MovimentoElemento(elemento, pontoDestino.Value));
+            }
+            _indiceFaseDestino = indiceDestino;
+            _duracaoTransicaoMs = _tatica.Quadros[_indiceFaseSelecionada].DuracaoMs;
+            _emTransicao = true;
+            _tempoTransicao.Restart();
             timerSequencia.Start();
             AtualizarAcoes();
+            labelResumoSequencia.Text = $"{_tatica.Quadros.Count} fases · Transição {_indiceFaseSelecionada + 1:00} → {indiceDestino + 1:00}";
+        }
+
+        private void AtualizarTransicao(float progresso)
+        {
+            // Altera apenas os objetos do desenho. Os quadros salvos na edição não são modificados.
+            foreach (MovimentoElemento movimento in _movimentos)
+            {
+                movimento.Elemento.X = movimento.Inicio.X + (movimento.Destino.X - movimento.Inicio.X) * progresso;
+                movimento.Elemento.Y = movimento.Inicio.Y + (movimento.Destino.Y - movimento.Inicio.Y) * progresso;
+            }
+            prancheta.Invalidate();
         }
 
         private void timerSequencia_Tick(object? sender, EventArgs e)
         {
-            if (_indiceFaseSelecionada + 1 >= _tatica.Quadros.Count) { PararApresentacao(); return; }
-            SelecionarFaseVisual(_indiceFaseSelecionada + 1);
-            timerSequencia.Interval = _tatica.Quadros[_indiceFaseSelecionada].DuracaoMs;
+            if (_emTransicao)
+            {
+                // Usa o tempo real decorrido; atrasos na pintura não alongam o movimento.
+                float progresso = (float)Math.Clamp(_tempoTransicao.Elapsed.TotalMilliseconds / _duracaoTransicaoMs, 0d, 1d);
+                AtualizarTransicao(progresso);
+                if (progresso < 1f) return;
+
+                _emTransicao = false;
+                _indiceFaseSelecionada = _indiceFaseDestino;
+                _indiceFaseDestino = -1;
+                _movimentos.Clear();
+                timerSequencia.Stop();
+                _tempoTransicao.Stop();
+                MostrarFaseAtual();
+                if (_apresentando) IniciarEtapaApresentacao();
+            }
+            else if (_apresentando && _tempoTransicao.Elapsed.TotalMilliseconds >= _duracaoTransicaoMs)
+                PararApresentacao();
         }
 
         private void PararApresentacao()
         {
             timerSequencia.Stop();
+            _tempoTransicao.Reset();
+            _movimentos.Clear();
+            _emTransicao = false;
+            _indiceFaseDestino = -1;
             _apresentando = false;
-            AtualizarAcoes();
+            // Ao interromper, restaura o quadro de origem, sem gravar posições intermediárias.
+            MostrarFaseAtual();
+            MostrarStatus("Prévia encerrada.");
+        }
+
+        private sealed class MovimentoElemento
+        {
+            public PosicaoElementos Elemento { get; }
+            public PointF Inicio { get; }
+            public PointF Destino { get; }
+
+            public MovimentoElemento(PosicaoElementos elemento, PointF destino)
+            {
+                Elemento = elemento;
+                Inicio = new PointF(elemento.X, elemento.Y);
+                Destino = destino;
+            }
         }
 
         private void AtualizarSequenciaVisual()
@@ -575,7 +674,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void AtualizarAcoes()
         {
-            bool editar = _pronto && !_operacao && !_apresentando;
+            bool editar = _pronto && !_operacao && !_apresentando && !_emTransicao;
             btnSalvarTatica.Enabled = editar && _equipes.Rows.Count > 0;
             layoutDadosTatica.Enabled = editar;
             comboEquipeTatica.Enabled = editar && _tatica.Id == 0 && _equipes.Rows.Count > 0;
@@ -585,7 +684,7 @@ namespace Limk.VolleyBall.User_Constrols
             btnFaseAnterior.Enabled = editar && _indiceFaseSelecionada > 0;
             btnProximaFase.Enabled = editar && _indiceFaseSelecionada + 1 < _tatica.Quadros.Count;
             btnExecutarSequencia.Enabled = _pronto && !_operacao;
-            btnExecutarSequencia.Text = _apresentando ? "■ Parar" : "▶ Executar";
+            btnExecutarSequencia.Text = _apresentando || _emTransicao ? "■ Parar" : "▶ Executar";
             prancheta.Enabled = editar;
             layoutCoordenadas.Enabled = editar && prancheta.ElementoSelecionado != null;
             layoutCamposAtleta.Enabled = editar;

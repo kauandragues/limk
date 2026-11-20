@@ -17,6 +17,8 @@
             {
                 _encerramento.Cancel();
                 _encerramento.Dispose();
+                _tempoTransicao.Stop();
+                _movimentos.Clear();
                 components?.Dispose();
             }
             base.Dispose(disposing);
@@ -162,6 +164,7 @@
             //
             // timerSequencia
             //
+            timerSequencia.Interval = 16;
             timerSequencia.Tick += timerSequencia_Tick;
             // 
             // labelNomeTatica
@@ -331,7 +334,7 @@
             btnExecutarSequencia.Size = new Size(83, 29);
             btnExecutarSequencia.TabIndex = 2;
             btnExecutarSequencia.Text = "▶ Executar";
-            dicasPrancheta.SetToolTip(btnExecutarSequencia, "Apresenta a sequência usando a duração de cada fase. Clique novamente para parar.");
+            dicasPrancheta.SetToolTip(btnExecutarSequencia, "Anima a sequência usando a duração em milissegundos de cada quadro. Clique novamente para parar.");
             btnExecutarSequencia.UseVisualStyleBackColor = false;
             btnExecutarSequencia.Click += btnExecutarSequencia_Click;
             // 
@@ -682,7 +685,7 @@
             labelDuracaoFase.Dock = DockStyle.Top;
             labelDuracaoFase.Margin = new Padding(0, 0, 5, 3);
             labelDuracaoFase.Name = "labelDuracaoFase";
-            labelDuracaoFase.Text = "Duração (s)";
+            labelDuracaoFase.Text = "Duração (ms)";
             //
             // labelRotacaoFase
             //
@@ -694,15 +697,15 @@
             //
             // numericDuracaoFase
             //
-            numericDuracaoFase.DecimalPlaces = 3;
             numericDuracaoFase.Dock = DockStyle.Top;
-            numericDuracaoFase.Increment = 0.1M;
+            numericDuracaoFase.Increment = 100M;
             numericDuracaoFase.Margin = new Padding(0, 0, 5, 0);
-            numericDuracaoFase.Minimum = 0.001M;
-            numericDuracaoFase.Maximum = 2147483.647M;
+            numericDuracaoFase.Minimum = 1M;
+            numericDuracaoFase.Maximum = 2147483647M;
             numericDuracaoFase.Name = "numericDuracaoFase";
             numericDuracaoFase.TabIndex = 0;
-            numericDuracaoFase.Value = 1M;
+            numericDuracaoFase.Value = 1000M;
+            dicasPrancheta.SetToolTip(numericDuracaoFase, "Tempo para ir deste quadro ao próximo. 1000 ms = 1 segundo.");
             //
             // comboRotacaoFase
             //
