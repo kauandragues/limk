@@ -51,6 +51,16 @@ git clone <URL_DO_REPOSITORIO>
 3. Copie `Limk.VolleyBall/.env.example` para `Limk.VolleyBall/.env` e preencha `DB_SERVER`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`. Use `limk` em `DB_NAME` para o banco criado pelo script.
 4. Abra `Limk.slnx` no Visual Studio e execute o projeto. Na tela de login, use o e-mail e a senha de um usuário cadastrado na tabela `usuario`. A coluna `senha_hash` armazena o hash bcrypt da senha.
 
+As três contas de demonstração do script usam a senha **`Limk@Teste2026!`** no ambiente de desenvolvimento:
+
+| E-mail | Equipe no script |
+| --- | --- |
+| `ana@limk.example` | LIMK Campinas |
+| `bruno@limk.example` | LIMK Campinas |
+| `carla@limk.example` | Vôlei Hortolândia |
+
+Digite essa senha no login. O bcrypt não permite recuperar a senha original a partir do hash: `BCrypt.Verify` compara a senha digitada com o hash salvo. Os `INSERTs` usam hashes gerados a partir da senha de demonstração, com um salt próprio para cada conta.
+
 O login informa o ID, o nome e o e-mail do usuário ao formulário principal. A interface `ITelaUsuario` permite que o formulário entregue essa identidade a cada tela antes de carregá-la, tanto pelo menu quanto pelos atalhos.
 
 O acesso aos dados segue os vínculos da tabela `usuario_equipe`:
