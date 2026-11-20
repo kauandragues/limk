@@ -21,6 +21,8 @@ namespace Limk.VolleyBall.User_Constrols
             lblNome = new Label();
             lblDescricao = new Label();
             lblQuadros = new Label();
+            layoutRodape = new TableLayoutPanel();
+            btnAbrirTatica = new Button();
             layoutCartao.SuspendLayout();
             SuspendLayout();
             //
@@ -38,7 +40,7 @@ namespace Limk.VolleyBall.User_Constrols
             layoutCartao.Controls.Add(lblEquipe, 0, 0);
             layoutCartao.Controls.Add(lblNome, 0, 1);
             layoutCartao.Controls.Add(lblDescricao, 0, 2);
-            layoutCartao.Controls.Add(lblQuadros, 0, 3);
+            layoutCartao.Controls.Add(layoutRodape, 0, 3);
             layoutCartao.Dock = DockStyle.Fill;
             layoutCartao.Name = "layoutCartao";
             layoutCartao.Padding = new Padding(16, 12, 16, 12);
@@ -48,6 +50,32 @@ namespace Limk.VolleyBall.User_Constrols
             layoutCartao.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             layoutCartao.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
             layoutCartao.TabIndex = 0;
+            //
+            // layoutRodape
+            //
+            layoutRodape.ColumnCount = 2;
+            layoutRodape.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutRodape.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 84F));
+            layoutRodape.RowCount = 1;
+            layoutRodape.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutRodape.Controls.Add(lblQuadros, 0, 0);
+            layoutRodape.Controls.Add(btnAbrirTatica, 1, 0);
+            layoutRodape.Dock = DockStyle.Fill;
+            layoutRodape.Margin = new Padding(0);
+            layoutRodape.Name = "layoutRodape";
+            //
+            // btnAbrirTatica
+            //
+            btnAbrirTatica.BackColor = Color.FromArgb(124, 58, 237);
+            btnAbrirTatica.Dock = DockStyle.Fill;
+            btnAbrirTatica.FlatStyle = FlatStyle.Flat;
+            btnAbrirTatica.FlatAppearance.BorderSize = 0;
+            btnAbrirTatica.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            btnAbrirTatica.ForeColor = Color.White;
+            btnAbrirTatica.Margin = new Padding(0);
+            btnAbrirTatica.Name = "btnAbrirTatica";
+            btnAbrirTatica.Text = "Abrir";
+            btnAbrirTatica.UseVisualStyleBackColor = false;
             //
             // lblEquipe
             //
@@ -109,6 +137,8 @@ namespace Limk.VolleyBall.User_Constrols
         #endregion
 
         private Panel pnlDestaque;
+        private TableLayoutPanel layoutRodape;
+        private Button btnAbrirTatica;
         private TableLayoutPanel layoutCartao;
         private Label lblEquipe;
         private Label lblNome;

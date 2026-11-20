@@ -95,6 +95,8 @@ namespace Limk.VolleyBall.User_Constrols
                     continue;
                 CardTática cartao = new CardTática();
                 cartao.ExibirTatica(tatica);
+                cartao.AbrirTatica += (sender, id) => TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id));
+                cartao.ApresentarTatica += (sender, id) => TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id, apresentar: true));
                 cartao.Dock = DockStyle.Top;
                 int linha = indice / 2;
                 if (linha >= tableLayoutPanel1.RowCount)

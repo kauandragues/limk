@@ -42,7 +42,7 @@ namespace Limk.VolleyBall.Backend
 
             // Sem histórico de uso, as últimas cadastradas são ordenadas pelo ID.
             const string consultaTaticas = @"SELECT t.nome, t.descricao, e.nome AS equipe,
-                    (SELECT COUNT(*) FROM quadro q WHERE q.tatica_id = t.id) AS quadros
+                    (SELECT COUNT(*) FROM quadro q WHERE q.tatica_id = t.id) AS quadros, t.id
                 FROM tatica t
                 INNER JOIN equipe e ON e.id = t.equipe_id
                 INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
@@ -59,6 +59,7 @@ namespace Limk.VolleyBall.Backend
                 {
                     resumo.UltimasTaticas.Add(new TaticaInicio
                     {
+                        Id = leitor.GetInt32(4),
                         Nome = leitor.GetString(0),
                         Descricao = leitor.IsDBNull(1) ? "" : leitor.GetString(1),
                         Equipe = leitor.GetString(2),
