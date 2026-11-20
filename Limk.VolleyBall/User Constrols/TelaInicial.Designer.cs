@@ -1,787 +1,812 @@
-﻿namespace Limk.VolleyBall.User_Constrols
+namespace Limk.VolleyBall.User_Constrols
 {
     partial class TelaInicial
     {
-        /// <summary> 
-        /// Variável de designer necessária.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
-        /// Limpar os recursos que estão sendo usados.
-        /// </summary>
-        /// <param name="disposing">true se for necessário descartar os recursos gerenciados; caso contrário, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
+            if (disposing && components != null)
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
         #region Código gerado pelo Designer de Componentes
 
-        /// <summary> 
-        /// Método necessário para suporte ao Designer - não modifique 
-        /// o conteúdo deste método com o editor de código.
-        /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TelaInicial));
-            panelTelas = new Panel();
-            panel7 = new Panel();
-            panel9 = new Panel();
-            label25 = new Label();
-            label24 = new Label();
-            panel8 = new Panel();
-            label22 = new Label();
-            label23 = new Label();
-            label21 = new Label();
-            panel5 = new Panel();
-            button18 = new Button();
-            button14 = new Button();
-            button13 = new Button();
-            button12 = new Button();
-            label20 = new Label();
-            label19 = new Label();
-            panel4 = new Panel();
-            button9 = new Button();
-            button10 = new Button();
-            button11 = new Button();
-            label13 = new Label();
-            label17 = new Label();
-            label18 = new Label();
-            panel6 = new Panel();
-            button15 = new Button();
-            button16 = new Button();
-            button17 = new Button();
-            label14 = new Label();
-            label15 = new Label();
-            label16 = new Label();
-            panel3 = new Panel();
-            button8 = new Button();
-            button7 = new Button();
-            button6 = new Button();
-            label12 = new Label();
-            label11 = new Label();
-            label10 = new Label();
-            button5 = new Button();
-            label9 = new Label();
-            label8 = new Label();
-            label7 = new Label();
-            panel2 = new Panel();
-            button4 = new Button();
-            button3 = new Button();
-            button2 = new Button();
-            label6 = new Label();
-            label5 = new Label();
-            label4 = new Label();
-            label3 = new Label();
-            label2 = new Label();
-            panel1 = new Panel();
-            button1 = new Button();
-            label1 = new Label();
-            panelTelas.SuspendLayout();
-            panel7.SuspendLayout();
-            panel9.SuspendLayout();
-            panel8.SuspendLayout();
-            panel5.SuspendLayout();
-            panel4.SuspendLayout();
-            panel6.SuspendLayout();
-            panel3.SuspendLayout();
-            panel2.SuspendLayout();
-            panel1.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            pnlCabecalho = new Panel();
+            btnUsuario = new Button();
+            lblInicio = new Label();
+            menuUsuario = new ContextMenuStrip(components);
+            itemConfiguracoes = new ToolStripMenuItem();
+            pnlConteudo = new Panel();
+            layoutConteudo = new TableLayoutPanel();
+            layoutHero = new TableLayoutPanel();
+            layoutApresentacao = new TableLayoutPanel();
+            lblBoasVindas = new Label();
+            lblTituloProjeto = new Label();
+            lblDescricao = new Label();
+            layoutAcessos = new TableLayoutPanel();
+            btnPrancheta = new Button();
+            btnTaticas = new Button();
+            btnEquipes = new Button();
+            btnAtletas = new Button();
+            layoutStatus = new TableLayoutPanel();
+            lblStatusBanco = new Label();
+            btnAtualizar = new Button();
+            layoutPainel = new TableLayoutPanel();
+            layoutSecaoTaticas = new TableLayoutPanel();
+            layoutCabecalhoTaticas = new TableLayoutPanel();
+            lblTituloTaticas = new Label();
+            btnVerTaticas = new Button();
+            lblEstadoTaticas = new Label();
+            layoutListaTaticas = new TableLayoutPanel();
+            layoutLateral = new TableLayoutPanel();
+            layoutSecaoEquipes = new TableLayoutPanel();
+            lblTituloEquipes = new Label();
+            lblEstadoEquipes = new Label();
+            layoutListaEquipes = new TableLayoutPanel();
+            btnVerEquipes = new Button();
+            layoutResumo = new TableLayoutPanel();
+            lblVisaoGeral = new Label();
+            layoutEstatisticas = new TableLayoutPanel();
+            pnlTaticas = new Panel();
+            lblTotalTaticas = new Label();
+            lblTaticas = new Label();
+            pnlAtletas = new Panel();
+            lblTotalAtletas = new Label();
+            lblAtletas = new Label();
+            pnlEquipes = new Panel();
+            lblTotalEquipes = new Label();
+            lblEquipes = new Label();
+            pnlQuadros = new Panel();
+            lblTotalQuadros = new Label();
+            lblQuadros = new Label();
+            pnlCabecalho.SuspendLayout();
+            menuUsuario.SuspendLayout();
+            pnlConteudo.SuspendLayout();
+            layoutConteudo.SuspendLayout();
+            layoutHero.SuspendLayout();
+            layoutApresentacao.SuspendLayout();
+            layoutAcessos.SuspendLayout();
+            layoutStatus.SuspendLayout();
+            layoutPainel.SuspendLayout();
+            layoutSecaoTaticas.SuspendLayout();
+            layoutCabecalhoTaticas.SuspendLayout();
+            layoutListaTaticas.SuspendLayout();
+            layoutLateral.SuspendLayout();
+            layoutSecaoEquipes.SuspendLayout();
+            layoutListaEquipes.SuspendLayout();
+            layoutResumo.SuspendLayout();
+            layoutEstatisticas.SuspendLayout();
+            pnlTaticas.SuspendLayout();
+            pnlAtletas.SuspendLayout();
+            pnlEquipes.SuspendLayout();
+            pnlQuadros.SuspendLayout();
             SuspendLayout();
-            // 
-            // panelTelas
-            // 
-            panelTelas.BackColor = Color.FromArgb(248, 249, 254);
-            panelTelas.AutoScroll = true;
-            panelTelas.Controls.Add(panel7);
-            panelTelas.Controls.Add(panel5);
-            panelTelas.Controls.Add(panel4);
-            panelTelas.Controls.Add(panel6);
-            panelTelas.Controls.Add(panel3);
-            panelTelas.Controls.Add(button5);
-            panelTelas.Controls.Add(label9);
-            panelTelas.Controls.Add(label8);
-            panelTelas.Controls.Add(label7);
-            panelTelas.Controls.Add(panel2);
-            panelTelas.Controls.Add(panel1);
-            panelTelas.Dock = DockStyle.Fill;
-            panelTelas.Location = new Point(0, 0);
-            panelTelas.Margin = new Padding(3, 4, 3, 4);
-            panelTelas.Name = "panelTelas";
-            panelTelas.Size = new Size(726, 592);
-            panelTelas.TabIndex = 2;
-            // 
-            // panel7
-            // 
-            panel7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            panel7.BackColor = Color.White;
-            panel7.Controls.Add(panel9);
-            panel7.Controls.Add(panel8);
-            panel7.Controls.Add(label21);
-            panel7.Location = new Point(523, 443);
-            panel7.Name = "panel7";
-            panel7.Size = new Size(191, 117);
-            panel7.TabIndex = 12;
-            // 
-            // panel9
-            // 
-            panel9.BackColor = Color.FromArgb(249, 248, 255);
-            panel9.Controls.Add(label25);
-            panel9.Controls.Add(label24);
-            panel9.Location = new Point(92, 36);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(66, 63);
-            panel9.TabIndex = 13;
-            // 
-            // label25
-            // 
-            label25.Font = new Font("Segoe UI", 6F);
-            label25.ForeColor = Color.FromArgb(100, 116, 139);
-            label25.Location = new Point(6, 21);
-            label25.Name = "label25";
-            label25.Size = new Size(57, 28);
-            label25.TabIndex = 1;
-            label25.Text = "Sistemas Recepção";
-            // 
-            // label24
-            // 
-            label24.AutoSize = true;
-            label24.ForeColor = Color.FromArgb(5, 150, 105);
-            label24.Location = new Point(25, 1);
-            label24.Name = "label24";
-            label24.Size = new Size(17, 20);
-            label24.TabIndex = 0;
-            label24.Text = "6";
-            // 
-            // panel8
-            // 
-            panel8.BackColor = Color.FromArgb(249, 248, 255);
-            panel8.Controls.Add(label22);
-            panel8.Controls.Add(label23);
-            panel8.ForeColor = SystemColors.ControlLight;
-            panel8.Location = new Point(14, 35);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(69, 64);
-            panel8.TabIndex = 1;
-            // 
-            // label22
-            // 
-            label22.AutoSize = true;
-            label22.ForeColor = Color.FromArgb(99, 14, 212);
-            label22.Location = new Point(23, 1);
-            label22.Name = "label22";
-            label22.Size = new Size(25, 20);
-            label22.TabIndex = 14;
-            label22.Text = "42";
-            // 
-            // label23
-            // 
-            label23.AutoSize = true;
-            label23.Font = new Font("Segoe UI", 6F);
-            label23.ForeColor = Color.FromArgb(100, 116, 139);
-            label23.Location = new Point(3, 22);
-            label23.Name = "label23";
-            label23.Size = new Size(62, 12);
-            label23.TabIndex = 0;
-            label23.Text = "Táticas Salvas";
-            // 
-            // label21
-            // 
-            label21.AutoSize = true;
-            label21.BackColor = Color.Transparent;
-            label21.ForeColor = Color.FromArgb(100, 116, 139);
-            label21.Location = new Point(6, 9);
-            label21.Name = "label21";
-            label21.Size = new Size(155, 20);
-            label21.TabIndex = 0;
-            label21.Text = "Métricas da Prancheta";
-            // 
-            // panel5
-            // 
-            panel5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            panel5.BackColor = Color.White;
-            panel5.Controls.Add(button18);
-            panel5.Controls.Add(button14);
-            panel5.Controls.Add(button13);
-            panel5.Controls.Add(button12);
-            panel5.Controls.Add(label20);
-            panel5.Controls.Add(label19);
-            panel5.Location = new Point(520, 176);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(197, 239);
-            panel5.TabIndex = 11;
-            // 
-            // button18
-            // 
-            button18.BackColor = Color.Transparent;
-            button18.ForeColor = Color.FromArgb(100, 116, 139);
-            button18.Location = new Point(27, 195);
-            button18.Name = "button18";
-            button18.Size = new Size(138, 29);
-            button18.TabIndex = 9;
-            button18.Text = "➕Nova Equipe";
-            button18.UseVisualStyleBackColor = false;
-            // 
-            // button14
-            // 
-            button14.BackColor = Color.FromArgb(248, 249, 253);
-            button14.Font = new Font("Segoe UI", 7F);
-            button14.Image = (Image)resources.GetObject("button14.Image");
-            button14.ImageAlign = ContentAlignment.MiddleLeft;
-            button14.Location = new Point(3, 131);
-            button14.Name = "button14";
-            button14.Size = new Size(191, 32);
-            button14.TabIndex = 8;
-            button14.Text = "        Clube Campinas Feminino";
-            button14.UseVisualStyleBackColor = false;
-            // 
-            // button13
-            // 
-            button13.BackColor = Color.FromArgb(248, 249, 253);
-            button13.Font = new Font("Segoe UI", 7F);
-            button13.Image = (Image)resources.GetObject("button13.Image");
-            button13.ImageAlign = ContentAlignment.MiddleLeft;
-            button13.Location = new Point(3, 93);
-            button13.Name = "button13";
-            button13.Size = new Size(191, 32);
-            button13.TabIndex = 7;
-            button13.Text = " São José Vôlei Sub-21";
-            button13.UseVisualStyleBackColor = false;
-            // 
-            // button12
-            // 
-            button12.BackColor = Color.FromArgb(248, 249, 253);
-            button12.Font = new Font("Segoe UI", 7F);
-            button12.Image = (Image)resources.GetObject("button12.Image");
-            button12.ImageAlign = ContentAlignment.MiddleLeft;
-            button12.Location = new Point(3, 54);
-            button12.Name = "button12";
-            button12.Size = new Size(191, 32);
-            button12.TabIndex = 6;
-            button12.Text = "     Vôlei Taubaté Masculino";
-            button12.UseVisualStyleBackColor = false;
-            // 
-            // label20
-            // 
-            label20.AutoSize = true;
-            label20.BackColor = Color.FromArgb(241, 245, 249);
-            label20.Font = new Font("Segoe UI", 7F);
-            label20.ForeColor = Color.FromArgb(71, 85, 105);
-            label20.Location = new Point(71, 31);
-            label20.Name = "label20";
-            label20.Size = new Size(46, 15);
-            label20.TabIndex = 5;
-            label20.Text = "3 ativas";
-            // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Image = (Image)resources.GetObject("label19.Image");
-            label19.ImageAlign = ContentAlignment.MiddleLeft;
-            label19.Location = new Point(3, 5);
-            label19.Name = "label19";
-            label19.Size = new Size(174, 20);
-            label19.TabIndex = 0;
-            label19.Text = "       Equipes Cadastradas";
-            // 
-            // panel4
-            // 
-            panel4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            panel4.BackColor = Color.White;
-            panel4.Controls.Add(button9);
-            panel4.Controls.Add(button10);
-            panel4.Controls.Add(button11);
-            panel4.Controls.Add(label13);
-            panel4.Controls.Add(label17);
-            panel4.Controls.Add(label18);
-            panel4.Location = new Point(15, 466);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(499, 125);
-            panel4.TabIndex = 10;
-            // 
-            // button9
-            // 
-            button9.BackColor = Color.FromArgb(125, 59, 237);
-            button9.Font = new Font("Segoe UI", 8F);
-            button9.ForeColor = Color.White;
-            button9.Location = new Point(338, 94);
-            button9.Name = "button9";
-            button9.Size = new Size(158, 28);
-            button9.TabIndex = 0;
-            button9.Text = "🖌️Abrir na Prancheta";
-            button9.UseVisualStyleBackColor = false;
-            // 
-            // button10
-            // 
-            button10.Location = new Point(224, 93);
-            button10.Name = "button10";
-            button10.Size = new Size(106, 29);
-            button10.TabIndex = 4;
-            button10.Text = "▶️Apresentar";
-            button10.UseVisualStyleBackColor = true;
-            // 
-            // button11
-            // 
-            button11.BackColor = Color.FromArgb(248, 249, 253);
-            button11.Font = new Font("Segoe UI", 6F);
-            button11.Image = (Image)resources.GetObject("button11.Image");
-            button11.ImageAlign = ContentAlignment.MiddleLeft;
-            button11.Location = new Point(11, 93);
-            button11.Name = "button11";
-            button11.Size = new Size(136, 27);
-            button11.TabIndex = 3;
-            button11.Text = "5 momentos";
-            button11.UseVisualStyleBackColor = false;
-            // 
-            // label13
-            // 
-            label13.Font = new Font("Segoe UI", 7F);
-            label13.Location = new Point(11, 55);
-            label13.Name = "label13";
-            label13.Size = new Size(468, 39);
-            label13.TabIndex = 2;
-            label13.Text = "Defesa em Z5 com levantamento acelerado para bola chutada na ponta (entrada de rede) ou fundo oposto.";
-            // 
-            // label17
-            // 
-            label17.AutoSize = true;
-            label17.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label17.Location = new Point(11, 32);
-            label17.Name = "label17";
-            label17.Size = new Size(295, 23);
-            label17.TabIndex = 1;
-            label17.Text = "Transição de Contra-Ataque Rápido";
-            // 
-            // label18
-            // 
-            label18.Font = new Font("Segoe UI", 8F);
-            label18.Location = new Point(11, 11);
-            label18.Name = "label18";
-            label18.Size = new Size(98, 21);
-            label18.TabIndex = 0;
-            label18.Text = "Vôlei Taubaté";
-            // 
-            // panel6
-            // 
-            panel6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            panel6.BackColor = Color.White;
-            panel6.Controls.Add(button15);
-            panel6.Controls.Add(button16);
-            panel6.Controls.Add(button17);
-            panel6.Controls.Add(label14);
-            panel6.Controls.Add(label15);
-            panel6.Controls.Add(label16);
-            panel6.Location = new Point(15, 338);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(499, 125);
-            panel6.TabIndex = 9;
-            // 
-            // button15
-            // 
-            button15.BackColor = Color.FromArgb(125, 59, 237);
-            button15.Font = new Font("Segoe UI", 8F);
-            button15.ForeColor = Color.White;
-            button15.Location = new Point(338, 94);
-            button15.Name = "button15";
-            button15.Size = new Size(158, 28);
-            button15.TabIndex = 0;
-            button15.Text = "🖌️Abrir na Prancheta";
-            button15.UseVisualStyleBackColor = false;
-            // 
-            // button16
-            // 
-            button16.Location = new Point(224, 93);
-            button16.Name = "button16";
-            button16.Size = new Size(106, 29);
-            button16.TabIndex = 4;
-            button16.Text = "▶️Apresentar";
-            button16.UseVisualStyleBackColor = true;
-            // 
-            // button17
-            // 
-            button17.BackColor = Color.FromArgb(248, 249, 253);
-            button17.Font = new Font("Segoe UI", 6F);
-            button17.Image = (Image)resources.GetObject("button17.Image");
-            button17.ImageAlign = ContentAlignment.MiddleLeft;
-            button17.Location = new Point(11, 93);
-            button17.Name = "button17";
-            button17.Size = new Size(136, 27);
-            button17.TabIndex = 3;
-            button17.Text = "3 momentos";
-            button17.UseVisualStyleBackColor = false;
-            // 
-            // label14
-            // 
-            label14.Font = new Font("Segoe UI", 7F);
-            label14.Location = new Point(11, 55);
-            label14.Name = "label14";
-            label14.Size = new Size(468, 39);
-            label14.TabIndex = 2;
-            label14.Text = "Posicionamento de defesa de fundo com libero na diagonal curta e ponteiro cobrindo a largada no meio da quadra.";
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label15.Location = new Point(11, 32);
-            label15.Name = "label15";
-            label15.Size = new Size(275, 23);
-            label15.TabIndex = 1;
-            label15.Text = "Defesa K2 contra Pipe do Oposto";
-            // 
-            // label16
-            // 
-            label16.Font = new Font("Segoe UI", 8F);
-            label16.Location = new Point(11, 11);
-            label16.Name = "label16";
-            label16.Size = new Size(160, 21);
-            label16.TabIndex = 0;
-            label16.Text = "Equipe Juvenil Sub-19";
-            // 
-            // panel3
-            // 
-            panel3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            panel3.BackColor = Color.White;
-            panel3.Controls.Add(button8);
-            panel3.Controls.Add(button7);
-            panel3.Controls.Add(button6);
-            panel3.Controls.Add(label12);
-            panel3.Controls.Add(label11);
-            panel3.Controls.Add(label10);
-            panel3.Location = new Point(15, 207);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(499, 125);
-            panel3.TabIndex = 6;
-            // 
-            // button8
-            // 
-            button8.BackColor = Color.FromArgb(125, 59, 237);
-            button8.Font = new Font("Segoe UI", 8F);
-            button8.ForeColor = Color.White;
-            button8.Location = new Point(338, 94);
-            button8.Name = "button8";
-            button8.Size = new Size(158, 28);
-            button8.TabIndex = 0;
-            button8.Text = "🖌️Abrir na Prancheta";
-            button8.UseVisualStyleBackColor = false;
-            // 
-            // button7
-            // 
-            button7.Location = new Point(224, 93);
-            button7.Name = "button7";
-            button7.Size = new Size(106, 29);
-            button7.TabIndex = 4;
-            button7.Text = "▶️Apresentar";
-            button7.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            button6.BackColor = Color.FromArgb(248, 249, 253);
-            button6.Font = new Font("Segoe UI", 6F);
-            button6.Image = (Image)resources.GetObject("button6.Image");
-            button6.ImageAlign = ContentAlignment.MiddleLeft;
-            button6.Location = new Point(11, 93);
-            button6.Name = "button6";
-            button6.Size = new Size(136, 27);
-            button6.TabIndex = 3;
-            button6.Text = "4 momentos";
-            button6.UseVisualStyleBackColor = false;
-            // 
-            // label12
-            // 
-            label12.Font = new Font("Segoe UI", 7F);
-            label12.Location = new Point(11, 55);
-            label12.Name = "label12";
-            label12.Size = new Size(468, 39);
-            label12.TabIndex = 2;
-            label12.Text = "Esquema ofensivo focado no deslocamento do bloqueador central adversário através do cruzamento com o ponteiro na zona de 3 metros.";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label11.Location = new Point(11, 32);
-            label11.Name = "label11";
-            label11.Size = new Size(385, 23);
-            label11.TabIndex = 1;
-            label11.Text = "Rotação 1 - Saída com Central (Tempo Rápido)";
-            // 
-            // label10
-            // 
-            label10.Font = new Font("Segoe UI", 8F);
-            label10.Location = new Point(11, 11);
-            label10.Name = "label10";
-            label10.Size = new Size(98, 21);
-            label10.TabIndex = 0;
-            label10.Text = "Vôlei Taubaté";
-            // 
-            // button5
-            // 
-            button5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            button5.BackColor = Color.FromArgb(248, 249, 254);
-            button5.Font = new Font("Segoe UI", 8F);
-            button5.ForeColor = Color.FromArgb(99, 14, 212);
-            button5.Location = new Point(321, 171);
-            button5.Name = "button5";
-            button5.Size = new Size(187, 30);
-            button5.TabIndex = 5;
-            button5.Text = "ver repositório completo →";
-            button5.UseVisualStyleBackColor = false;
-            // 
-            // label9
-            // 
-            label9.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label9.AutoSize = true;
-            label9.BackColor = Color.FromArgb(241, 245, 249);
-            label9.ForeColor = Color.FromArgb(71, 85, 105);
-            label9.Location = new Point(239, 176);
-            label9.Name = "label9";
-            label9.Size = new Size(76, 20);
-            label9.TabIndex = 4;
-            label9.Text = "3 recentes";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.ForeColor = Color.FromArgb(99, 14, 212);
-            label8.Location = new Point(37, 176);
-            label8.Name = "label8";
-            label8.Size = new Size(22, 20);
-            label8.TabIndex = 3;
-            label8.Text = "↪";
-            // 
-            // label7
-            // 
-            label7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label7.AutoSize = true;
-            label7.Location = new Point(57, 176);
-            label7.Name = "label7";
-            label7.Size = new Size(176, 20);
-            label7.TabIndex = 2;
-            label7.Text = "Últimas Táticas Utilizadas";
-            // 
-            // panel2
-            // 
-            panel2.BackColor = Color.White;
-            panel2.Controls.Add(button4);
-            panel2.Controls.Add(button3);
-            panel2.Controls.Add(button2);
-            panel2.Controls.Add(label6);
-            panel2.Controls.Add(label5);
-            panel2.Controls.Add(label4);
-            panel2.Controls.Add(label3);
-            panel2.Controls.Add(label2);
-            panel2.Location = new Point(15, 40);
-            panel2.Name = "panel2";
-            panel2.Padding = new Padding(20, 0, 0, 20);
-            panel2.Size = new Size(702, 128);
-            panel2.TabIndex = 1;
-            // 
-            // button4
-            // 
-            button4.BackColor = Color.FromArgb(27, 19, 38);
-            button4.ForeColor = Color.White;
-            button4.Location = new Point(374, 70);
-            button4.Name = "button4";
-            button4.Size = new Size(158, 45);
-            button4.TabIndex = 7;
-            button4.Text = "🏐Prancheta Rápida";
-            button4.UseVisualStyleBackColor = false;
-            // 
-            // button3
-            // 
-            button3.BackColor = Color.FromArgb(123, 59, 237);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(374, 15);
-            button3.Name = "button3";
-            button3.Size = new Size(158, 41);
-            button3.TabIndex = 6;
-            button3.Text = " \U0001f9fe+Nova Tática";
-            button3.UseVisualStyleBackColor = false;
-            // 
-            // button2
-            // 
-            button2.Location = new Point(538, 17);
-            button2.Name = "button2";
-            button2.Size = new Size(141, 39);
-            button2.TabIndex = 5;
-            button2.Text = "📂Abrir Tática...";
-            button2.UseVisualStyleBackColor = true;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.ForeColor = Color.FromArgb(16, 185, 129);
-            label6.Location = new Point(173, 15);
-            label6.Name = "label6";
-            label6.Size = new Size(18, 20);
-            label6.TabIndex = 4;
-            label6.Text = "●";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 8F);
-            label5.Location = new Point(187, 17);
-            label5.Name = "label5";
-            label5.Size = new Size(163, 19);
-            label5.TabIndex = 3;
-            label5.Text = "Pronto para sessão tática";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.BackColor = Color.FromArgb(237, 233, 254);
-            label4.Font = new Font("Segoe UI", 8F);
-            label4.ForeColor = Color.FromArgb(99, 14, 212);
-            label4.Location = new Point(39, 17);
-            label4.Name = "label4";
-            label4.Size = new Size(128, 19);
-            label4.TabIndex = 2;
-            label4.Text = "TACTICAL DESK 2.4";
-            // 
-            // label3
-            // 
-            label3.Location = new Point(11, 70);
-            label3.Name = "label3";
-            label3.Size = new Size(387, 45);
-            label3.TabIndex = 1;
-            label3.Text = "Planeje rotações, posicione defesas de alto nível e projete táticas sequenciais com precisão em quadra.";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Arial Rounded MT Bold", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(31, 36);
-            label2.Name = "label2";
-            label2.Size = new Size(307, 34);
-            label2.TabIndex = 0;
-            label2.Text = "LIMK Volleyball Hub";
-            // 
-            // panel1
-            // 
-            panel1.BackColor = Color.FromArgb(254, 254, 255);
-            panel1.Controls.Add(button1);
-            panel1.Controls.Add(label1);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(726, 34);
-            panel1.TabIndex = 0;
-            // 
-            // button1
-            // 
-            button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button1.BackColor = Color.FromArgb(125, 59, 237);
-            button1.ForeColor = Color.FromArgb(254, 254, 255);
-            button1.Location = new Point(623, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(94, 29);
-            button1.TabIndex = 2;
-            button1.Text = "💾Salvar Tática";
-            button1.UseVisualStyleBackColor = false;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(3, 5);
-            label1.Name = "label1";
-            label1.Size = new Size(127, 20);
-            label1.TabIndex = 1;
-            label1.Text = "LIMK Tactical Hub";
-            // 
+            //
+            // pnlCabecalho
+            //
+            pnlCabecalho.Name = "pnlCabecalho";
+            pnlCabecalho.BackColor = Color.White;
+            pnlCabecalho.Controls.Add(btnUsuario);
+            pnlCabecalho.Controls.Add(lblInicio);
+            pnlCabecalho.Dock = DockStyle.Top;
+            pnlCabecalho.Size = new Size(850, 64);
+            pnlCabecalho.TabIndex = 0;
+            //
+            // btnUsuario
+            //
+            btnUsuario.Name = "btnUsuario";
+            btnUsuario.Text = "Usuário: visitante ▾";
+            btnUsuario.BackColor = Color.White;
+            btnUsuario.ForeColor = Color.FromArgb(92, 48, 154);
+            btnUsuario.Cursor = Cursors.Hand;
+            btnUsuario.FlatStyle = FlatStyle.Flat;
+            btnUsuario.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
+            btnUsuario.UseVisualStyleBackColor = false;
+            btnUsuario.AutoEllipsis = true;
+            btnUsuario.BackColor = Color.FromArgb(245, 240, 255);
+            btnUsuario.FlatAppearance.BorderSize = 0;
+            btnUsuario.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnUsuario.Location = new Point(24, 14);
+            btnUsuario.Size = new Size(280, 36);
+            btnUsuario.TabIndex = 0;
+            btnUsuario.UseMnemonic = false;
+            btnUsuario.Click += btnUsuario_Click;
+            //
+            // lblInicio
+            //
+            lblInicio.Name = "lblInicio";
+            lblInicio.Text = "Início";
+            lblInicio.Dock = DockStyle.Fill;
+            lblInicio.Margin = new Padding(0);
+            lblInicio.Dock = DockStyle.None;
+            lblInicio.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblInicio.ForeColor = Color.FromArgb(100, 116, 139);
+            lblInicio.Location = new Point(714, 14);
+            lblInicio.Size = new Size(112, 36);
+            lblInicio.TextAlign = ContentAlignment.MiddleRight;
+            //
+            // menuUsuario
+            //
+            menuUsuario.Name = "menuUsuario";
+            menuUsuario.Items.AddRange(new ToolStripItem[] { itemConfiguracoes });
+            //
+            // itemConfiguracoes
+            //
+            itemConfiguracoes.Name = "itemConfiguracoes";
+            itemConfiguracoes.Enabled = false;
+            itemConfiguracoes.Text = "Configurações do usuário (em breve)";
+            //
+            // pnlConteudo
+            //
+            pnlConteudo.Name = "pnlConteudo";
+            pnlConteudo.AutoScroll = true;
+            pnlConteudo.Controls.Add(layoutConteudo);
+            pnlConteudo.Dock = DockStyle.Fill;
+            pnlConteudo.Location = new Point(0, 64);
+            pnlConteudo.Padding = new Padding(24);
+            pnlConteudo.Size = new Size(850, 739);
+            pnlConteudo.TabIndex = 1;
+            //
+            // layoutConteudo
+            //
+            layoutConteudo.Name = "layoutConteudo";
+            layoutConteudo.ColumnCount = 1;
+            layoutConteudo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutConteudo.Controls.Add(layoutHero, 0, 0);
+            layoutConteudo.Controls.Add(layoutStatus, 0, 1);
+            layoutConteudo.Controls.Add(layoutPainel, 0, 2);
+            layoutConteudo.RowCount = 3;
+            layoutConteudo.RowStyles.Add(new RowStyle(SizeType.Absolute, 180F));
+            layoutConteudo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            layoutConteudo.RowStyles.Add(new RowStyle(SizeType.AutoSize, 0F));
+            layoutConteudo.AutoSize = true;
+            layoutConteudo.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutConteudo.Dock = DockStyle.Top;
+            layoutConteudo.Location = new Point(24, 24);
+            layoutConteudo.Margin = new Padding(0);
+            layoutConteudo.MinimumSize = new Size(660, 0);
+            layoutConteudo.Size = new Size(802, 800);
+            layoutConteudo.TabIndex = 0;
+            //
+            // layoutHero
+            //
+            layoutHero.Name = "layoutHero";
+            layoutHero.ColumnCount = 2;
+            layoutHero.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
+            layoutHero.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
+            layoutHero.Controls.Add(layoutApresentacao, 0, 0);
+            layoutHero.Controls.Add(layoutAcessos, 1, 0);
+            layoutHero.RowCount = 1;
+            layoutHero.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutHero.BackColor = Color.White;
+            layoutHero.Dock = DockStyle.Fill;
+            layoutHero.Margin = new Padding(0);
+            layoutHero.Padding = new Padding(20);
+            layoutHero.TabIndex = 0;
+            //
+            // layoutApresentacao
+            //
+            layoutApresentacao.Name = "layoutApresentacao";
+            layoutApresentacao.ColumnCount = 1;
+            layoutApresentacao.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutApresentacao.Controls.Add(lblBoasVindas, 0, 0);
+            layoutApresentacao.Controls.Add(lblTituloProjeto, 0, 1);
+            layoutApresentacao.Controls.Add(lblDescricao, 0, 2);
+            layoutApresentacao.RowCount = 3;
+            layoutApresentacao.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
+            layoutApresentacao.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+            layoutApresentacao.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutApresentacao.Dock = DockStyle.Fill;
+            layoutApresentacao.Margin = new Padding(0);
+            //
+            // lblBoasVindas
+            //
+            lblBoasVindas.Name = "lblBoasVindas";
+            lblBoasVindas.Text = "Bem-vindo, visitante!";
+            lblBoasVindas.Dock = DockStyle.Fill;
+            lblBoasVindas.Margin = new Padding(0);
+            lblBoasVindas.AutoEllipsis = true;
+            lblBoasVindas.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblBoasVindas.ForeColor = Color.FromArgb(92, 48, 154);
+            lblBoasVindas.TextAlign = ContentAlignment.MiddleLeft;
+            lblBoasVindas.UseMnemonic = false;
+            //
+            // lblTituloProjeto
+            //
+            lblTituloProjeto.Name = "lblTituloProjeto";
+            lblTituloProjeto.Text = "LIMK Volleyball Hub";
+            lblTituloProjeto.Dock = DockStyle.Fill;
+            lblTituloProjeto.Margin = new Padding(0);
+            lblTituloProjeto.AutoEllipsis = true;
+            lblTituloProjeto.Font = new Font("Segoe UI", 21F, FontStyle.Bold);
+            lblTituloProjeto.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // lblDescricao
+            //
+            lblDescricao.Name = "lblDescricao";
+            lblDescricao.Text = "Crie táticas de vôlei, organize suas equipes e planeje cada momento da jogada.";
+            lblDescricao.Dock = DockStyle.Fill;
+            lblDescricao.Margin = new Padding(0);
+            lblDescricao.ForeColor = Color.FromArgb(100, 116, 139);
+            lblDescricao.Margin = new Padding(0, 8, 8, 0);
+            //
+            // layoutAcessos
+            //
+            layoutAcessos.Name = "layoutAcessos";
+            layoutAcessos.ColumnCount = 2;
+            layoutAcessos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutAcessos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutAcessos.Controls.Add(btnPrancheta, 0, 0);
+            layoutAcessos.Controls.Add(btnTaticas, 1, 0);
+            layoutAcessos.Controls.Add(btnEquipes, 0, 1);
+            layoutAcessos.Controls.Add(btnAtletas, 1, 1);
+            layoutAcessos.RowCount = 2;
+            layoutAcessos.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            layoutAcessos.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            layoutAcessos.Dock = DockStyle.Fill;
+            layoutAcessos.Margin = new Padding(20, 14, 0, 14);
+            layoutAcessos.TabIndex = 0;
+            //
+            // btnPrancheta
+            //
+            btnPrancheta.Name = "btnPrancheta";
+            btnPrancheta.Text = "+ Nova tática";
+            btnPrancheta.BackColor = Color.FromArgb(124, 58, 237);
+            btnPrancheta.ForeColor = Color.White;
+            btnPrancheta.Cursor = Cursors.Hand;
+            btnPrancheta.FlatStyle = FlatStyle.Flat;
+            btnPrancheta.FlatAppearance.BorderSize = 0;
+            btnPrancheta.UseVisualStyleBackColor = false;
+            btnPrancheta.Dock = DockStyle.Fill;
+            btnPrancheta.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnPrancheta.Margin = new Padding(0, 0, 4, 4);
+            btnPrancheta.TabIndex = 0;
+            btnPrancheta.Click += btnPrancheta_Click;
+            //
+            // btnTaticas
+            //
+            btnTaticas.Name = "btnTaticas";
+            btnTaticas.Text = "Abrir táticas";
+            btnTaticas.BackColor = Color.White;
+            btnTaticas.ForeColor = Color.FromArgb(92, 48, 154);
+            btnTaticas.Cursor = Cursors.Hand;
+            btnTaticas.FlatStyle = FlatStyle.Flat;
+            btnTaticas.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
+            btnTaticas.UseVisualStyleBackColor = false;
+            btnTaticas.Dock = DockStyle.Fill;
+            btnTaticas.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnTaticas.Margin = new Padding(4, 0, 0, 4);
+            btnTaticas.TabIndex = 1;
+            btnTaticas.Click += btnTaticas_Click;
+            //
+            // btnEquipes
+            //
+            btnEquipes.Name = "btnEquipes";
+            btnEquipes.Text = "Equipes";
+            btnEquipes.BackColor = Color.White;
+            btnEquipes.ForeColor = Color.FromArgb(92, 48, 154);
+            btnEquipes.Cursor = Cursors.Hand;
+            btnEquipes.FlatStyle = FlatStyle.Flat;
+            btnEquipes.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
+            btnEquipes.UseVisualStyleBackColor = false;
+            btnEquipes.Dock = DockStyle.Fill;
+            btnEquipes.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnEquipes.Margin = new Padding(0, 4, 4, 0);
+            btnEquipes.TabIndex = 2;
+            btnEquipes.Click += btnEquipes_Click;
+            //
+            // btnAtletas
+            //
+            btnAtletas.Name = "btnAtletas";
+            btnAtletas.Text = "Atletas";
+            btnAtletas.BackColor = Color.White;
+            btnAtletas.ForeColor = Color.FromArgb(92, 48, 154);
+            btnAtletas.Cursor = Cursors.Hand;
+            btnAtletas.FlatStyle = FlatStyle.Flat;
+            btnAtletas.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
+            btnAtletas.UseVisualStyleBackColor = false;
+            btnAtletas.Dock = DockStyle.Fill;
+            btnAtletas.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnAtletas.Margin = new Padding(4, 4, 0, 0);
+            btnAtletas.TabIndex = 3;
+            btnAtletas.Click += btnAtletas_Click;
+            //
+            // layoutStatus
+            //
+            layoutStatus.Name = "layoutStatus";
+            layoutStatus.ColumnCount = 2;
+            layoutStatus.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutStatus.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
+            layoutStatus.Controls.Add(lblStatusBanco, 0, 0);
+            layoutStatus.Controls.Add(btnAtualizar, 1, 0);
+            layoutStatus.RowCount = 1;
+            layoutStatus.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutStatus.Dock = DockStyle.Fill;
+            layoutStatus.Margin = new Padding(0, 6, 0, 6);
+            layoutStatus.TabIndex = 1;
+            //
+            // lblStatusBanco
+            //
+            lblStatusBanco.Name = "lblStatusBanco";
+            lblStatusBanco.Text = "Os dados são consultados ao abrir esta tela.";
+            lblStatusBanco.Dock = DockStyle.Fill;
+            lblStatusBanco.Margin = new Padding(0);
+            lblStatusBanco.ForeColor = Color.FromArgb(100, 116, 139);
+            lblStatusBanco.Margin = new Padding(0, 0, 12, 0);
+            lblStatusBanco.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // btnAtualizar
+            //
+            btnAtualizar.Name = "btnAtualizar";
+            btnAtualizar.Text = "Atualizar";
+            btnAtualizar.BackColor = Color.White;
+            btnAtualizar.ForeColor = Color.FromArgb(92, 48, 154);
+            btnAtualizar.Cursor = Cursors.Hand;
+            btnAtualizar.FlatStyle = FlatStyle.Flat;
+            btnAtualizar.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
+            btnAtualizar.UseVisualStyleBackColor = false;
+            btnAtualizar.Anchor = AnchorStyles.Right;
+            btnAtualizar.Margin = new Padding(0);
+            btnAtualizar.Size = new Size(110, 32);
+            btnAtualizar.TabIndex = 0;
+            btnAtualizar.Click += btnAtualizar_Click;
+            //
+            // layoutPainel
+            //
+            layoutPainel.Name = "layoutPainel";
+            layoutPainel.ColumnCount = 2;
+            layoutPainel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 64F));
+            layoutPainel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 36F));
+            layoutPainel.Controls.Add(layoutSecaoTaticas, 0, 0);
+            layoutPainel.Controls.Add(layoutLateral, 1, 0);
+            layoutPainel.RowCount = 1;
+            layoutPainel.RowStyles.Add(new RowStyle(SizeType.AutoSize, 0F));
+            layoutPainel.AutoSize = true;
+            layoutPainel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutPainel.Dock = DockStyle.Top;
+            layoutPainel.Margin = new Padding(0);
+            layoutPainel.TabIndex = 2;
+            //
+            // layoutSecaoTaticas
+            //
+            layoutSecaoTaticas.Name = "layoutSecaoTaticas";
+            layoutSecaoTaticas.ColumnCount = 1;
+            layoutSecaoTaticas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutSecaoTaticas.Controls.Add(layoutCabecalhoTaticas, 0, 0);
+            layoutSecaoTaticas.Controls.Add(lblEstadoTaticas, 0, 1);
+            layoutSecaoTaticas.Controls.Add(layoutListaTaticas, 0, 2);
+            layoutSecaoTaticas.RowCount = 3;
+            layoutSecaoTaticas.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            layoutSecaoTaticas.RowStyles.Add(new RowStyle(SizeType.AutoSize, 0F));
+            layoutSecaoTaticas.RowStyles.Add(new RowStyle(SizeType.AutoSize, 0F));
+            layoutSecaoTaticas.AutoSize = true;
+            layoutSecaoTaticas.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutSecaoTaticas.Dock = DockStyle.Top;
+            layoutSecaoTaticas.Margin = new Padding(0, 0, 20, 0);
+            //
+            // layoutCabecalhoTaticas
+            //
+            layoutCabecalhoTaticas.Name = "layoutCabecalhoTaticas";
+            layoutCabecalhoTaticas.ColumnCount = 2;
+            layoutCabecalhoTaticas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutCabecalhoTaticas.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 76F));
+            layoutCabecalhoTaticas.Controls.Add(lblTituloTaticas, 0, 0);
+            layoutCabecalhoTaticas.Controls.Add(btnVerTaticas, 1, 0);
+            layoutCabecalhoTaticas.RowCount = 1;
+            layoutCabecalhoTaticas.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutCabecalhoTaticas.Dock = DockStyle.Fill;
+            layoutCabecalhoTaticas.Margin = new Padding(0);
+            layoutCabecalhoTaticas.TabIndex = 0;
+            //
+            // lblTituloTaticas
+            //
+            lblTituloTaticas.Name = "lblTituloTaticas";
+            lblTituloTaticas.Text = "Últimas táticas cadastradas";
+            lblTituloTaticas.Dock = DockStyle.Fill;
+            lblTituloTaticas.Margin = new Padding(0);
+            lblTituloTaticas.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblTituloTaticas.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // btnVerTaticas
+            //
+            btnVerTaticas.Name = "btnVerTaticas";
+            btnVerTaticas.Text = "Ver todas";
+            btnVerTaticas.BackColor = Color.White;
+            btnVerTaticas.ForeColor = Color.FromArgb(92, 48, 154);
+            btnVerTaticas.Cursor = Cursors.Hand;
+            btnVerTaticas.FlatStyle = FlatStyle.Flat;
+            btnVerTaticas.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
+            btnVerTaticas.UseVisualStyleBackColor = false;
+            btnVerTaticas.Anchor = AnchorStyles.Right;
+            btnVerTaticas.BackColor = Color.FromArgb(248, 249, 254);
+            btnVerTaticas.FlatAppearance.BorderSize = 0;
+            btnVerTaticas.Margin = new Padding(0);
+            btnVerTaticas.Size = new Size(76, 32);
+            btnVerTaticas.TabIndex = 0;
+            btnVerTaticas.Click += btnTaticas_Click;
+            //
+            // lblEstadoTaticas
+            //
+            lblEstadoTaticas.Name = "lblEstadoTaticas";
+            lblEstadoTaticas.Text = "As últimas táticas cadastradas aparecerão aqui.";
+            lblEstadoTaticas.Dock = DockStyle.Fill;
+            lblEstadoTaticas.Margin = new Padding(0);
+            lblEstadoTaticas.AutoSize = true;
+            lblEstadoTaticas.ForeColor = Color.FromArgb(100, 116, 139);
+            lblEstadoTaticas.MinimumSize = new Size(0, 72);
+            lblEstadoTaticas.Padding = new Padding(12);
+            lblEstadoTaticas.BackColor = Color.White;
+            //
+            // layoutListaTaticas
+            //
+            layoutListaTaticas.Name = "layoutListaTaticas";
+            layoutListaTaticas.ColumnCount = 1;
+            layoutListaTaticas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutListaTaticas.RowCount = 0;
+            layoutListaTaticas.AutoSize = true;
+            layoutListaTaticas.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutListaTaticas.Dock = DockStyle.Top;
+            layoutListaTaticas.Margin = new Padding(0);
+            //
+            // layoutLateral
+            //
+            layoutLateral.Name = "layoutLateral";
+            layoutLateral.ColumnCount = 1;
+            layoutLateral.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutLateral.Controls.Add(layoutSecaoEquipes, 0, 0);
+            layoutLateral.Controls.Add(layoutResumo, 0, 1);
+            layoutLateral.RowCount = 2;
+            layoutLateral.RowStyles.Add(new RowStyle(SizeType.AutoSize, 0F));
+            layoutLateral.RowStyles.Add(new RowStyle(SizeType.AutoSize, 0F));
+            layoutLateral.AutoSize = true;
+            layoutLateral.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutLateral.Dock = DockStyle.Top;
+            layoutLateral.Margin = new Padding(0);
+            layoutLateral.TabIndex = 1;
+            //
+            // layoutSecaoEquipes
+            //
+            layoutSecaoEquipes.Name = "layoutSecaoEquipes";
+            layoutSecaoEquipes.ColumnCount = 1;
+            layoutSecaoEquipes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutSecaoEquipes.Controls.Add(lblTituloEquipes, 0, 0);
+            layoutSecaoEquipes.Controls.Add(lblEstadoEquipes, 0, 1);
+            layoutSecaoEquipes.Controls.Add(layoutListaEquipes, 0, 2);
+            layoutSecaoEquipes.Controls.Add(btnVerEquipes, 0, 3);
+            layoutSecaoEquipes.RowCount = 4;
+            layoutSecaoEquipes.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            layoutSecaoEquipes.RowStyles.Add(new RowStyle(SizeType.AutoSize, 0F));
+            layoutSecaoEquipes.RowStyles.Add(new RowStyle(SizeType.AutoSize, 0F));
+            layoutSecaoEquipes.RowStyles.Add(new RowStyle(SizeType.Absolute, 46F));
+            layoutSecaoEquipes.AutoSize = true;
+            layoutSecaoEquipes.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutSecaoEquipes.BackColor = Color.White;
+            layoutSecaoEquipes.Dock = DockStyle.Top;
+            layoutSecaoEquipes.Margin = new Padding(0);
+            layoutSecaoEquipes.Padding = new Padding(16);
+            layoutSecaoEquipes.TabIndex = 0;
+            //
+            // lblTituloEquipes
+            //
+            lblTituloEquipes.Name = "lblTituloEquipes";
+            lblTituloEquipes.Text = "Equipes cadastradas";
+            lblTituloEquipes.Dock = DockStyle.Fill;
+            lblTituloEquipes.Margin = new Padding(0);
+            lblTituloEquipes.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblTituloEquipes.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // lblEstadoEquipes
+            //
+            lblEstadoEquipes.Name = "lblEstadoEquipes";
+            lblEstadoEquipes.Text = "As equipes cadastradas aparecerão aqui.";
+            lblEstadoEquipes.Dock = DockStyle.Fill;
+            lblEstadoEquipes.Margin = new Padding(0);
+            lblEstadoEquipes.AutoSize = true;
+            lblEstadoEquipes.ForeColor = Color.FromArgb(100, 116, 139);
+            lblEstadoEquipes.MinimumSize = new Size(0, 68);
+            lblEstadoEquipes.Padding = new Padding(0, 8, 0, 8);
+            //
+            // layoutListaEquipes
+            //
+            layoutListaEquipes.Name = "layoutListaEquipes";
+            layoutListaEquipes.ColumnCount = 1;
+            layoutListaEquipes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutListaEquipes.RowCount = 0;
+            layoutListaEquipes.AutoSize = true;
+            layoutListaEquipes.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutListaEquipes.Dock = DockStyle.Top;
+            layoutListaEquipes.Margin = new Padding(0);
+            //
+            // btnVerEquipes
+            //
+            btnVerEquipes.Name = "btnVerEquipes";
+            btnVerEquipes.Text = "Ver todas as equipes";
+            btnVerEquipes.BackColor = Color.White;
+            btnVerEquipes.ForeColor = Color.FromArgb(92, 48, 154);
+            btnVerEquipes.Cursor = Cursors.Hand;
+            btnVerEquipes.FlatStyle = FlatStyle.Flat;
+            btnVerEquipes.FlatAppearance.BorderColor = Color.FromArgb(222, 215, 236);
+            btnVerEquipes.UseVisualStyleBackColor = false;
+            btnVerEquipes.Dock = DockStyle.Fill;
+            btnVerEquipes.Margin = new Padding(0, 10, 0, 0);
+            btnVerEquipes.TabIndex = 0;
+            btnVerEquipes.Click += btnEquipes_Click;
+            //
+            // layoutResumo
+            //
+            layoutResumo.Name = "layoutResumo";
+            layoutResumo.ColumnCount = 1;
+            layoutResumo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutResumo.Controls.Add(lblVisaoGeral, 0, 0);
+            layoutResumo.Controls.Add(layoutEstatisticas, 0, 1);
+            layoutResumo.RowCount = 2;
+            layoutResumo.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
+            layoutResumo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutResumo.BackColor = Color.White;
+            layoutResumo.Dock = DockStyle.Top;
+            layoutResumo.Margin = new Padding(0, 20, 0, 0);
+            layoutResumo.Padding = new Padding(16);
+            layoutResumo.Size = new Size(288, 246);
+            layoutResumo.TabIndex = 1;
+            //
+            // lblVisaoGeral
+            //
+            lblVisaoGeral.Name = "lblVisaoGeral";
+            lblVisaoGeral.Text = "Visão geral";
+            lblVisaoGeral.Dock = DockStyle.Fill;
+            lblVisaoGeral.Margin = new Padding(0);
+            lblVisaoGeral.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblVisaoGeral.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // layoutEstatisticas
+            //
+            layoutEstatisticas.Name = "layoutEstatisticas";
+            layoutEstatisticas.ColumnCount = 2;
+            layoutEstatisticas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutEstatisticas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutEstatisticas.Controls.Add(pnlTaticas, 0, 0);
+            layoutEstatisticas.Controls.Add(pnlAtletas, 1, 0);
+            layoutEstatisticas.Controls.Add(pnlEquipes, 0, 1);
+            layoutEstatisticas.Controls.Add(pnlQuadros, 1, 1);
+            layoutEstatisticas.RowCount = 2;
+            layoutEstatisticas.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            layoutEstatisticas.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            layoutEstatisticas.Dock = DockStyle.Fill;
+            layoutEstatisticas.Margin = new Padding(0);
+            //
+            // pnlTaticas
+            //
+            pnlTaticas.Name = "pnlTaticas";
+            pnlTaticas.BackColor = Color.FromArgb(248, 249, 254);
+            pnlTaticas.Controls.Add(lblTotalTaticas);
+            pnlTaticas.Controls.Add(lblTaticas);
+            pnlTaticas.Dock = DockStyle.Fill;
+            pnlTaticas.Margin = new Padding(0, 0, 6, 6);
+            pnlTaticas.Padding = new Padding(10, 6, 10, 6);
+            //
+            // lblTotalTaticas
+            //
+            lblTotalTaticas.Name = "lblTotalTaticas";
+            lblTotalTaticas.Text = "—";
+            lblTotalTaticas.Dock = DockStyle.Fill;
+            lblTotalTaticas.Margin = new Padding(0);
+            lblTotalTaticas.AutoEllipsis = true;
+            lblTotalTaticas.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblTotalTaticas.ForeColor = Color.FromArgb(124, 58, 237);
+            lblTotalTaticas.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // lblTaticas
+            //
+            lblTaticas.Name = "lblTaticas";
+            lblTaticas.Text = "Táticas";
+            lblTaticas.Dock = DockStyle.Fill;
+            lblTaticas.Margin = new Padding(0);
+            lblTaticas.Dock = DockStyle.Top;
+            lblTaticas.Font = new Font("Segoe UI", 8.5F);
+            lblTaticas.ForeColor = Color.FromArgb(100, 116, 139);
+            lblTaticas.Height = 22;
+            //
+            // pnlAtletas
+            //
+            pnlAtletas.Name = "pnlAtletas";
+            pnlAtletas.BackColor = Color.FromArgb(248, 249, 254);
+            pnlAtletas.Controls.Add(lblTotalAtletas);
+            pnlAtletas.Controls.Add(lblAtletas);
+            pnlAtletas.Dock = DockStyle.Fill;
+            pnlAtletas.Margin = new Padding(0, 0, 6, 6);
+            pnlAtletas.Padding = new Padding(10, 6, 10, 6);
+            //
+            // lblTotalAtletas
+            //
+            lblTotalAtletas.Name = "lblTotalAtletas";
+            lblTotalAtletas.Text = "—";
+            lblTotalAtletas.Dock = DockStyle.Fill;
+            lblTotalAtletas.Margin = new Padding(0);
+            lblTotalAtletas.AutoEllipsis = true;
+            lblTotalAtletas.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblTotalAtletas.ForeColor = Color.FromArgb(124, 58, 237);
+            lblTotalAtletas.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // lblAtletas
+            //
+            lblAtletas.Name = "lblAtletas";
+            lblAtletas.Text = "Atletas";
+            lblAtletas.Dock = DockStyle.Fill;
+            lblAtletas.Margin = new Padding(0);
+            lblAtletas.Dock = DockStyle.Top;
+            lblAtletas.Font = new Font("Segoe UI", 8.5F);
+            lblAtletas.ForeColor = Color.FromArgb(100, 116, 139);
+            lblAtletas.Height = 22;
+            //
+            // pnlEquipes
+            //
+            pnlEquipes.Name = "pnlEquipes";
+            pnlEquipes.BackColor = Color.FromArgb(248, 249, 254);
+            pnlEquipes.Controls.Add(lblTotalEquipes);
+            pnlEquipes.Controls.Add(lblEquipes);
+            pnlEquipes.Dock = DockStyle.Fill;
+            pnlEquipes.Margin = new Padding(0, 0, 6, 6);
+            pnlEquipes.Padding = new Padding(10, 6, 10, 6);
+            //
+            // lblTotalEquipes
+            //
+            lblTotalEquipes.Name = "lblTotalEquipes";
+            lblTotalEquipes.Text = "—";
+            lblTotalEquipes.Dock = DockStyle.Fill;
+            lblTotalEquipes.Margin = new Padding(0);
+            lblTotalEquipes.AutoEllipsis = true;
+            lblTotalEquipes.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblTotalEquipes.ForeColor = Color.FromArgb(124, 58, 237);
+            lblTotalEquipes.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // lblEquipes
+            //
+            lblEquipes.Name = "lblEquipes";
+            lblEquipes.Text = "Equipes";
+            lblEquipes.Dock = DockStyle.Fill;
+            lblEquipes.Margin = new Padding(0);
+            lblEquipes.Dock = DockStyle.Top;
+            lblEquipes.Font = new Font("Segoe UI", 8.5F);
+            lblEquipes.ForeColor = Color.FromArgb(100, 116, 139);
+            lblEquipes.Height = 22;
+            //
+            // pnlQuadros
+            //
+            pnlQuadros.Name = "pnlQuadros";
+            pnlQuadros.BackColor = Color.FromArgb(248, 249, 254);
+            pnlQuadros.Controls.Add(lblTotalQuadros);
+            pnlQuadros.Controls.Add(lblQuadros);
+            pnlQuadros.Dock = DockStyle.Fill;
+            pnlQuadros.Margin = new Padding(0, 0, 6, 6);
+            pnlQuadros.Padding = new Padding(10, 6, 10, 6);
+            //
+            // lblTotalQuadros
+            //
+            lblTotalQuadros.Name = "lblTotalQuadros";
+            lblTotalQuadros.Text = "—";
+            lblTotalQuadros.Dock = DockStyle.Fill;
+            lblTotalQuadros.Margin = new Padding(0);
+            lblTotalQuadros.AutoEllipsis = true;
+            lblTotalQuadros.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblTotalQuadros.ForeColor = Color.FromArgb(124, 58, 237);
+            lblTotalQuadros.TextAlign = ContentAlignment.MiddleLeft;
+            //
+            // lblQuadros
+            //
+            lblQuadros.Name = "lblQuadros";
+            lblQuadros.Text = "Quadros";
+            lblQuadros.Dock = DockStyle.Fill;
+            lblQuadros.Margin = new Padding(0);
+            lblQuadros.Dock = DockStyle.Top;
+            lblQuadros.Font = new Font("Segoe UI", 8.5F);
+            lblQuadros.ForeColor = Color.FromArgb(100, 116, 139);
+            lblQuadros.Height = 22;
+            //
             // TelaInicial
-            // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            //
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoScroll = true;
-            BackColor = SystemColors.ActiveCaption;
-            Controls.Add(panelTelas);
-            Margin = new Padding(3, 4, 3, 4);
+            BackColor = Color.FromArgb(248, 249, 254);
+            Controls.Add(pnlConteudo);
+            Controls.Add(pnlCabecalho);
+            Font = new Font("Segoe UI", 9F);
+            ForeColor = Color.FromArgb(30, 27, 45);
             Name = "TelaInicial";
-            Size = new Size(726, 592);
-            panelTelas.ResumeLayout(false);
-            panelTelas.PerformLayout();
-            panel7.ResumeLayout(false);
-            panel7.PerformLayout();
-            panel9.ResumeLayout(false);
-            panel9.PerformLayout();
-            panel8.ResumeLayout(false);
-            panel8.PerformLayout();
-            panel5.ResumeLayout(false);
-            panel5.PerformLayout();
-            panel4.ResumeLayout(false);
-            panel4.PerformLayout();
-            panel6.ResumeLayout(false);
-            panel6.PerformLayout();
-            panel3.ResumeLayout(false);
-            panel3.PerformLayout();
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            Size = new Size(850, 803);
+            Load += TelaInicial_Load;
+            pnlQuadros.ResumeLayout(false);
+            pnlEquipes.ResumeLayout(false);
+            pnlAtletas.ResumeLayout(false);
+            pnlTaticas.ResumeLayout(false);
+            layoutEstatisticas.ResumeLayout(false);
+            layoutEstatisticas.PerformLayout();
+            layoutResumo.ResumeLayout(false);
+            layoutResumo.PerformLayout();
+            layoutListaEquipes.ResumeLayout(false);
+            layoutListaEquipes.PerformLayout();
+            layoutSecaoEquipes.ResumeLayout(false);
+            layoutSecaoEquipes.PerformLayout();
+            layoutLateral.ResumeLayout(false);
+            layoutLateral.PerformLayout();
+            layoutListaTaticas.ResumeLayout(false);
+            layoutListaTaticas.PerformLayout();
+            layoutCabecalhoTaticas.ResumeLayout(false);
+            layoutCabecalhoTaticas.PerformLayout();
+            layoutSecaoTaticas.ResumeLayout(false);
+            layoutSecaoTaticas.PerformLayout();
+            layoutPainel.ResumeLayout(false);
+            layoutPainel.PerformLayout();
+            layoutStatus.ResumeLayout(false);
+            layoutStatus.PerformLayout();
+            layoutAcessos.ResumeLayout(false);
+            layoutAcessos.PerformLayout();
+            layoutApresentacao.ResumeLayout(false);
+            layoutApresentacao.PerformLayout();
+            layoutHero.ResumeLayout(false);
+            layoutHero.PerformLayout();
+            layoutConteudo.ResumeLayout(false);
+            layoutConteudo.PerformLayout();
+            pnlConteudo.ResumeLayout(false);
+            pnlConteudo.PerformLayout();
+            menuUsuario.ResumeLayout(false);
+            pnlCabecalho.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private Panel panelTelas;
-        private Panel panel7;
-        private Panel panel9;
-        private Label label25;
-        private Label label24;
-        private Panel panel8;
-        private Label label22;
-        private Label label23;
-        private Label label21;
-        private Panel panel5;
-        private Button button18;
-        private Button button14;
-        private Button button13;
-        private Button button12;
-        private Label label20;
-        private Label label19;
-        private Panel panel4;
-        private Button button9;
-        private Button button10;
-        private Button button11;
-        private Label label13;
-        private Label label17;
-        private Label label18;
-        private Panel panel6;
-        private Button button15;
-        private Button button16;
-        private Button button17;
-        private Label label14;
-        private Label label15;
-        private Label label16;
-        private Panel panel3;
-        private Button button8;
-        private Button button7;
-        private Button button6;
-        private Label label12;
-        private Label label11;
-        private Label label10;
-        private Button button5;
-        private Label label9;
-        private Label label8;
-        private Label label7;
-        private Panel panel2;
-        private Button button4;
-        private Button button3;
-        private Button button2;
-        private Label label6;
-        private Label label5;
-        private Label label4;
-        private Label label3;
-        private Label label2;
-        private Panel panel1;
-        private Button button1;
-        private Label label1;
+        private Panel pnlCabecalho;
+        private Button btnUsuario;
+        private Label lblInicio;
+        private ContextMenuStrip menuUsuario;
+        private ToolStripMenuItem itemConfiguracoes;
+        private Panel pnlConteudo;
+        private TableLayoutPanel layoutConteudo;
+        private TableLayoutPanel layoutHero;
+        private TableLayoutPanel layoutApresentacao;
+        private Label lblBoasVindas;
+        private Label lblTituloProjeto;
+        private Label lblDescricao;
+        private TableLayoutPanel layoutAcessos;
+        private Button btnPrancheta;
+        private Button btnTaticas;
+        private Button btnEquipes;
+        private Button btnAtletas;
+        private TableLayoutPanel layoutStatus;
+        private Label lblStatusBanco;
+        private Button btnAtualizar;
+        private TableLayoutPanel layoutPainel;
+        private TableLayoutPanel layoutSecaoTaticas;
+        private TableLayoutPanel layoutCabecalhoTaticas;
+        private Label lblTituloTaticas;
+        private Button btnVerTaticas;
+        private Label lblEstadoTaticas;
+        private TableLayoutPanel layoutListaTaticas;
+        private TableLayoutPanel layoutLateral;
+        private TableLayoutPanel layoutSecaoEquipes;
+        private Label lblTituloEquipes;
+        private Label lblEstadoEquipes;
+        private TableLayoutPanel layoutListaEquipes;
+        private Button btnVerEquipes;
+        private TableLayoutPanel layoutResumo;
+        private Label lblVisaoGeral;
+        private TableLayoutPanel layoutEstatisticas;
+        private Panel pnlTaticas;
+        private Label lblTotalTaticas;
+        private Label lblTaticas;
+        private Panel pnlAtletas;
+        private Label lblTotalAtletas;
+        private Label lblAtletas;
+        private Panel pnlEquipes;
+        private Label lblTotalEquipes;
+        private Label lblEquipes;
+        private Panel pnlQuadros;
+        private Label lblTotalQuadros;
+        private Label lblQuadros;
     }
 }

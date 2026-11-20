@@ -1,26 +1,29 @@
 ﻿using MySql.Data.MySqlClient;
-using System.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Limk.VolleyBall
 {
     internal class ConexaoBD
     {
+        // Retorna a conexão fechada para quem precisa abrir de forma assíncrona.
+        public static MySqlConnection CriarConexao()
+        {
+            string porta = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
+            MySqlConnectionStringBuilder configuracao = new MySqlConnectionStringBuilder
+            {
+                Server = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost",
+                Port = uint.Parse(porta),
+                Database = Environment.GetEnvironmentVariable("DB_NAME") ?? "",
+                UserID = Environment.GetEnvironmentVariable("DB_USER") ?? "",
+                Password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "",
+                ConnectionTimeout = 5
+            };
+
+            return new MySqlConnection(configuracao.ConnectionString);
+        }
+
         public static MySqlConnection ObterConexao()
         {
-            string servidor = Environment.GetEnvironmentVariable("DB_SERVER");
-            string porta = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
-            string banco = Environment.GetEnvironmentVariable("DB_NAME");
-            string usuario = Environment.GetEnvironmentVariable("DB_USER");
-            string senha = Environment.GetEnvironmentVariable("DB_PASSWORD");
-
-            MessageBox.Show($"Lido do .env -> Servidor: {servidor} | Banco: {banco} | User: {usuario}", "Debug .env");
-
-            string stringConexao = $"Server={servidor};Port={porta};Database={banco};Uid = {usuario};Pwd={senha};";
-
-            MySqlConnection conexao = new MySqlConnection(stringConexao);
+            MySqlConnection conexao = CriarConexao();
             try
             {
                 conexao.Open();

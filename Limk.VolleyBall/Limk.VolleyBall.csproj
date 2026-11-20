@@ -54,4 +54,24 @@
       <DependentUpon>CartaoFaseControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="User Constrols\CartaoTaticaInicio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="User Constrols\CartaoTaticaInicio.Designer.cs">
+      <DependentUpon>CartaoTaticaInicio.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="User Constrols\CartaoTaticaInicio.resx">
+      <DependentUpon>CartaoTaticaInicio.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Update="User Constrols\CartaoEquipeInicio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="User Constrols\CartaoEquipeInicio.Designer.cs">
+      <DependentUpon>CartaoEquipeInicio.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="User Constrols\CartaoEquipeInicio.resx">
+      <DependentUpon>CartaoEquipeInicio.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
