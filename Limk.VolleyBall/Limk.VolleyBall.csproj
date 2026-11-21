@@ -57,6 +57,9 @@
     <Compile Update="User Constrols\TelaLogin.Designer.cs">
       <DependentUpon>TelaLogin.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Update="User Constrols\TelaLogin.resx">
+      <DependentUpon>TelaLogin.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

@@ -4,13 +4,6 @@ namespace Limk.VolleyBall.User_Constrols
 {
     partial class TelaLogin
     {
-        private static readonly Color CorMarca = Color.FromArgb(30, 21, 42);
-        private static readonly Color CorFundo = Color.FromArgb(248, 249, 254);
-        private static readonly Color CorBorda = Color.FromArgb(222, 215, 236);
-        private static readonly Color CorTexto = Color.FromArgb(30, 27, 45);
-        private static readonly Color CorTextoSecundario = Color.FromArgb(100, 116, 139);
-        private static readonly Color CorRoxa = Color.FromArgb(92, 48, 154);
-        private static readonly Color CorAcao = Color.FromArgb(124, 58, 237);
 
         private Panel pnlMarca;
         private TableLayoutPanel layoutMarca;
@@ -21,6 +14,11 @@ namespace Limk.VolleyBall.User_Constrols
         private Label lblPrancheta;
         private Panel pnlConteudo;
         private TableLayoutPanel layoutFormulario;
+        private TableLayoutPanel layoutCampoEmail;
+        private TableLayoutPanel layoutCampoSenha;
+        private Label lblTitulo;
+        private Label lblEmail;
+        private Label lblSenha;
         private Label lblInstrucao;
         private TextBox txtEmail;
         private TextBox txtSenha;
@@ -39,11 +37,13 @@ namespace Limk.VolleyBall.User_Constrols
             lblPrancheta = new Label();
             pnlConteudo = new Panel();
             layoutFormulario = new TableLayoutPanel();
-            Label lblTitulo = new Label();
+            layoutCampoEmail = new TableLayoutPanel();
+            layoutCampoSenha = new TableLayoutPanel();
+            lblTitulo = new Label();
             lblInstrucao = new Label();
-            Label lblEmail = new Label();
+            lblEmail = new Label();
             txtEmail = new TextBox();
-            Label lblSenha = new Label();
+            lblSenha = new Label();
             txtSenha = new TextBox();
             chkMostrarSenha = new CheckBox();
             btnEntrar = new Button();
@@ -54,14 +54,19 @@ namespace Limk.VolleyBall.User_Constrols
             layoutLogo.SuspendLayout();
             pnlConteudo.SuspendLayout();
             layoutFormulario.SuspendLayout();
+            layoutCampoEmail.SuspendLayout();
+            layoutCampoSenha.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)imgQuadra).BeginInit();
 
             pnlMarca.Name = "pnlMarca";
-            pnlMarca.BackColor = CorMarca;
+            pnlMarca.BackColor = Color.FromArgb(30, 21, 42);
             pnlMarca.Dock = DockStyle.Left;
             pnlMarca.Width = 325;
             pnlMarca.TabStop = false;
             pnlMarca.Controls.Add(layoutMarca);
 
+            layoutMarca.Name = "layoutMarca";
             layoutMarca.Dock = DockStyle.Fill;
             layoutMarca.Margin = new Padding(0);
             layoutMarca.Padding = new Padding(28);
@@ -89,6 +94,7 @@ namespace Limk.VolleyBall.User_Constrols
             layoutLogo.Controls.Add(imgLogo, 0, 0);
             layoutLogo.Controls.Add(lblMarca, 1, 0);
 
+            imgLogo.Name = "imgLogo";
             imgLogo.Anchor = AnchorStyles.Left;
             imgLogo.AccessibleName = "LIMK Volleyball";
             imgLogo.Image = Properties.Resources.LogoMenuLateral;
@@ -105,12 +111,14 @@ namespace Limk.VolleyBall.User_Constrols
             lblMarca.Text = "LIMK";
             lblMarca.TextAlign = ContentAlignment.MiddleLeft;
 
+            imgQuadra.Name = "imgQuadra";
             imgQuadra.Dock = DockStyle.Fill;
             imgQuadra.Image = Properties.Resources.Quadra;
             imgQuadra.Margin = new Padding(0);
             imgQuadra.SizeMode = PictureBoxSizeMode.Zoom;
             imgQuadra.TabStop = false;
 
+            lblPrancheta.Name = "lblPrancheta";
             lblPrancheta.AutoSize = true;
             lblPrancheta.Dock = DockStyle.Top;
             lblPrancheta.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
@@ -131,40 +139,104 @@ namespace Limk.VolleyBall.User_Constrols
             layoutFormulario.RowCount = 8;
             layoutFormulario.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             layoutFormulario.Padding = new Padding(26, 24, 26, 24);
+            layoutFormulario.Location = new Point(61, 110);
             layoutFormulario.Size = new Size(452, 360);
-            layoutFormulario.Paint += (_, e) => ControlPaint.DrawBorder(e.Graphics, layoutFormulario.ClientRectangle, CorBorda, ButtonBorderStyle.Solid);
-            for (int linha = 0; linha < layoutFormulario.RowCount; linha++)
-                layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFormulario.Paint += layoutFormulario_Paint;
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
+            // layoutCampoEmail
+            layoutCampoEmail.Name = "layoutCampoEmail";
+            layoutCampoEmail.BackColor = Color.FromArgb(248, 249, 254);
+            layoutCampoEmail.ColumnCount = 1;
+            layoutCampoEmail.RowCount = 3;
+            layoutCampoEmail.Dock = DockStyle.Top;
+            layoutCampoEmail.Margin = new Padding(0, 0, 0, 14);
+            layoutCampoEmail.Padding = new Padding(12, 1, 1, 1);
+            layoutCampoEmail.MinimumSize = new Size(0, 42);
+            layoutCampoEmail.Height = 42;
+            layoutCampoEmail.TabIndex = 0;
+            layoutCampoEmail.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutCampoEmail.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            layoutCampoEmail.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutCampoEmail.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            layoutCampoEmail.Controls.Add(txtEmail, 0, 1);
+            layoutCampoEmail.Paint += campo_Paint;
+            layoutCampoEmail.Enter += campo_FocoAlterado;
+            layoutCampoEmail.Leave += campo_FocoAlterado;
+
+            // layoutCampoSenha
+            layoutCampoSenha.Name = "layoutCampoSenha";
+            layoutCampoSenha.BackColor = Color.FromArgb(248, 249, 254);
+            layoutCampoSenha.ColumnCount = 2;
+            layoutCampoSenha.RowCount = 3;
+            layoutCampoSenha.Dock = DockStyle.Top;
+            layoutCampoSenha.Margin = new Padding(0, 0, 0, 18);
+            layoutCampoSenha.Padding = new Padding(12, 1, 1, 1);
+            layoutCampoSenha.MinimumSize = new Size(0, 42);
+            layoutCampoSenha.Height = 42;
+            layoutCampoSenha.TabIndex = 1;
+            layoutCampoSenha.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutCampoSenha.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 82F));
+            layoutCampoSenha.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            layoutCampoSenha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutCampoSenha.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            layoutCampoSenha.Controls.Add(txtSenha, 0, 1);
+            layoutCampoSenha.Controls.Add(chkMostrarSenha, 1, 0);
+            layoutCampoSenha.SetRowSpan(chkMostrarSenha, 3);
+            layoutCampoSenha.Paint += campo_Paint;
+            layoutCampoSenha.Enter += campo_FocoAlterado;
+            layoutCampoSenha.Leave += campo_FocoAlterado;
+
+            lblTitulo.Name = "lblTitulo";
             lblTitulo.AutoSize = true;
             lblTitulo.Font = new Font("Segoe UI", 21F, FontStyle.Bold);
             lblTitulo.Margin = new Padding(0, 0, 0, 4);
             lblTitulo.Text = "Entre na sua conta";
 
+            lblInstrucao.Name = "lblInstrucao";
             lblInstrucao.AutoSize = true;
             lblInstrucao.Font = new Font("Segoe UI", 10F);
-            lblInstrucao.ForeColor = CorTextoSecundario;
+            lblInstrucao.ForeColor = Color.FromArgb(100, 116, 139);
             lblInstrucao.Margin = new Padding(0, 0, 0, 19);
             lblInstrucao.Text = "Use o e-mail cadastrado no LIMK.";
 
+            lblEmail.Name = "lblEmail";
             lblEmail.AutoSize = true;
             lblEmail.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblEmail.Margin = new Padding(0, 0, 0, 6);
             lblEmail.Text = "E-mail";
 
             txtEmail.Name = "txtEmail";
+            txtEmail.BackColor = Color.FromArgb(248, 249, 254);
+            txtEmail.BorderStyle = BorderStyle.None;
+            txtEmail.Dock = DockStyle.Fill;
+            txtEmail.Font = new Font("Segoe UI", 11F);
+            txtEmail.Margin = new Padding(0);
             txtEmail.AccessibleName = "E-mail";
             txtEmail.MaxLength = 254;
             txtEmail.PlaceholderText = "nome@exemplo.com";
             txtEmail.TabIndex = 0;
             txtEmail.TextChanged += campo_TextChanged;
 
+            lblSenha.Name = "lblSenha";
             lblSenha.AutoSize = true;
             lblSenha.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblSenha.Margin = new Padding(0, 0, 0, 6);
             lblSenha.Text = "Senha";
 
             txtSenha.Name = "txtSenha";
+            txtSenha.BackColor = Color.FromArgb(248, 249, 254);
+            txtSenha.BorderStyle = BorderStyle.None;
+            txtSenha.Dock = DockStyle.Fill;
+            txtSenha.Font = new Font("Segoe UI", 11F);
+            txtSenha.Margin = new Padding(0);
             txtSenha.AccessibleName = "Senha";
             txtSenha.MaxLength = 254;
             txtSenha.TabIndex = 0;
@@ -182,7 +254,7 @@ namespace Limk.VolleyBall.User_Constrols
             chkMostrarSenha.FlatAppearance.MouseOverBackColor = Color.FromArgb(233, 221, 251);
             chkMostrarSenha.FlatStyle = FlatStyle.Flat;
             chkMostrarSenha.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            chkMostrarSenha.ForeColor = CorRoxa;
+            chkMostrarSenha.ForeColor = Color.FromArgb(92, 48, 154);
             chkMostrarSenha.Margin = new Padding(8, 3, 3, 3);
             chkMostrarSenha.TabIndex = 1;
             chkMostrarSenha.Text = "Mostrar";
@@ -191,7 +263,7 @@ namespace Limk.VolleyBall.User_Constrols
             chkMostrarSenha.CheckedChanged += chkMostrarSenha_CheckedChanged;
 
             btnEntrar.Name = "btnEntrar";
-            btnEntrar.BackColor = CorAcao;
+            btnEntrar.BackColor = Color.FromArgb(124, 58, 237);
             btnEntrar.Cursor = Cursors.Hand;
             btnEntrar.Dock = DockStyle.Top;
             btnEntrar.FlatAppearance.BorderSize = 0;
@@ -209,7 +281,7 @@ namespace Limk.VolleyBall.User_Constrols
 
             lblMensagem.Name = "lblMensagem";
             lblMensagem.AutoSize = true;
-            lblMensagem.ForeColor = CorTextoSecundario;
+            lblMensagem.ForeColor = Color.FromArgb(100, 116, 139);
             lblMensagem.LiveSetting = AutomationLiveSetting.Polite;
             lblMensagem.Margin = new Padding(0, 10, 0, 0);
             lblMensagem.Visible = false;
@@ -217,22 +289,28 @@ namespace Limk.VolleyBall.User_Constrols
             layoutFormulario.Controls.Add(lblTitulo, 0, 0);
             layoutFormulario.Controls.Add(lblInstrucao, 0, 1);
             layoutFormulario.Controls.Add(lblEmail, 0, 2);
-            layoutFormulario.Controls.Add(CriarCampo(txtEmail, null, 0, 14), 0, 3);
+            layoutFormulario.Controls.Add(layoutCampoEmail, 0, 3);
             layoutFormulario.Controls.Add(lblSenha, 0, 4);
-            layoutFormulario.Controls.Add(CriarCampo(txtSenha, chkMostrarSenha, 1, 18), 0, 5);
+            layoutFormulario.Controls.Add(layoutCampoSenha, 0, 5);
             layoutFormulario.Controls.Add(btnEntrar, 0, 6);
             layoutFormulario.Controls.Add(lblMensagem, 0, 7);
 
             AccessibleName = "Acesso ao LIMK Volleyball";
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            BackColor = CorFundo;
+            BackColor = Color.FromArgb(248, 249, 254);
             Controls.Add(pnlConteudo);
             Controls.Add(pnlMarca);
             Font = new Font("Segoe UI", 9F);
-            ForeColor = CorTexto;
+            ForeColor = Color.FromArgb(30, 27, 45);
             Name = "TelaLogin";
             Size = new Size(900, 590);
+            layoutCampoEmail.ResumeLayout(false);
+            layoutCampoEmail.PerformLayout();
+            layoutCampoSenha.ResumeLayout(false);
+            layoutCampoSenha.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)imgLogo).EndInit();
+            ((System.ComponentModel.ISupportInitialize)imgQuadra).EndInit();
             layoutFormulario.ResumeLayout(false);
             pnlConteudo.ResumeLayout(false);
             layoutLogo.ResumeLayout(false);
