@@ -1,668 +1,750 @@
-﻿namespace Limk.VolleyBall.User_Constrols
+namespace Limk.VolleyBall.User_Constrols
 {
     partial class TelaAtletas
     {
-        /// <summary> 
-        /// Variável de designer necessária.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
-        /// Limpar os recursos que estão sendo usados.
-        /// </summary>
-        /// <param name="disposing">true se for necessário descartar os recursos gerenciados; caso contrário, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing)
+                components?.Dispose();
+
             base.Dispose(disposing);
         }
 
         #region Código gerado pelo Designer de Componentes
 
-        /// <summary> 
-        /// Método necessário para suporte ao Designer - não modifique 
-        /// o conteúdo deste método com o editor de código.
-        /// </summary>
         private void InitializeComponent()
         {
-            btnCadastrarAtletas = new Button();
-            lblTitulo = new Label();
-            cmbEquipe = new ComboBox();
-            label1 = new Label();
             panel1 = new Panel();
-            panel6 = new Panel();
-            label13 = new Label();
-            label12 = new Label();
-            lblQtdAtletas = new Label();
-            label10 = new Label();
-            panel2 = new Panel();
-            label14 = new Label();
-            lblPorcentagem = new Label();
-            label11 = new Label();
+            layoutTela = new TableLayoutPanel();
+            painelCabecalho = new TableLayoutPanel();
+            lblTitulo = new Label();
+            label1 = new Label();
+            acoesCabecalho = new FlowLayoutPanel();
+            cmbEquipe = new ComboBox();
+            btnCadastrarAtletas = new Button();
+            painelFiltros = new FlowLayoutPanel();
+            txtbBuscarAtleta = new TextBox();
+            btnFiltroTodosAtletas = new Button();
+            btnFiltroLevAtletas = new Button();
+            btnFiltroPontAtleta = new Button();
+            btnFiltroCentAtletas = new Button();
+            btnFiltroOpostoAtletas = new Button();
+            btnFiltroLibeAtletas = new Button();
+            layoutCorpo = new TableLayoutPanel();
             panel5 = new Panel();
             dataGridViewAtletas = new DataGridView();
-            panel4 = new Panel();
-            btnFiltroLibeAtletas = new Button();
-            txtbBuscarAtleta = new TextBox();
-            btnFiltroCentAtletas = new Button();
-            btnFiltroTodosAtletas = new Button();
-            btnFiltroPontAtleta = new Button();
-            btnFiltroLevAtletas = new Button();
-            panel3 = new Panel();
             panelFichaAtleta = new Panel();
-            dateTimePicker1 = new DateTimePicker();
-            label9 = new Label();
+            painelRolarFicha = new Panel();
+            layoutFicha = new TableLayoutPanel();
+            layoutRodapeFicha = new TableLayoutPanel();
+            label2 = new Label();
             label8 = new Label();
             txtbNomeCompleto = new TextBox();
-            btnLimparAtleta = new Button();
-            btnSalvarAtleta = new Button();
-            label7 = new Label();
-            checkBoxAtletaTitular = new CheckBox();
-            label6 = new Label();
-            txtbEquipeAtleta = new TextBox();
-            label5 = new Label();
-            cmbPosicao = new ComboBox();
-            txtbNumCamisa = new TextBox();
-            txtbNomeCamisa = new TextBox();
-            label4 = new Label();
             label3 = new Label();
-            label2 = new Label();
+            txtbNomeCamisa = new TextBox();
+            label9 = new Label();
+            dateTimePicker1 = new DateTimePicker();
+            label6 = new Label();
+            cmbEquipeAtleta = new ComboBox();
+            layoutCamisa = new TableLayoutPanel();
+            label4 = new Label();
+            txtbNumCamisa = new TextBox();
+            checkBoxAtletaTitular = new CheckBox();
+            label5 = new Label();
+            listaPosicoes = new CheckedListBox();
+            acoesFicha = new FlowLayoutPanel();
+            btnSalvarAtleta = new Button();
+            btnLimparAtleta = new Button();
+            lblStatusAtleta = new Label();
+            layoutResumo = new TableLayoutPanel();
+            painelTotal = new TableLayoutPanel();
+            label10 = new Label();
+            lblQtdAtletas = new Label();
+            label13 = new Label();
+            painelCobertura = new TableLayoutPanel();
+            label11 = new Label();
+            lblPorcentagem = new Label();
+            label14 = new Label();
+            DataGridViewCellStyle linhaAlternada = new DataGridViewCellStyle();
+            linhaAlternada.BackColor = Color.FromArgb(248, 249, 254);
             panel1.SuspendLayout();
-            panel6.SuspendLayout();
-            panel2.SuspendLayout();
+            layoutTela.SuspendLayout();
+            painelCabecalho.SuspendLayout();
+            acoesCabecalho.SuspendLayout();
+            painelFiltros.SuspendLayout();
+            layoutCorpo.SuspendLayout();
             panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewAtletas).BeginInit();
-            panel4.SuspendLayout();
-            panel3.SuspendLayout();
             panelFichaAtleta.SuspendLayout();
+            painelRolarFicha.SuspendLayout();
+            layoutFicha.SuspendLayout();
+            layoutRodapeFicha.SuspendLayout();
+            layoutCamisa.SuspendLayout();
+            acoesFicha.SuspendLayout();
+            layoutResumo.SuspendLayout();
+            painelTotal.SuspendLayout();
+            painelCobertura.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewAtletas).BeginInit();
             SuspendLayout();
-            // 
-            // btnCadastrarAtletas
-            // 
-            btnCadastrarAtletas.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
+            panel1.AutoScroll = true;
+            panel1.Dock = DockStyle.Fill;
+            panel1.Name = "panel1";
+            panel1.TabIndex = 0;
+            panel1.Controls.Add(layoutTela);
+
+            layoutTela.Dock = DockStyle.Fill;
+            layoutTela.Margin = Padding.Empty;
+            layoutTela.Name = "layoutTela";
+            layoutTela.Padding = new Padding(10);
+            layoutTela.TabIndex = 0;
+            layoutTela.ColumnCount = 1;
+            layoutTela.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutTela.RowCount = 4;
+            layoutTela.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutTela.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutTela.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutTela.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutTela.Controls.Add(painelCabecalho, 0, 0);
+            layoutTela.Controls.Add(painelFiltros, 0, 1);
+            layoutTela.Controls.Add(layoutCorpo, 0, 2);
+            layoutTela.Controls.Add(layoutResumo, 0, 3);
+
+            painelCabecalho.AutoSize = true;
+            painelCabecalho.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            painelCabecalho.BackColor = Color.White;
+            painelCabecalho.Dock = DockStyle.Fill;
+            painelCabecalho.Margin = new Padding(0, 0, 0, 8);
+            painelCabecalho.Name = "painelCabecalho";
+            painelCabecalho.Padding = new Padding(10, 8, 10, 4);
+            painelCabecalho.TabIndex = 0;
+            painelCabecalho.ColumnCount = 1;
+            painelCabecalho.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            painelCabecalho.RowCount = 3;
+            painelCabecalho.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            painelCabecalho.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            painelCabecalho.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+            painelCabecalho.Controls.Add(lblTitulo, 0, 0);
+            painelCabecalho.Controls.Add(label1, 0, 1);
+            painelCabecalho.Controls.Add(acoesCabecalho, 0, 2);
+            lblTitulo.AutoSize = true;
+            lblTitulo.Dock = DockStyle.Top;
+            lblTitulo.Margin = new Padding(0, 0, 0, 4);
+            lblTitulo.Name = "lblTitulo";
+            lblTitulo.Text = "Gerenciamento de Atletas";
+            lblTitulo.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            label1.AutoSize = true;
+            label1.Dock = DockStyle.Top;
+            label1.Margin = new Padding(0, 0, 0, 8);
+            label1.Name = "label1";
+            label1.Text = "Gerencie o elenco e as posições da sua equipe.";
+            label1.ForeColor = Color.FromArgb(100, 116, 139);
+
+            acoesCabecalho.AutoSize = true;
+            acoesCabecalho.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            acoesCabecalho.Dock = DockStyle.Fill;
+            acoesCabecalho.FlowDirection = FlowDirection.LeftToRight;
+            acoesCabecalho.Margin = Padding.Empty;
+            acoesCabecalho.Name = "acoesCabecalho";
+            acoesCabecalho.WrapContents = true;
+            acoesCabecalho.TabIndex = 0;
+            acoesCabecalho.Controls.Add(cmbEquipe);
+            acoesCabecalho.Controls.Add(btnCadastrarAtletas);
+            cmbEquipe.AccessibleName = "Filtrar por equipe";
+            cmbEquipe.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEquipe.FormattingEnabled = true;
+            cmbEquipe.Margin = new Padding(0, 2, 10, 4);
+            cmbEquipe.Name = "cmbEquipe";
+            cmbEquipe.Size = new Size(198, 23);
+            cmbEquipe.TabIndex = 0;
+            btnCadastrarAtletas.AutoSize = true;
+            btnCadastrarAtletas.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             btnCadastrarAtletas.BackColor = Color.FromArgb(123, 57, 237);
-            btnCadastrarAtletas.BackgroundImageLayout = ImageLayout.None;
-            btnCadastrarAtletas.FlatAppearance.BorderColor = Color.FromArgb(123, 57, 237);
             btnCadastrarAtletas.FlatAppearance.BorderSize = 0;
             btnCadastrarAtletas.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
             btnCadastrarAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(141, 79, 255);
             btnCadastrarAtletas.FlatStyle = FlatStyle.Flat;
-            btnCadastrarAtletas.Font = new Font("Arial", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnCadastrarAtletas.ForeColor = SystemColors.Window;
-            btnCadastrarAtletas.Location = new Point(496, 8);
+            btnCadastrarAtletas.ForeColor = Color.White;
+            btnCadastrarAtletas.Margin = new Padding(0, 0, 6, 4);
+            btnCadastrarAtletas.MinimumSize = new Size(0, 28);
             btnCadastrarAtletas.Name = "btnCadastrarAtletas";
-            btnCadastrarAtletas.Size = new Size(125, 23);
-            btnCadastrarAtletas.TabIndex = 0;
-            btnCadastrarAtletas.Text = "➕ Cadastrar Atleta";
+            btnCadastrarAtletas.Padding = new Padding(8, 0, 8, 0);
+            btnCadastrarAtletas.TabIndex = 1;
+            btnCadastrarAtletas.Text = "+ Cadastrar atleta";
             btnCadastrarAtletas.UseVisualStyleBackColor = false;
-            // 
-            // lblTitulo
-            // 
-            lblTitulo.AutoSize = true;
-            lblTitulo.Font = new Font("Arial Narrow", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitulo.Location = new Point(2, 2);
-            lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new Size(168, 20);
-            lblTitulo.TabIndex = 1;
-            lblTitulo.Text = "Gerenciamento de Atletas";
-            // 
-            // cmbEquipe
-            // 
-            cmbEquipe.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            cmbEquipe.FormattingEnabled = true;
-            cmbEquipe.Location = new Point(338, 8);
-            cmbEquipe.Name = "cmbEquipe";
-            cmbEquipe.Size = new Size(152, 23);
-            cmbEquipe.TabIndex = 2;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.BackColor = Color.Transparent;
-            label1.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(3, 19);
-            label1.Name = "label1";
-            label1.Size = new Size(307, 14);
-            label1.TabIndex = 3;
-            label1.Text = "Gerencie o elenco de atletas e posições táticas da sua equipe";
-            // 
-            // panel1
-            // 
-            panel1.Controls.Add(panel6);
-            panel1.Controls.Add(panel2);
-            panel1.Controls.Add(panel5);
-            panel1.Controls.Add(panel4);
-            panel1.Controls.Add(panel3);
-            panel1.Controls.Add(panelFichaAtleta);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(634, 444);
-            panel1.TabIndex = 4;
-            // 
-            // panel6
-            // 
-            panel6.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panel6.BackColor = SystemColors.HighlightText;
-            panel6.Controls.Add(label13);
-            panel6.Controls.Add(label12);
-            panel6.Controls.Add(lblQtdAtletas);
-            panel6.Controls.Add(label10);
-            panel6.Location = new Point(322, 399);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(308, 36);
-            panel6.TabIndex = 9;
-            // 
-            // label13
-            // 
-            label13.Anchor = AnchorStyles.Right;
-            label13.AutoSize = true;
-            label13.Font = new Font("Arial Narrow", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label13.Location = new Point(245, 10);
-            label13.Name = "label13";
-            label13.Size = new Size(63, 15);
-            label13.TabIndex = 5;
-            label13.Text = "Suas equipes";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Font = new Font("Arial Narrow", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label12.Location = new Point(69, 17);
-            label12.Name = "label12";
-            label12.Size = new Size(62, 15);
-            label12.TabIndex = 4;
-            label12.Text = "NO ELENCO";
-            // 
-            // lblQtdAtletas
-            // 
-            lblQtdAtletas.AutoSize = true;
-            lblQtdAtletas.Font = new Font("Arial", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblQtdAtletas.Location = new Point(49, 17);
-            lblQtdAtletas.Name = "lblQtdAtletas";
-            lblQtdAtletas.Size = new Size(14, 15);
-            lblQtdAtletas.TabIndex = 3;
-            lblQtdAtletas.Text = "0";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Arial Narrow", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(49, 2);
-            label10.Name = "label10";
-            label10.Size = new Size(110, 15);
-            label10.TabIndex = 0;
-            label10.Text = "POSIÇÕES COBERTAS";
-            // 
-            // panel2
-            // 
-            panel2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panel2.BackColor = SystemColors.HighlightText;
-            panel2.Controls.Add(label14);
-            panel2.Controls.Add(lblPorcentagem);
-            panel2.Controls.Add(label11);
-            panel2.Location = new Point(8, 399);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(308, 36);
-            panel2.TabIndex = 8;
-            // 
-            // label14
-            // 
-            label14.Anchor = AnchorStyles.Right;
-            label14.AutoSize = true;
-            label14.Font = new Font("Arial Narrow", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label14.ForeColor = SystemColors.ControlText;
-            label14.Location = new Point(252, 10);
-            label14.Name = "label14";
-            label14.Size = new Size(95, 15);
-            label14.TabIndex = 6;
-            label14.Text = "0 posições no elenco";
-            // 
-            // lblPorcentagem
-            // 
-            lblPorcentagem.AutoSize = true;
-            lblPorcentagem.Font = new Font("Arial", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPorcentagem.Location = new Point(43, 17);
-            lblPorcentagem.Name = "lblPorcentagem";
-            lblPorcentagem.Size = new Size(24, 15);
-            lblPorcentagem.TabIndex = 2;
-            lblPorcentagem.Text = "0/5";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Font = new Font("Arial Narrow", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label11.Location = new Point(43, 1);
-            label11.Name = "label11";
-            label11.Size = new Size(110, 15);
-            label11.TabIndex = 1;
-            label11.Text = "POSIÇÕES COBERTAS";
-            // 
-            // panel5
-            // 
-            panel5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panel5.BackColor = SystemColors.HighlightText;
-            panel5.Controls.Add(dataGridViewAtletas);
-            panel5.Location = new Point(7, 78);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(411, 312);
-            panel5.TabIndex = 7;
-            // 
-            // dataGridViewAtletas
-            // 
-            dataGridViewAtletas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewAtletas.Dock = DockStyle.Fill;
-            dataGridViewAtletas.Location = new Point(0, 0);
-            dataGridViewAtletas.Name = "dataGridViewAtletas";
-            dataGridViewAtletas.Size = new Size(411, 312);
-            dataGridViewAtletas.TabIndex = 0;
-            // 
-            // panel4
-            // 
-            panel4.BackColor = SystemColors.HighlightText;
-            panel4.Controls.Add(btnFiltroLibeAtletas);
-            panel4.Controls.Add(txtbBuscarAtleta);
-            panel4.Controls.Add(btnFiltroCentAtletas);
-            panel4.Controls.Add(btnFiltroTodosAtletas);
-            panel4.Controls.Add(btnFiltroPontAtleta);
-            panel4.Controls.Add(btnFiltroLevAtletas);
-            panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 37);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(634, 34);
-            panel4.TabIndex = 5;
-            // 
-            // btnFiltroLibeAtletas
-            // 
-            btnFiltroLibeAtletas.Anchor = AnchorStyles.Right;
-            btnFiltroLibeAtletas.BackColor = Color.FromArgb(100, 116, 139);
-            btnFiltroLibeAtletas.BackgroundImageLayout = ImageLayout.None;
-            btnFiltroLibeAtletas.FlatAppearance.BorderSize = 0;
-            btnFiltroLibeAtletas.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
-            btnFiltroLibeAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
-            btnFiltroLibeAtletas.FlatStyle = FlatStyle.Flat;
-            btnFiltroLibeAtletas.Font = new Font("Arial", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnFiltroLibeAtletas.ForeColor = SystemColors.Window;
-            btnFiltroLibeAtletas.Location = new Point(548, 6);
-            btnFiltroLibeAtletas.Name = "btnFiltroLibeAtletas";
-            btnFiltroLibeAtletas.Size = new Size(63, 23);
-            btnFiltroLibeAtletas.TabIndex = 9;
-            btnFiltroLibeAtletas.Text = "Líbero";
-            btnFiltroLibeAtletas.UseVisualStyleBackColor = false;
-            // 
-            // txtbBuscarAtleta
-            // 
-            txtbBuscarAtleta.BackColor = SystemColors.ControlLight;
-            txtbBuscarAtleta.BorderStyle = BorderStyle.FixedSingle;
-            txtbBuscarAtleta.Location = new Point(9, 6);
+
+            painelFiltros.AutoSize = true;
+            painelFiltros.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            painelFiltros.Dock = DockStyle.Fill;
+            painelFiltros.FlowDirection = FlowDirection.LeftToRight;
+            painelFiltros.Margin = new Padding(0, 0, 0, 8);
+            painelFiltros.Name = "painelFiltros";
+            painelFiltros.WrapContents = true;
+            painelFiltros.BackColor = Color.White;
+            painelFiltros.Padding = new Padding(10, 8, 10, 4);
+            painelFiltros.TabIndex = 1;
+            painelFiltros.Controls.Add(txtbBuscarAtleta);
+            painelFiltros.Controls.Add(btnFiltroTodosAtletas);
+            painelFiltros.Controls.Add(btnFiltroLevAtletas);
+            painelFiltros.Controls.Add(btnFiltroPontAtleta);
+            painelFiltros.Controls.Add(btnFiltroCentAtletas);
+            painelFiltros.Controls.Add(btnFiltroOpostoAtletas);
+            painelFiltros.Controls.Add(btnFiltroLibeAtletas);
+            txtbBuscarAtleta.AccessibleName = "Buscar atleta";
+            txtbBuscarAtleta.Margin = new Padding(0, 2, 10, 4);
             txtbBuscarAtleta.Name = "txtbBuscarAtleta";
-            txtbBuscarAtleta.PlaceholderText = "🔍 Pesquise o nome do atleta";
-            txtbBuscarAtleta.Size = new Size(242, 23);
+            txtbBuscarAtleta.PlaceholderText = "Busque pelo nome ou apelido";
+            txtbBuscarAtleta.Size = new Size(202, 23);
             txtbBuscarAtleta.TabIndex = 0;
-            // 
-            // btnFiltroCentAtletas
-            // 
-            btnFiltroCentAtletas.Anchor = AnchorStyles.Right;
-            btnFiltroCentAtletas.BackColor = Color.FromArgb(100, 116, 139);
-            btnFiltroCentAtletas.BackgroundImageLayout = ImageLayout.None;
-            btnFiltroCentAtletas.FlatAppearance.BorderSize = 0;
-            btnFiltroCentAtletas.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
-            btnFiltroCentAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
-            btnFiltroCentAtletas.FlatStyle = FlatStyle.Flat;
-            btnFiltroCentAtletas.Font = new Font("Arial", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnFiltroCentAtletas.ForeColor = SystemColors.Window;
-            btnFiltroCentAtletas.Location = new Point(480, 6);
-            btnFiltroCentAtletas.Name = "btnFiltroCentAtletas";
-            btnFiltroCentAtletas.Size = new Size(63, 23);
-            btnFiltroCentAtletas.TabIndex = 8;
-            btnFiltroCentAtletas.Text = "Central";
-            btnFiltroCentAtletas.UseVisualStyleBackColor = false;
-            btnFiltroCentAtletas.Click += btnFiltroCentAtletas_Click;
-            // 
-            // btnFiltroTodosAtletas
-            // 
-            btnFiltroTodosAtletas.Anchor = AnchorStyles.Right;
-            btnFiltroTodosAtletas.BackColor = Color.FromArgb(100, 116, 139);
-            btnFiltroTodosAtletas.BackgroundImageLayout = ImageLayout.None;
+            btnFiltroTodosAtletas.AutoSize = true;
+            btnFiltroTodosAtletas.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnFiltroTodosAtletas.BackColor = Color.FromArgb(123, 57, 237);
             btnFiltroTodosAtletas.FlatAppearance.BorderSize = 0;
             btnFiltroTodosAtletas.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
-            btnFiltroTodosAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
+            btnFiltroTodosAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(141, 79, 255);
             btnFiltroTodosAtletas.FlatStyle = FlatStyle.Flat;
-            btnFiltroTodosAtletas.Font = new Font("Arial", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnFiltroTodosAtletas.ForeColor = SystemColors.Window;
-            btnFiltroTodosAtletas.Location = new Point(257, 6);
+            btnFiltroTodosAtletas.ForeColor = Color.White;
+            btnFiltroTodosAtletas.Margin = new Padding(0, 0, 6, 4);
+            btnFiltroTodosAtletas.MinimumSize = new Size(0, 28);
             btnFiltroTodosAtletas.Name = "btnFiltroTodosAtletas";
-            btnFiltroTodosAtletas.Size = new Size(63, 23);
-            btnFiltroTodosAtletas.TabIndex = 5;
+            btnFiltroTodosAtletas.Padding = new Padding(8, 0, 8, 0);
+            btnFiltroTodosAtletas.TabIndex = 1;
             btnFiltroTodosAtletas.Text = "Todos";
             btnFiltroTodosAtletas.UseVisualStyleBackColor = false;
-            btnFiltroTodosAtletas.Click += btnFiltroTodosAtletas_Click;
-            // 
-            // btnFiltroPontAtleta
-            // 
-            btnFiltroPontAtleta.Anchor = AnchorStyles.Right;
-            btnFiltroPontAtleta.BackColor = Color.FromArgb(100, 116, 139);
-            btnFiltroPontAtleta.BackgroundImageLayout = ImageLayout.None;
-            btnFiltroPontAtleta.FlatAppearance.BorderSize = 0;
-            btnFiltroPontAtleta.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
-            btnFiltroPontAtleta.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
-            btnFiltroPontAtleta.FlatStyle = FlatStyle.Flat;
-            btnFiltroPontAtleta.Font = new Font("Arial", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnFiltroPontAtleta.ForeColor = SystemColors.Window;
-            btnFiltroPontAtleta.Location = new Point(411, 6);
-            btnFiltroPontAtleta.Name = "btnFiltroPontAtleta";
-            btnFiltroPontAtleta.Size = new Size(63, 23);
-            btnFiltroPontAtleta.TabIndex = 7;
-            btnFiltroPontAtleta.Text = "Ponteiro";
-            btnFiltroPontAtleta.UseVisualStyleBackColor = false;
-            btnFiltroPontAtleta.Click += btnFiltroPontAtleta_Click;
-            // 
-            // btnFiltroLevAtletas
-            // 
-            btnFiltroLevAtletas.Anchor = AnchorStyles.Right;
+            btnFiltroLevAtletas.AutoSize = true;
+            btnFiltroLevAtletas.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             btnFiltroLevAtletas.BackColor = Color.FromArgb(100, 116, 139);
-            btnFiltroLevAtletas.BackgroundImageLayout = ImageLayout.None;
             btnFiltroLevAtletas.FlatAppearance.BorderSize = 0;
             btnFiltroLevAtletas.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
             btnFiltroLevAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
             btnFiltroLevAtletas.FlatStyle = FlatStyle.Flat;
-            btnFiltroLevAtletas.Font = new Font("Arial", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnFiltroLevAtletas.ForeColor = SystemColors.Window;
-            btnFiltroLevAtletas.Location = new Point(326, 6);
+            btnFiltroLevAtletas.ForeColor = Color.White;
+            btnFiltroLevAtletas.Margin = new Padding(0, 0, 6, 4);
+            btnFiltroLevAtletas.MinimumSize = new Size(0, 28);
             btnFiltroLevAtletas.Name = "btnFiltroLevAtletas";
-            btnFiltroLevAtletas.Size = new Size(79, 23);
-            btnFiltroLevAtletas.TabIndex = 6;
+            btnFiltroLevAtletas.Padding = new Padding(8, 0, 8, 0);
+            btnFiltroLevAtletas.TabIndex = 2;
             btnFiltroLevAtletas.Text = "Levantador";
             btnFiltroLevAtletas.UseVisualStyleBackColor = false;
-            btnFiltroLevAtletas.Click += btnFiltroLevAtletas_Click;
-            // 
-            // panel3
-            // 
-            panel3.Controls.Add(lblTitulo);
-            panel3.Controls.Add(btnCadastrarAtletas);
-            panel3.Controls.Add(label1);
-            panel3.Controls.Add(cmbEquipe);
-            panel3.Dock = DockStyle.Top;
-            panel3.Location = new Point(0, 0);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(634, 37);
-            panel3.TabIndex = 4;
-            // 
-            // panelFichaAtleta
-            // 
-            panelFichaAtleta.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            panelFichaAtleta.BackColor = SystemColors.HighlightText;
-            panelFichaAtleta.Controls.Add(dateTimePicker1);
-            panelFichaAtleta.Controls.Add(label9);
-            panelFichaAtleta.Controls.Add(label8);
-            panelFichaAtleta.Controls.Add(txtbNomeCompleto);
-            panelFichaAtleta.Controls.Add(btnLimparAtleta);
-            panelFichaAtleta.Controls.Add(btnSalvarAtleta);
-            panelFichaAtleta.Controls.Add(label7);
-            panelFichaAtleta.Controls.Add(checkBoxAtletaTitular);
-            panelFichaAtleta.Controls.Add(label6);
-            panelFichaAtleta.Controls.Add(txtbEquipeAtleta);
-            panelFichaAtleta.Controls.Add(label5);
-            panelFichaAtleta.Controls.Add(cmbPosicao);
-            panelFichaAtleta.Controls.Add(txtbNumCamisa);
-            panelFichaAtleta.Controls.Add(txtbNomeCamisa);
-            panelFichaAtleta.Controls.Add(label4);
-            panelFichaAtleta.Controls.Add(label3);
-            panelFichaAtleta.Controls.Add(label2);
-            panelFichaAtleta.Location = new Point(430, 78);
+            btnFiltroPontAtleta.AutoSize = true;
+            btnFiltroPontAtleta.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnFiltroPontAtleta.BackColor = Color.FromArgb(100, 116, 139);
+            btnFiltroPontAtleta.FlatAppearance.BorderSize = 0;
+            btnFiltroPontAtleta.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
+            btnFiltroPontAtleta.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
+            btnFiltroPontAtleta.FlatStyle = FlatStyle.Flat;
+            btnFiltroPontAtleta.ForeColor = Color.White;
+            btnFiltroPontAtleta.Margin = new Padding(0, 0, 6, 4);
+            btnFiltroPontAtleta.MinimumSize = new Size(0, 28);
+            btnFiltroPontAtleta.Name = "btnFiltroPontAtleta";
+            btnFiltroPontAtleta.Padding = new Padding(8, 0, 8, 0);
+            btnFiltroPontAtleta.TabIndex = 3;
+            btnFiltroPontAtleta.Text = "Ponteiro";
+            btnFiltroPontAtleta.UseVisualStyleBackColor = false;
+            btnFiltroCentAtletas.AutoSize = true;
+            btnFiltroCentAtletas.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnFiltroCentAtletas.BackColor = Color.FromArgb(100, 116, 139);
+            btnFiltroCentAtletas.FlatAppearance.BorderSize = 0;
+            btnFiltroCentAtletas.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
+            btnFiltroCentAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
+            btnFiltroCentAtletas.FlatStyle = FlatStyle.Flat;
+            btnFiltroCentAtletas.ForeColor = Color.White;
+            btnFiltroCentAtletas.Margin = new Padding(0, 0, 6, 4);
+            btnFiltroCentAtletas.MinimumSize = new Size(0, 28);
+            btnFiltroCentAtletas.Name = "btnFiltroCentAtletas";
+            btnFiltroCentAtletas.Padding = new Padding(8, 0, 8, 0);
+            btnFiltroCentAtletas.TabIndex = 4;
+            btnFiltroCentAtletas.Text = "Central";
+            btnFiltroCentAtletas.UseVisualStyleBackColor = false;
+            btnFiltroOpostoAtletas.AutoSize = true;
+            btnFiltroOpostoAtletas.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnFiltroOpostoAtletas.BackColor = Color.FromArgb(100, 116, 139);
+            btnFiltroOpostoAtletas.FlatAppearance.BorderSize = 0;
+            btnFiltroOpostoAtletas.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
+            btnFiltroOpostoAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
+            btnFiltroOpostoAtletas.FlatStyle = FlatStyle.Flat;
+            btnFiltroOpostoAtletas.ForeColor = Color.White;
+            btnFiltroOpostoAtletas.Margin = new Padding(0, 0, 6, 4);
+            btnFiltroOpostoAtletas.MinimumSize = new Size(0, 28);
+            btnFiltroOpostoAtletas.Name = "btnFiltroOpostoAtletas";
+            btnFiltroOpostoAtletas.Padding = new Padding(8, 0, 8, 0);
+            btnFiltroOpostoAtletas.TabIndex = 5;
+            btnFiltroOpostoAtletas.Text = "Oposto";
+            btnFiltroOpostoAtletas.UseVisualStyleBackColor = false;
+            btnFiltroLibeAtletas.AutoSize = true;
+            btnFiltroLibeAtletas.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnFiltroLibeAtletas.BackColor = Color.FromArgb(100, 116, 139);
+            btnFiltroLibeAtletas.FlatAppearance.BorderSize = 0;
+            btnFiltroLibeAtletas.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
+            btnFiltroLibeAtletas.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
+            btnFiltroLibeAtletas.FlatStyle = FlatStyle.Flat;
+            btnFiltroLibeAtletas.ForeColor = Color.White;
+            btnFiltroLibeAtletas.Margin = new Padding(0, 0, 6, 4);
+            btnFiltroLibeAtletas.MinimumSize = new Size(0, 28);
+            btnFiltroLibeAtletas.Name = "btnFiltroLibeAtletas";
+            btnFiltroLibeAtletas.Padding = new Padding(8, 0, 8, 0);
+            btnFiltroLibeAtletas.TabIndex = 6;
+            btnFiltroLibeAtletas.Text = "Líbero";
+            btnFiltroLibeAtletas.UseVisualStyleBackColor = false;
+
+            layoutCorpo.Dock = DockStyle.Fill;
+            layoutCorpo.Margin = Padding.Empty;
+            layoutCorpo.Name = "layoutCorpo";
+            layoutCorpo.TabIndex = 2;
+            layoutCorpo.ColumnCount = 2;
+            layoutCorpo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutCorpo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 246F));
+            layoutCorpo.RowCount = 2;
+            layoutCorpo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutCorpo.RowStyles.Add(new RowStyle(SizeType.Absolute, 0F));
+            layoutCorpo.Controls.Add(panel5, 0, 0);
+            layoutCorpo.Controls.Add(panelFichaAtleta, 1, 0);
+
+            panel5.Dock = DockStyle.Fill;
+            panel5.Margin = new Padding(0, 0, 10, 0);
+            panel5.Name = "panel5";
+            panel5.TabIndex = 0;
+            panel5.Controls.Add(dataGridViewAtletas);
+            dataGridViewAtletas.AccessibleName = "Atletas do elenco";
+            dataGridViewAtletas.AllowUserToAddRows = false;
+            dataGridViewAtletas.AllowUserToDeleteRows = false;
+            dataGridViewAtletas.AllowUserToResizeRows = false;
+            dataGridViewAtletas.AlternatingRowsDefaultCellStyle = linhaAlternada;
+            dataGridViewAtletas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewAtletas.BackgroundColor = SystemColors.Control;
+            dataGridViewAtletas.BorderStyle = BorderStyle.FixedSingle;
+            dataGridViewAtletas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewAtletas.Dock = DockStyle.Fill;
+            dataGridViewAtletas.MultiSelect = false;
+            dataGridViewAtletas.Name = "dataGridViewAtletas";
+            dataGridViewAtletas.ReadOnly = true;
+            dataGridViewAtletas.RowHeadersVisible = false;
+            dataGridViewAtletas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewAtletas.TabIndex = 0;
+
+            panelFichaAtleta.BackColor = Color.White;
+            panelFichaAtleta.Dock = DockStyle.Fill;
+            panelFichaAtleta.Margin = Padding.Empty;
             panelFichaAtleta.Name = "panelFichaAtleta";
-            panelFichaAtleta.Size = new Size(200, 312);
-            panelFichaAtleta.TabIndex = 2;
-            // 
-            // dateTimePicker1
-            // 
-            dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(3, 137);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.ShowCheckBox = true;
-            dateTimePicker1.Size = new Size(127, 23);
-            dateTimePicker1.TabIndex = 20;
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.BackColor = Color.Transparent;
-            label9.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label9.Location = new Point(3, 123);
-            label9.Name = "label9";
-            label9.Size = new Size(103, 14);
-            label9.TabIndex = 19;
-            label9.Text = "Data de Nascimento";
-            // 
-            // label8
-            // 
+            panelFichaAtleta.TabIndex = 1;
+            panelFichaAtleta.Controls.Add(painelRolarFicha);
+            panelFichaAtleta.Controls.Add(layoutRodapeFicha);
+
+            painelRolarFicha.AutoScroll = true;
+            painelRolarFicha.Dock = DockStyle.Fill;
+            painelRolarFicha.Name = "painelRolarFicha";
+            painelRolarFicha.TabIndex = 0;
+            painelRolarFicha.Controls.Add(layoutFicha);
+
+            layoutFicha.AutoSize = true;
+            layoutFicha.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutFicha.Dock = DockStyle.Top;
+            layoutFicha.Margin = Padding.Empty;
+            layoutFicha.Name = "layoutFicha";
+            layoutFicha.Padding = new Padding(10);
+            layoutFicha.TabIndex = 0;
+            layoutFicha.ColumnCount = 1;
+            layoutFicha.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutFicha.RowCount = 12;
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutFicha.Controls.Add(label2, 0, 0);
+            layoutFicha.Controls.Add(label8, 0, 1);
+            layoutFicha.Controls.Add(txtbNomeCompleto, 0, 2);
+            layoutFicha.Controls.Add(label3, 0, 3);
+            layoutFicha.Controls.Add(txtbNomeCamisa, 0, 4);
+            layoutFicha.Controls.Add(label9, 0, 5);
+            layoutFicha.Controls.Add(dateTimePicker1, 0, 6);
+            layoutFicha.Controls.Add(label6, 0, 7);
+            layoutFicha.Controls.Add(cmbEquipeAtleta, 0, 8);
+            layoutFicha.Controls.Add(layoutCamisa, 0, 9);
+            layoutFicha.Controls.Add(label5, 0, 10);
+            layoutFicha.Controls.Add(listaPosicoes, 0, 11);
+
+            layoutRodapeFicha.AutoSize = true;
+            layoutRodapeFicha.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutRodapeFicha.Dock = DockStyle.Bottom;
+            layoutRodapeFicha.Name = "layoutRodapeFicha";
+            layoutRodapeFicha.Padding = new Padding(10, 4, 10, 6);
+            layoutRodapeFicha.TabIndex = 1;
+            layoutRodapeFicha.ColumnCount = 1;
+            layoutRodapeFicha.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutRodapeFicha.RowCount = 2;
+            layoutRodapeFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutRodapeFicha.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutRodapeFicha.Controls.Add(acoesFicha, 0, 0);
+            layoutRodapeFicha.Controls.Add(lblStatusAtleta, 0, 1);
+
+            label2.AutoSize = true;
+            label2.Dock = DockStyle.Top;
+            label2.Margin = new Padding(0, 0, 0, 8);
+            label2.Name = "label2";
+            label2.Text = "Ficha do atleta";
+            label2.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             label8.AutoSize = true;
-            label8.BackColor = Color.Transparent;
-            label8.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label8.Location = new Point(4, 74);
+            label8.Dock = DockStyle.Top;
+            label8.Margin = new Padding(0, 0, 0, 4);
             label8.Name = "label8";
-            label8.Size = new Size(81, 14);
-            label8.TabIndex = 18;
-            label8.Text = "Nome Completo";
-            // 
-            // txtbNomeCompleto
-            // 
-            txtbNomeCompleto.Location = new Point(4, 91);
+            label8.Text = "Nome completo";
+            txtbNomeCompleto.AccessibleName = "Nome completo";
+            txtbNomeCompleto.Dock = DockStyle.Top;
+            txtbNomeCompleto.Margin = new Padding(0, 0, 0, 8);
             txtbNomeCompleto.Name = "txtbNomeCompleto";
-            txtbNomeCompleto.Size = new Size(135, 23);
-            txtbNomeCompleto.TabIndex = 17;
-            // 
-            // btnLimparAtleta
-            // 
-            btnLimparAtleta.Dock = DockStyle.Bottom;
-            btnLimparAtleta.FlatStyle = FlatStyle.Flat;
-            btnLimparAtleta.Location = new Point(0, 266);
-            btnLimparAtleta.Name = "btnLimparAtleta";
-            btnLimparAtleta.Size = new Size(200, 23);
-            btnLimparAtleta.TabIndex = 16;
-            btnLimparAtleta.Text = "🗑️ Limpar";
-            btnLimparAtleta.UseVisualStyleBackColor = true;
-            btnLimparAtleta.Click += btnLimparAtleta_Click;
-            // 
-            // btnSalvarAtleta
-            // 
+            txtbNomeCompleto.TabIndex = 0;
+            txtbNomeCompleto.MaxLength = 100;
+            label3.AutoSize = true;
+            label3.Dock = DockStyle.Top;
+            label3.Margin = new Padding(0, 0, 0, 4);
+            label3.Name = "label3";
+            label3.Text = "Apelido";
+            txtbNomeCamisa.AccessibleName = "Apelido";
+            txtbNomeCamisa.Dock = DockStyle.Top;
+            txtbNomeCamisa.Margin = new Padding(0, 0, 0, 8);
+            txtbNomeCamisa.Name = "txtbNomeCamisa";
+            txtbNomeCamisa.TabIndex = 1;
+            txtbNomeCamisa.MaxLength = 50;
+            label9.AutoSize = true;
+            label9.Dock = DockStyle.Top;
+            label9.Margin = new Padding(0, 0, 0, 4);
+            label9.Name = "label9";
+            label9.Text = "Data de nascimento";
+            dateTimePicker1.AccessibleName = "Data de nascimento";
+            dateTimePicker1.Dock = DockStyle.Top;
+            dateTimePicker1.Margin = new Padding(0, 0, 0, 8);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.TabIndex = 2;
+            dateTimePicker1.Checked = false;
+            dateTimePicker1.Format = DateTimePickerFormat.Short;
+            dateTimePicker1.ShowCheckBox = true;
+            label6.AutoSize = true;
+            label6.Dock = DockStyle.Top;
+            label6.Margin = new Padding(0, 0, 0, 4);
+            label6.Name = "label6";
+            label6.Text = "Equipe";
+            cmbEquipeAtleta.AccessibleName = "Equipe";
+            cmbEquipeAtleta.Dock = DockStyle.Top;
+            cmbEquipeAtleta.Margin = new Padding(0, 0, 0, 8);
+            cmbEquipeAtleta.Name = "cmbEquipeAtleta";
+            cmbEquipeAtleta.TabIndex = 3;
+            cmbEquipeAtleta.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEquipeAtleta.FormattingEnabled = true;
+
+            layoutCamisa.AutoSize = true;
+            layoutCamisa.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutCamisa.Dock = DockStyle.Fill;
+            layoutCamisa.Margin = new Padding(0, 0, 0, 8);
+            layoutCamisa.Name = "layoutCamisa";
+            layoutCamisa.TabIndex = 4;
+            layoutCamisa.ColumnCount = 2;
+            layoutCamisa.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutCamisa.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutCamisa.RowCount = 2;
+            layoutCamisa.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutCamisa.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutCamisa.Controls.Add(label4, 0, 0);
+            layoutCamisa.Controls.Add(txtbNumCamisa, 0, 1);
+            layoutCamisa.Controls.Add(checkBoxAtletaTitular, 1, 1);
+            label4.AutoSize = true;
+            label4.Dock = DockStyle.Top;
+            label4.Margin = new Padding(0, 0, 0, 4);
+            label4.Name = "label4";
+            label4.Text = "Nº da camisa";
+            txtbNumCamisa.AccessibleName = "Número da camisa";
+            txtbNumCamisa.Dock = DockStyle.Top;
+            txtbNumCamisa.Margin = new Padding(0, 0, 8, 0);
+            txtbNumCamisa.Name = "txtbNumCamisa";
+            txtbNumCamisa.TabIndex = 0;
+            txtbNumCamisa.MaxLength = 2;
+            checkBoxAtletaTitular.Anchor = AnchorStyles.Left;
+            checkBoxAtletaTitular.AutoSize = true;
+            checkBoxAtletaTitular.Margin = Padding.Empty;
+            checkBoxAtletaTitular.Name = "checkBoxAtletaTitular";
+            checkBoxAtletaTitular.TabIndex = 1;
+            checkBoxAtletaTitular.Text = "Titular";
+
+            label5.AutoSize = true;
+            label5.Dock = DockStyle.Top;
+            label5.Margin = new Padding(0, 0, 0, 4);
+            label5.Name = "label5";
+            label5.Text = "Posições";
+            listaPosicoes.AccessibleName = "Posições do atleta";
+            listaPosicoes.Dock = DockStyle.Top;
+            listaPosicoes.Margin = new Padding(0, 0, 0, 8);
+            listaPosicoes.Name = "listaPosicoes";
+            listaPosicoes.TabIndex = 5;
+            listaPosicoes.CheckOnClick = true;
+            listaPosicoes.FormattingEnabled = true;
+            listaPosicoes.IntegralHeight = false;
+            listaPosicoes.Size = new Size(208, 92);
+
+            acoesFicha.AutoSize = true;
+            acoesFicha.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            acoesFicha.Dock = DockStyle.Fill;
+            acoesFicha.FlowDirection = FlowDirection.LeftToRight;
+            acoesFicha.Margin = Padding.Empty;
+            acoesFicha.Name = "acoesFicha";
+            acoesFicha.WrapContents = true;
+            acoesFicha.TabIndex = 0;
+            acoesFicha.Controls.Add(btnSalvarAtleta);
+            acoesFicha.Controls.Add(btnLimparAtleta);
+            btnSalvarAtleta.AutoSize = true;
+            btnSalvarAtleta.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             btnSalvarAtleta.BackColor = Color.FromArgb(123, 57, 237);
-            btnSalvarAtleta.BackgroundImageLayout = ImageLayout.None;
-            btnSalvarAtleta.Dock = DockStyle.Bottom;
-            btnSalvarAtleta.FlatAppearance.BorderColor = Color.FromArgb(123, 57, 237);
             btnSalvarAtleta.FlatAppearance.BorderSize = 0;
             btnSalvarAtleta.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
             btnSalvarAtleta.FlatAppearance.MouseOverBackColor = Color.FromArgb(141, 79, 255);
             btnSalvarAtleta.FlatStyle = FlatStyle.Flat;
-            btnSalvarAtleta.Font = new Font("Arial", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnSalvarAtleta.ForeColor = SystemColors.Window;
-            btnSalvarAtleta.Location = new Point(0, 289);
+            btnSalvarAtleta.ForeColor = Color.White;
+            btnSalvarAtleta.Margin = new Padding(0, 0, 6, 4);
+            btnSalvarAtleta.MinimumSize = new Size(0, 28);
             btnSalvarAtleta.Name = "btnSalvarAtleta";
-            btnSalvarAtleta.Size = new Size(200, 23);
-            btnSalvarAtleta.TabIndex = 15;
-            btnSalvarAtleta.Text = "✔️ Salvar Atleta";
+            btnSalvarAtleta.Padding = new Padding(8, 0, 8, 0);
+            btnSalvarAtleta.TabIndex = 0;
+            btnSalvarAtleta.Text = "Salvar atleta";
             btnSalvarAtleta.UseVisualStyleBackColor = false;
-            btnSalvarAtleta.Click += btnSalvarAtleta_Click;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.BackColor = Color.Transparent;
-            label7.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label7.Location = new Point(26, 235);
-            label7.Name = "label7";
-            label7.Size = new Size(121, 14);
-            label7.TabIndex = 14;
-            label7.Text = "Prioridade de Formação";
-            // 
-            // checkBoxAtletaTitular
-            // 
-            checkBoxAtletaTitular.AutoSize = true;
-            checkBoxAtletaTitular.BackColor = Color.Transparent;
-            checkBoxAtletaTitular.FlatStyle = FlatStyle.System;
-            checkBoxAtletaTitular.Location = new Point(12, 221);
-            checkBoxAtletaTitular.Name = "checkBoxAtletaTitular";
-            checkBoxAtletaTitular.Size = new Size(100, 20);
-            checkBoxAtletaTitular.TabIndex = 13;
-            checkBoxAtletaTitular.Text = "Atleta Titular";
-            checkBoxAtletaTitular.UseVisualStyleBackColor = false;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.BackColor = Color.Transparent;
-            label6.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label6.Location = new Point(109, 161);
-            label6.Name = "label6";
-            label6.Size = new Size(39, 14);
-            label6.TabIndex = 12;
-            label6.Text = "Equipe";
-            // 
-            // txtbEquipeAtleta
-            // 
-            txtbEquipeAtleta.Location = new Point(109, 178);
-            txtbEquipeAtleta.Name = "txtbEquipeAtleta";
-            txtbEquipeAtleta.ReadOnly = true;
-            txtbEquipeAtleta.Size = new Size(85, 23);
-            txtbEquipeAtleta.TabIndex = 11;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.BackColor = Color.Transparent;
-            label5.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label5.Location = new Point(3, 161);
-            label5.Name = "label5";
-            label5.Size = new Size(45, 14);
-            label5.TabIndex = 10;
-            label5.Text = "Posição";
-            // 
-            // cmbPosicao
-            // 
-            cmbPosicao.FormattingEnabled = true;
-            cmbPosicao.Location = new Point(4, 178);
-            cmbPosicao.Name = "cmbPosicao";
-            cmbPosicao.Size = new Size(86, 23);
-            cmbPosicao.TabIndex = 9;
-            // 
-            // txtbNumCamisa
-            // 
-            txtbNumCamisa.Location = new Point(146, 42);
-            txtbNumCamisa.Name = "txtbNumCamisa";
-            txtbNumCamisa.Size = new Size(50, 23);
-            txtbNumCamisa.TabIndex = 8;
-            // 
-            // txtbNomeCamisa
-            // 
-            txtbNomeCamisa.Location = new Point(3, 42);
-            txtbNomeCamisa.Name = "txtbNomeCamisa";
-            txtbNomeCamisa.Size = new Size(135, 23);
-            txtbNomeCamisa.TabIndex = 7;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.BackColor = Color.Transparent;
-            label4.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.Location = new Point(142, 25);
-            label4.Name = "label4";
-            label4.Size = new Size(56, 14);
-            label4.TabIndex = 6;
-            label4.Text = "N° Camisa";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.BackColor = Color.Transparent;
-            label3.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(3, 25);
-            label3.Name = "label3";
-            label3.Size = new Size(87, 14);
-            label3.TabIndex = 4;
-            label3.Text = "Nome da Camisa";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Dock = DockStyle.Top;
-            label2.Font = new Font("Arial Narrow", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(0, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(86, 16);
-            label2.TabIndex = 5;
-            label2.Text = "Ficha do Atleta";
-            // 
-            // TelaAtletas
-            // 
+            btnLimparAtleta.AutoSize = true;
+            btnLimparAtleta.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnLimparAtleta.BackColor = Color.FromArgb(100, 116, 139);
+            btnLimparAtleta.FlatAppearance.BorderSize = 0;
+            btnLimparAtleta.FlatAppearance.MouseDownBackColor = Color.FromArgb(141, 79, 255);
+            btnLimparAtleta.FlatAppearance.MouseOverBackColor = Color.FromArgb(123, 57, 237);
+            btnLimparAtleta.FlatStyle = FlatStyle.Flat;
+            btnLimparAtleta.ForeColor = Color.White;
+            btnLimparAtleta.Margin = new Padding(0, 0, 6, 4);
+            btnLimparAtleta.MinimumSize = new Size(0, 28);
+            btnLimparAtleta.Name = "btnLimparAtleta";
+            btnLimparAtleta.Padding = new Padding(8, 0, 8, 0);
+            btnLimparAtleta.TabIndex = 1;
+            btnLimparAtleta.Text = "Limpar";
+            btnLimparAtleta.UseVisualStyleBackColor = false;
+            lblStatusAtleta.AutoSize = true;
+            lblStatusAtleta.Dock = DockStyle.Top;
+            lblStatusAtleta.Margin = new Padding(0, 4, 0, 0);
+            lblStatusAtleta.Name = "lblStatusAtleta";
+            lblStatusAtleta.Text = "";
+            lblStatusAtleta.AccessibleName = "Estado da ficha";
+            lblStatusAtleta.LiveSetting = System.Windows.Forms.Automation.AutomationLiveSetting.Polite;
+            lblStatusAtleta.Visible = false;
+
+            layoutResumo.AutoSize = true;
+            layoutResumo.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutResumo.Dock = DockStyle.Fill;
+            layoutResumo.Margin = new Padding(0, 8, 0, 0);
+            layoutResumo.Name = "layoutResumo";
+            layoutResumo.TabIndex = 3;
+            layoutResumo.ColumnCount = 2;
+            layoutResumo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutResumo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutResumo.RowCount = 1;
+            layoutResumo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutResumo.Controls.Add(painelTotal, 0, 0);
+            layoutResumo.Controls.Add(painelCobertura, 1, 0);
+            painelTotal.AutoSize = true;
+            painelTotal.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            painelTotal.BackColor = Color.White;
+            painelTotal.Dock = DockStyle.Fill;
+            painelTotal.Margin = new Padding(0, 0, 4, 0);
+            painelTotal.Name = "painelTotal";
+            painelTotal.Padding = new Padding(10, 8, 10, 8);
+            painelTotal.ColumnCount = 2;
+            painelTotal.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            painelTotal.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            painelTotal.RowCount = 2;
+            painelTotal.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            painelTotal.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            painelTotal.Controls.Add(label10, 0, 0);
+            painelTotal.Controls.Add(lblQtdAtletas, 1, 0);
+            painelTotal.Controls.Add(label13, 0, 1);
+            painelTotal.SetColumnSpan(label13, 2);
+            label10.AutoSize = true;
+            label10.Dock = DockStyle.Top;
+            label10.Margin = new Padding(0, 0, 0, 4);
+            label10.Name = "label10";
+            label10.Text = "ATLETAS VISÍVEIS";
+            label10.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            lblQtdAtletas.AutoSize = true;
+            lblQtdAtletas.Dock = DockStyle.Top;
+            lblQtdAtletas.Margin = new Padding(0, 0, 0, 4);
+            lblQtdAtletas.Name = "lblQtdAtletas";
+            lblQtdAtletas.Text = "0";
+            lblQtdAtletas.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            label13.AutoSize = true;
+            label13.Dock = DockStyle.Top;
+            label13.Margin = Padding.Empty;
+            label13.Name = "label13";
+            label13.Text = "Suas equipes";
+            label13.ForeColor = Color.FromArgb(100, 116, 139);
+            painelCobertura.AutoSize = true;
+            painelCobertura.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            painelCobertura.BackColor = Color.White;
+            painelCobertura.Dock = DockStyle.Fill;
+            painelCobertura.Margin = new Padding(4, 0, 0, 0);
+            painelCobertura.Name = "painelCobertura";
+            painelCobertura.Padding = new Padding(10, 8, 10, 8);
+            painelCobertura.ColumnCount = 2;
+            painelCobertura.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            painelCobertura.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            painelCobertura.RowCount = 2;
+            painelCobertura.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            painelCobertura.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            painelCobertura.Controls.Add(label11, 0, 0);
+            painelCobertura.Controls.Add(lblPorcentagem, 1, 0);
+            painelCobertura.Controls.Add(label14, 0, 1);
+            painelCobertura.SetColumnSpan(label14, 2);
+            label11.AutoSize = true;
+            label11.Dock = DockStyle.Top;
+            label11.Margin = new Padding(0, 0, 0, 4);
+            label11.Name = "label11";
+            label11.Text = "POSIÇÕES COBERTAS";
+            label11.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            lblPorcentagem.AutoSize = true;
+            lblPorcentagem.Dock = DockStyle.Top;
+            lblPorcentagem.Margin = new Padding(0, 0, 0, 4);
+            lblPorcentagem.Name = "lblPorcentagem";
+            lblPorcentagem.Text = "0";
+            lblPorcentagem.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            label14.AutoSize = true;
+            label14.Dock = DockStyle.Top;
+            label14.Margin = Padding.Empty;
+            label14.Name = "label14";
+            label14.Text = "0 posições no elenco";
+            label14.ForeColor = Color.FromArgb(100, 116, 139);
+
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoScroll = true;
-            BackColor = SystemColors.MenuBar;
+            BackColor = Color.FromArgb(240, 242, 246);
             Controls.Add(panel1);
             Name = "TelaAtletas";
-            Size = new Size(634, 444);
-            panel1.ResumeLayout(false);
-            panel6.ResumeLayout(false);
-            panel6.PerformLayout();
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
-            panel5.ResumeLayout(false);
+            Size = new Size(890, 680);
             ((System.ComponentModel.ISupportInitialize)dataGridViewAtletas).EndInit();
-            panel4.ResumeLayout(false);
-            panel4.PerformLayout();
-            panel3.ResumeLayout(false);
-            panel3.PerformLayout();
+            painelCobertura.ResumeLayout(false);
+            painelTotal.ResumeLayout(false);
+            layoutResumo.ResumeLayout(false);
+            acoesFicha.ResumeLayout(false);
+            layoutCamisa.ResumeLayout(false);
+            layoutRodapeFicha.ResumeLayout(false);
+            layoutFicha.ResumeLayout(false);
+            painelRolarFicha.ResumeLayout(false);
             panelFichaAtleta.ResumeLayout(false);
-            panelFichaAtleta.PerformLayout();
-            ResumeLayout(false);
+            panel5.ResumeLayout(false);
+            layoutCorpo.ResumeLayout(false);
+            painelFiltros.ResumeLayout(false);
+            acoesCabecalho.ResumeLayout(false);
+            painelCabecalho.ResumeLayout(false);
+            layoutTela.ResumeLayout(false);
+            panel1.ResumeLayout(false);
+            ResumeLayout(true);
         }
 
         #endregion
 
-        private Button btnCadastrarAtletas;
-        private Label lblTitulo;
-        private ComboBox cmbEquipe;
-        private Label label1;
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            AjustarLayoutAtletas();
+        }
+
+        private void AjustarLayoutAtletas()
+        {
+            if (layoutCorpo is null)
+                return;
+
+            int larguraColunas = dataGridViewAtletas.Columns.Cast<DataGridViewColumn>()
+                .Where(coluna => coluna.Visible).Sum(coluna => coluna.MinimumWidth);
+            if (larguraColunas == 0)
+                larguraColunas = LogicalToDeviceUnits(385);
+
+            int larguraFicha = LogicalToDeviceUnits(246);
+            int espacoEntrePainelEFicha = LogicalToDeviceUnits(10);
+            int larguraBarra = SystemInformation.VerticalScrollBarWidth;
+            int larguraPagina = ClientSize.Width;
+            if (ClientSize.Height < LogicalToDeviceUnits(400))
+                larguraPagina -= larguraBarra;
+
+            int larguraLadoALado = layoutTela.Padding.Horizontal + larguraColunas + larguraFicha +
+                espacoEntrePainelEFicha + larguraBarra + 2 * SystemInformation.BorderSize.Width;
+            bool fichaAbaixo = larguraPagina < larguraLadoALado;
+            var tamanhoMinimo = LogicalToDeviceUnits(new Size(275, fichaAbaixo ? 1000 : 400));
+            int larguraCabecalho = Math.Max(ClientSize.Width, tamanhoMinimo.Width) -
+                layoutTela.Padding.Horizontal - painelCabecalho.Padding.Horizontal;
+            if (ClientSize.Height < tamanhoMinimo.Height)
+                larguraCabecalho -= larguraBarra;
+            var espacoCabecalho = new Size(Math.Max(1, larguraCabecalho), 0);
+
+            panel1.SuspendLayout();
+            layoutCorpo.SuspendLayout();
+            panel1.AutoScrollMinSize = tamanhoMinimo;
+            painelCabecalho.RowStyles[2].Height = acoesCabecalho.GetPreferredSize(espacoCabecalho).Height;
+            layoutCorpo.SetCellPosition(panelFichaAtleta, new TableLayoutPanelCellPosition(fichaAbaixo ? 0 : 1, fichaAbaixo ? 1 : 0));
+            layoutCorpo.ColumnStyles[1].Width = fichaAbaixo ? 0 : larguraFicha;
+            layoutCorpo.RowStyles[1].Height = fichaAbaixo ? LogicalToDeviceUnits(490) : 0;
+            panel5.Margin = fichaAbaixo ? new Padding(0, 0, 0, espacoEntrePainelEFicha)
+                : new Padding(0, 0, espacoEntrePainelEFicha, 0);
+            layoutCorpo.ResumeLayout(true);
+            panel1.ResumeLayout(true);
+        }
+
         private Panel panel1;
+        private TableLayoutPanel layoutTela;
+        private TableLayoutPanel painelCabecalho;
+        private Label lblTitulo;
+        private Label label1;
+        private FlowLayoutPanel acoesCabecalho;
+        private ComboBox cmbEquipe;
+        private Button btnCadastrarAtletas;
+        private FlowLayoutPanel painelFiltros;
         private TextBox txtbBuscarAtleta;
-        private Button btnFiltroLibeAtletas;
-        private Button btnFiltroCentAtletas;
-        private Button btnFiltroPontAtleta;
-        private Button btnFiltroLevAtletas;
         private Button btnFiltroTodosAtletas;
-        private Panel panelFichaAtleta;
-        private Label label2;
-        private Label label3;
-        private Label label4;
-        private TextBox txtbNomeCamisa;
-        private ComboBox cmbPosicao;
-        private TextBox txtbNumCamisa;
-        private Label label5;
-        private Label label6;
-        private TextBox txtbEquipeAtleta;
-        private CheckBox checkBoxAtletaTitular;
-        private Button btnSalvarAtleta;
-        private Label label7;
-        private Button btnLimparAtleta;
-        private Panel panel3;
-        private Panel panel4;
+        private Button btnFiltroLevAtletas;
+        private Button btnFiltroPontAtleta;
+        private Button btnFiltroCentAtletas;
+        private Button btnFiltroOpostoAtletas;
+        private Button btnFiltroLibeAtletas;
+        private TableLayoutPanel layoutCorpo;
         private Panel panel5;
-        private DateTimePicker dateTimePicker1;
-        private Label label9;
+        private DataGridView dataGridViewAtletas;
+        private Panel panelFichaAtleta;
+        private Panel painelRolarFicha;
+        private TableLayoutPanel layoutFicha;
+        private TableLayoutPanel layoutRodapeFicha;
+        private Label label2;
         private Label label8;
         private TextBox txtbNomeCompleto;
-        private DataGridView dataGridViewAtletas;
-        private Label label11;
+        private Label label3;
+        private TextBox txtbNomeCamisa;
+        private Label label9;
+        private DateTimePicker dateTimePicker1;
+        private Label label6;
+        private ComboBox cmbEquipeAtleta;
+        private TableLayoutPanel layoutCamisa;
+        private Label label4;
+        private TextBox txtbNumCamisa;
+        private CheckBox checkBoxAtletaTitular;
+        private Label label5;
+        private CheckedListBox listaPosicoes;
+        private FlowLayoutPanel acoesFicha;
+        private Button btnSalvarAtleta;
+        private Button btnLimparAtleta;
+        private Label lblStatusAtleta;
+        private TableLayoutPanel layoutResumo;
+        private TableLayoutPanel painelTotal;
         private Label label10;
-        private Panel panel6;
-        private Panel panel2;
-        private Label lblPorcentagem;
-        private Label label12;
         private Label lblQtdAtletas;
         private Label label13;
+        private TableLayoutPanel painelCobertura;
+        private Label label11;
+        private Label lblPorcentagem;
         private Label label14;
     }
 }
