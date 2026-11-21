@@ -11,7 +11,6 @@ namespace Limk.VolleyBall.User_Constrols
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int EquipeId { get; private set; }
         public event EventHandler? VerElenco;
-        public event EventHandler? EditarEquipe;
         public event EventHandler? ExcluirEquipe;
 
         public CardEquipes()
@@ -45,7 +44,6 @@ namespace Limk.VolleyBall.User_Constrols
         }
 
         private void button8_Click(object? sender, EventArgs e) => VerElenco?.Invoke(this, e);
-        private void button2_Click(object? sender, EventArgs e) => EditarEquipe?.Invoke(this, e);
         private void button1_Click(object? sender, EventArgs e) => ExcluirEquipe?.Invoke(this, e);
 
         private void LiberarEscudo()
