@@ -25,9 +25,14 @@ namespace Limk.VolleyBall.Backend
                 using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
                 DataTable tabela = new DataTable();
                 tabela.Load(leitor);
+                token.ThrowIfCancellationRequested();
                 return tabela;
             }
-            catch (MySqlException erro) { throw new FalhaPranchetaException(erro); }
+            catch (Exception erro) when (ErroDeBanco(erro))
+            {
+                token.ThrowIfCancellationRequested();
+                throw new FalhaPranchetaException(erro);
+            }
         }
 
         public static async Task<List<AtletaDaEquipe>> CarregarElencoAsync(int usuarioId, int equipeId, CancellationToken token = default)
@@ -35,10 +40,10 @@ namespace Limk.VolleyBall.Backend
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(equipeId);
             const string consulta = @"SELECT ea.id, a.nome, ea.numero_camisa
-                FROM equipe_atleta ea
-                INNER JOIN atleta a ON a.id = ea.atleta_id
-                INNER JOIN usuario_equipe ue ON ue.equipe_id = ea.equipe_id
-                WHERE ue.usuario_id = @usuarioId AND ea.equipe_id = @equipeId AND ea.ativo = TRUE
+                FROM usuario_equipe ue
+                LEFT JOIN equipe_atleta ea ON ea.equipe_id = ue.equipe_id AND ea.ativo = TRUE
+                LEFT JOIN atleta a ON a.id = ea.atleta_id
+                WHERE ue.usuario_id = @usuarioId AND ue.equipe_id = @equipeId
                 ORDER BY ea.numero_camisa, a.nome";
             try
             {
@@ -48,12 +53,22 @@ namespace Limk.VolleyBall.Backend
                 comando.Parameters.AddWithValue("@usuarioId", usuarioId);
                 comando.Parameters.AddWithValue("@equipeId", equipeId);
                 using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
+                if (!await leitor.ReadAsync(token).ConfigureAwait(false))
+                    throw new UnauthorizedAccessException("Você não tem acesso à equipe desta tática.");
+
                 var elenco = new List<AtletaDaEquipe>();
-                while (await leitor.ReadAsync(token).ConfigureAwait(false))
-                    elenco.Add(new AtletaDaEquipe { EquipeAtletaId = leitor.GetInt32(0), Nome = leitor.GetString(1), NumeroCamisa = leitor.GetInt32(2) });
+                do
+                {
+                    if (!leitor.IsDBNull(0))
+                        elenco.Add(new AtletaDaEquipe { EquipeAtletaId = leitor.GetInt32(0), Nome = leitor.GetString(1), NumeroCamisa = leitor.GetInt32(2) });
+                } while (await leitor.ReadAsync(token).ConfigureAwait(false));
                 return elenco;
             }
-            catch (MySqlException erro) { throw new FalhaPranchetaException(erro); }
+            catch (Exception erro) when (ErroDeBanco(erro))
+            {
+                token.ThrowIfCancellationRequested();
+                throw new FalhaPranchetaException(erro);
+            }
         }
 
         public static async Task<Tatica> CarregarAsync(int usuarioId, int taticaId, CancellationToken token = default)
@@ -65,7 +80,7 @@ namespace Limk.VolleyBall.Backend
                 using var conexao = ConexaoBD.CriarConexao();
                 await conexao.OpenAsync(token).ConfigureAwait(false);
                 // As consultas leem o mesmo retrato, mesmo que outra pessoa salve a tática.
-                using var transacao = conexao.BeginTransaction(IsolationLevel.RepeatableRead);
+                using var transacao = await conexao.BeginTransactionAsync(IsolationLevel.RepeatableRead, token).ConfigureAwait(false);
                 const string raiz = @"SELECT t.id, t.equipe_id, t.nome, t.descricao, t.tipo_tatica_id, t.sistema_jogo_id
                     FROM tatica t INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
                     WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId";
@@ -140,36 +155,35 @@ namespace Limk.VolleyBall.Backend
                     while (await leitor.ReadAsync(token).ConfigureAwait(false))
                         quadros[leitor.GetInt32(0)].Bola = new PosicaoBola { X = (float)leitor.GetDecimal(1), Y = (float)leitor.GetDecimal(2) };
                 }
-                transacao.Commit();
+                await transacao.CommitAsync(token).ConfigureAwait(false);
                 return tatica;
             }
-            catch (MySqlException erro) { throw new FalhaPranchetaException(erro); }
+            catch (Exception erro) when (ErroDeBanco(erro))
+            {
+                token.ThrowIfCancellationRequested();
+                throw new FalhaPranchetaException(erro);
+            }
         }
 
         public static async Task<int> SalvarAsync(int usuarioId, Tatica original, CancellationToken token = default)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
+            ArgumentNullException.ThrowIfNull(original);
             Tatica tatica = original.Copiar();
             Validar(tatica);
             try
             {
                 using var conexao = ConexaoBD.CriarConexao();
                 await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var transacao = conexao.BeginTransaction();
-                // Bloqueia o vínculo enquanto grava: a autorização faz parte da transação.
-                using (var comando = Comando(conexao, transacao,
-                    "SELECT equipe_id FROM usuario_equipe WHERE usuario_id=@usuarioId AND equipe_id=@equipeId FOR UPDATE"))
-                {
-                    comando.Parameters.AddWithValue("@usuarioId", usuarioId);
-                    comando.Parameters.AddWithValue("@equipeId", tatica.EquipeId);
-                    if (await comando.ExecuteScalarAsync(token).ConfigureAwait(false) == null)
-                        throw new UnauthorizedAccessException("Você não tem acesso à equipe desta tática.");
-                }
+                using var transacao = await conexao.BeginTransactionAsync(token).ConfigureAwait(false);
+                if (!await DadosEquipe.BloquearComAcessoAsync(conexao, transacao, usuarioId, tatica.EquipeId,
+                    exclusivo: false, token).ConfigureAwait(false))
+                    throw new UnauthorizedAccessException("Você não tem acesso à equipe desta tática.");
                 if (tatica.Id > 0)
                 {
                     const string consulta = @"SELECT t.equipe_id FROM tatica t
                         INNER JOIN usuario_equipe ue ON ue.equipe_id=t.equipe_id
-                        WHERE t.id=@taticaId AND ue.usuario_id=@usuarioId FOR UPDATE";
+                        WHERE t.id=@taticaId AND ue.usuario_id=@usuarioId FOR UPDATE OF t FOR SHARE OF ue";
                     using var comando = ConsultaTatica(conexao, transacao, consulta, usuarioId, tatica.Id);
                     object? equipe = await comando.ExecuteScalarAsync(token).ConfigureAwait(false);
                     if (equipe == null)
@@ -179,7 +193,7 @@ namespace Limk.VolleyBall.Backend
                 }
 
                 var vinculos = new HashSet<int>();
-                using (var comando = Comando(conexao, transacao, "SELECT id FROM equipe_atleta WHERE equipe_id=@equipeId FOR UPDATE"))
+                using (var comando = Comando(conexao, transacao, "SELECT id FROM equipe_atleta WHERE equipe_id=@equipeId FOR SHARE"))
                 {
                     comando.Parameters.AddWithValue("@equipeId", tatica.EquipeId);
                     using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
@@ -248,17 +262,21 @@ namespace Limk.VolleyBall.Backend
                     }
                 }
                 token.ThrowIfCancellationRequested();
-                transacao.Commit();
+                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
                 return tatica.Id;
             }
-            catch (MySqlException erro) { throw new FalhaPranchetaException(erro); }
+            catch (Exception erro) when (ErroDeBanco(erro))
+            {
+                token.ThrowIfCancellationRequested();
+                throw new FalhaPranchetaException(erro);
+            }
         }
 
         internal static void Validar(Tatica tatica)
         {
             if (tatica.Id < 0 || tatica.EquipeId <= 0)
                 throw new ArgumentException("Selecione uma equipe para a tática.");
-            if (string.IsNullOrWhiteSpace(tatica.Nome) || tatica.Nome.Trim().Length > 100)
+            if (string.IsNullOrWhiteSpace(tatica.Nome) || tatica.Nome.Trim().EnumerateRunes().Count() > 100)
                 throw new ArgumentException("Informe um nome de tática com até 100 caracteres.");
             if (Encoding.UTF8.GetByteCount(tatica.Descricao) > 65535)
                 throw new ArgumentException("A descrição da tática está muito longa.");
@@ -268,7 +286,7 @@ namespace Limk.VolleyBall.Backend
                 throw new ArgumentException("A tática precisa ter pelo menos uma fase.");
             foreach (QuadroTatica quadro in tatica.Quadros)
             {
-                if (string.IsNullOrWhiteSpace(quadro.Nome) || quadro.Nome.Trim().Length > 100)
+                if (string.IsNullOrWhiteSpace(quadro.Nome) || quadro.Nome.Trim().EnumerateRunes().Count() > 100)
                     throw new ArgumentException("Cada fase precisa de um nome com até 100 caracteres.");
                 if (quadro.DuracaoMs <= 0 || (quadro.Rotacao.HasValue && (quadro.Rotacao < 1 || quadro.Rotacao > 6)))
                     throw new ArgumentException("Informe uma duração positiva e uma rotação entre P1 e P6, ou sem rotação.");
@@ -298,6 +316,9 @@ namespace Limk.VolleyBall.Backend
 
         private static MySqlCommand Comando(MySqlConnection conexao, MySqlTransaction? transacao, string sql) =>
             new MySqlCommand(sql, conexao, transacao) { CommandTimeout = 5 };
+
+        private static bool ErroDeBanco(Exception erro) =>
+            erro is MySqlException or InvalidOperationException or FormatException or OverflowException or TimeoutException;
 
         private static MySqlCommand ConsultaTatica(MySqlConnection conexao, MySqlTransaction transacao, string sql, int usuarioId, int taticaId)
         {

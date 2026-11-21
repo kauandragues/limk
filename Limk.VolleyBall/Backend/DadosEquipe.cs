@@ -1,4 +1,5 @@
 using MySql.Data.MySqlClient;
+using System.Text;
 
 namespace Limk.VolleyBall.Backend
 {
@@ -12,8 +13,9 @@ namespace Limk.VolleyBall.Backend
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
             ArgumentOutOfRangeException.ThrowIfNegative(equipeId);
+            ArgumentNullException.ThrowIfNull(nome);
             nome = nome.Trim();
-            if (nome.Length == 0 || nome.Length > 100)
+            if (nome.Length == 0 || nome.EnumerateRunes().Count() > 100)
                 throw new ArgumentException("Informe um nome de equipe com até 100 caracteres.");
             if (escudo != null)
             {
@@ -27,7 +29,7 @@ namespace Limk.VolleyBall.Backend
             {
                 using var conexao = ConexaoBD.CriarConexao();
                 await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var transacao = conexao.BeginTransaction();
+                using var transacao = await conexao.BeginTransactionAsync(token).ConfigureAwait(false);
                 if (equipeId > 0)
                     await VerificarAcessoAsync(conexao, transacao, usuarioId, equipeId, token).ConfigureAwait(false);
 
@@ -51,10 +53,14 @@ namespace Limk.VolleyBall.Backend
                     }
                 }
                 token.ThrowIfCancellationRequested();
-                transacao.Commit();
+                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
                 return equipeId;
             }
-            catch (MySqlException erro) { throw new FalhaEquipeException(erro); }
+            catch (MySqlException erro)
+            {
+                token.ThrowIfCancellationRequested();
+                throw new FalhaEquipeException(erro);
+            }
         }
 
         public static async Task ExcluirAsync(int usuarioId, int equipeId, CancellationToken token = default)
@@ -65,13 +71,13 @@ namespace Limk.VolleyBall.Backend
             {
                 using var conexao = ConexaoBD.CriarConexao();
                 await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var transacao = conexao.BeginTransaction();
+                using var transacao = await conexao.BeginTransactionAsync(token).ConfigureAwait(false);
                 await VerificarAcessoAsync(conexao, transacao, usuarioId, equipeId, token).ConfigureAwait(false);
 
                 var atletas = new List<int>();
                 using (var comando = Comando(conexao, transacao, @"SELECT a.id FROM atleta a
                     INNER JOIN equipe_atleta ea ON ea.atleta_id=a.id
-                    WHERE ea.equipe_id=@equipeId ORDER BY a.id FOR UPDATE"))
+                    WHERE ea.equipe_id=@equipeId ORDER BY a.id FOR UPDATE OF a"))
                 {
                     comando.Parameters.AddWithValue("@equipeId", equipeId);
                     using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
@@ -93,21 +99,41 @@ namespace Limk.VolleyBall.Backend
                     await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
                 }
                 token.ThrowIfCancellationRequested();
-                transacao.Commit();
+                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
             }
-            catch (MySqlException erro) { throw new FalhaEquipeException(erro); }
+            catch (MySqlException erro)
+            {
+                token.ThrowIfCancellationRequested();
+                throw new FalhaEquipeException(erro);
+            }
         }
 
         private static async Task VerificarAcessoAsync(MySqlConnection conexao, MySqlTransaction transacao,
             int usuarioId, int equipeId, CancellationToken token)
         {
-            using var comando = Comando(conexao, transacao, @"SELECT e.id FROM equipe e
-                INNER JOIN usuario_equipe ue ON ue.equipe_id=e.id
-                WHERE e.id=@equipeId AND ue.usuario_id=@usuarioId FOR UPDATE");
-            comando.Parameters.AddWithValue("@equipeId", equipeId);
-            comando.Parameters.AddWithValue("@usuarioId", usuarioId);
-            if (await comando.ExecuteScalarAsync(token).ConfigureAwait(false) == null)
+            if (!await BloquearComAcessoAsync(conexao, transacao, usuarioId, equipeId, exclusivo: true, token)
+                .ConfigureAwait(false))
                 throw new UnauthorizedAccessException("Equipe não encontrada nas suas equipes.");
+        }
+
+        internal static async Task<bool> BloquearComAcessoAsync(MySqlConnection conexao, MySqlTransaction transacao,
+            int usuarioId, int equipeId, bool exclusivo, CancellationToken token)
+        {
+            // A equipe deve ser bloqueada antes dos vínculos que sua exclusão remove em cascata.
+            string sqlEquipe = exclusivo ? "SELECT id FROM equipe WHERE id=@equipeId FOR UPDATE"
+                : "SELECT id FROM equipe WHERE id=@equipeId FOR SHARE";
+            using (var equipe = Comando(conexao, transacao, sqlEquipe))
+            {
+                equipe.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
+                if (await equipe.ExecuteScalarAsync(token).ConfigureAwait(false) is null)
+                    return false;
+            }
+
+            using var acesso = Comando(conexao, transacao,
+                "SELECT equipe_id FROM usuario_equipe WHERE usuario_id=@usuarioId AND equipe_id=@equipeId FOR SHARE");
+            acesso.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
+            acesso.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
+            return await acesso.ExecuteScalarAsync(token).ConfigureAwait(false) is not null;
         }
 
         private static MySqlCommand Comando(MySqlConnection conexao, MySqlTransaction transacao, string sql) =>

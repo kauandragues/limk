@@ -8,6 +8,7 @@ namespace Limk.VolleyBall.User_Constrols
     {
         private Image? _escudo;
         private readonly Image? _escudoPadrao;
+        private readonly Image? _iconeExcluir;
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int EquipeId { get; private set; }
         public event EventHandler? VerElenco;
@@ -17,6 +18,15 @@ namespace Limk.VolleyBall.User_Constrols
         {
             InitializeComponent();
             _escudoPadrao = pictureBox3.Image;
+            _iconeExcluir = button1.Image;
+            Disposed += LiberarImagensDoCartao;
+        }
+
+        private void LiberarImagensDoCartao(object? sender, EventArgs e)
+        {
+            Disposed -= LiberarImagensDoCartao;
+            _escudoPadrao?.Dispose();
+            _iconeExcluir?.Dispose();
         }
 
         internal void ExibirEquipe(DataRow equipe)

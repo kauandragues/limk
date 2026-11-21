@@ -21,6 +21,7 @@ namespace Limk.VolleyBall.User_Constrols
             get { return _numero; }
             set
             {
+                if (_numero == value) return;
                 _numero = value;
                 AtualizarCartao();
             }
@@ -32,6 +33,7 @@ namespace Limk.VolleyBall.User_Constrols
             get { return _nomeFase; }
             set
             {
+                if (_nomeFase == value) return;
                 _nomeFase = value;
                 AtualizarCartao();
             }
@@ -43,6 +45,7 @@ namespace Limk.VolleyBall.User_Constrols
             get { return _tipo; }
             set
             {
+                if (_tipo == value) return;
                 _tipo = value;
                 AtualizarCartao();
             }
@@ -54,6 +57,7 @@ namespace Limk.VolleyBall.User_Constrols
             get { return _inicio; }
             set
             {
+                if (_inicio == value) return;
                 _inicio = value;
                 AtualizarCartao();
             }
@@ -65,6 +69,7 @@ namespace Limk.VolleyBall.User_Constrols
             get { return _ativo; }
             set
             {
+                if (_ativo == value) return;
                 _ativo = value;
                 AtualizarCartao();
             }
@@ -116,7 +121,8 @@ namespace Limk.VolleyBall.User_Constrols
             if (Ativo)
                 titulo += " • ATIVA";
 
-            string horario = Inicio.ToString(@"mm\:ss\.f");
+            long minutos = Inicio.Ticks / TimeSpan.TicksPerMinute;
+            string horario = $"{minutos:00}:{Inicio.Seconds:00}.{Inicio.Milliseconds / 100}";
             btnSelecionarFase.Text = $"{titulo}\n{NomeFase}\n{Tipo} • {horario}";
 
             if (Ativo)

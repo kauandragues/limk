@@ -9,6 +9,8 @@ namespace Limk.VolleyBall.User_Constrols
         private UsuarioAutenticado? _usuario;
         private DataTable _equipes = new DataTable();
         private int _equipeSelecionadaId;
+        private string _nomeOriginal = string.Empty;
+        private byte[]? _escudoOriginal;
         private byte[]? _dadosEscudo;
         private Bitmap? _imagemEscudo;
         private bool _pronto;
@@ -43,43 +45,56 @@ namespace Limk.VolleyBall.User_Constrols
             finally { _operacao = false; if (!IsDisposed) AtualizarAcoes(); }
         }
 
-        private async Task RecarregarListaAsync()
+        private async Task RecarregarListaAsync(bool preservarEdicao = false)
         {
-            DataTable equipes = await DadosUsuario.CarregarEquipesAsync(_usuario!.Id);
-            if (IsDisposed) return;
+            CancellationToken token = _encerramento.Token;
+            DataTable equipes = await DadosUsuario.CarregarEquipesAsync(_usuario!.Id, token);
+            if (token.IsCancellationRequested) return;
             _equipes = equipes;
             _pronto = true;
-            ExibirEquipes();
+            ExibirEquipes(preservarEdicao);
         }
 
         private void textBox1_TextChanged(object? sender, EventArgs e)
         {
-            if (!_operacao) ExibirEquipes();
+            if (!_operacao) ExibirEquipes(preservarEdicao: true);
         }
 
-        private void ExibirEquipes()
+        private void ExibirEquipes(bool preservarEdicao = false)
         {
             if (_equipes.Columns.Count == 0) return;
             tableLayoutPanel1.SuspendLayout();
-            while (tableLayoutPanel1.Controls.Count > 0) tableLayoutPanel1.Controls[0].Dispose();
-            tableLayoutPanel1.RowStyles.Clear();
-            tableLayoutPanel1.RowCount = 0;
-            string busca = textBox1.Text.Trim();
-            foreach (DataRow equipe in _equipes.Rows)
+            try
             {
-                if (!equipe["nome"].ToString()!.Contains(busca, StringComparison.OrdinalIgnoreCase)) continue;
-                var cartao = new CardEquipes { Dock = DockStyle.Top, Margin = new Padding(0, 0, 0, 8) };
-                cartao.ExibirEquipe(equipe);
-                cartao.Click += CartaoSelecionado;
-                cartao.ExcluirEquipe += CartaoExcluirEquipe;
-                cartao.VerElenco += CartaoVerElenco;
-                int linha = tableLayoutPanel1.RowCount++;
-                tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-                tableLayoutPanel1.Controls.Add(cartao, 0, linha);
+                while (tableLayoutPanel1.Controls.Count > 0) tableLayoutPanel1.Controls[0].Dispose();
+                tableLayoutPanel1.RowStyles.Clear();
+                tableLayoutPanel1.RowCount = 0;
+                string busca = textBox1.Text.Trim();
+                foreach (DataRow equipe in _equipes.Rows)
+                {
+                    if (!equipe["nome"].ToString()!.Contains(busca, StringComparison.OrdinalIgnoreCase)) continue;
+                    var cartao = new CardEquipes { Dock = DockStyle.Top, Margin = new Padding(0, 0, 0, 8) };
+                    cartao.ExibirEquipe(equipe);
+                    cartao.Click += CartaoSelecionado;
+                    cartao.ExcluirEquipe += CartaoExcluirEquipe;
+                    cartao.VerElenco += CartaoVerElenco;
+                    int linha = tableLayoutPanel1.RowCount++;
+                    tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                    tableLayoutPanel1.Controls.Add(cartao, 0, linha);
+                }
             }
-            tableLayoutPanel1.ResumeLayout(true);
+            finally
+            {
+                tableLayoutPanel1.ResumeLayout(true);
+            }
             label3.Text = tableLayoutPanel1.Controls.Count == 0
                 ? "Nenhuma equipe encontrada." : $"Suas equipes · {tableLayoutPanel1.Controls.Count}";
+            if (preservarEdicao && (textBox3.Text != _nomeOriginal || !ReferenceEquals(_dadosEscudo, _escudoOriginal)))
+            {
+                DestacarSelecao();
+                return;
+            }
+
             var selecionado = tableLayoutPanel1.Controls.OfType<CardEquipes>().FirstOrDefault(c => c.EquipeId == _equipeSelecionadaId)
                 ?? tableLayoutPanel1.Controls.OfType<CardEquipes>().FirstOrDefault();
             if (selecionado == null) NovaEquipe();
@@ -93,18 +108,21 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void SelecionarEquipe(int equipeId)
         {
-            DataRow? registro = _equipes.AsEnumerable().FirstOrDefault(r => Convert.ToInt32(r["id"]) == equipeId);
+            DataRow? registro = LocalizarEquipe(equipeId);
             if (registro == null) return;
             _equipeSelecionadaId = equipeId;
             textBox2.Text = "Editar equipe";
-            textBox3.Text = registro["nome"].ToString();
-            _dadosEscudo = registro["escudo"] as byte[];
+            textBox3.Text = _nomeOriginal = registro.Field<string>("nome") ?? string.Empty;
+            _dadosEscudo = _escudoOriginal = registro["escudo"] as byte[];
             MostrarMensagem("");
             AtualizarEscudo();
             if (_dadosEscudo != null && _imagemEscudo == null)
                 MostrarMensagem("O escudo cadastrado não pôde ser lido. Escolha outra imagem ou remova o escudo.", true);
             DestacarSelecao();
         }
+
+        private DataRow? LocalizarEquipe(int equipeId) =>
+            _equipes.AsEnumerable().FirstOrDefault(registro => registro.Field<int>("id") == equipeId);
 
         private void DestacarSelecao()
         {
@@ -117,7 +135,8 @@ namespace Limk.VolleyBall.User_Constrols
             _equipeSelecionadaId = 0;
             textBox2.Text = "Cadastrar nova equipe";
             textBox3.Clear();
-            _dadosEscudo = null;
+            _nomeOriginal = string.Empty;
+            _dadosEscudo = _escudoOriginal = null;
             AtualizarEscudo();
             MostrarMensagem("");
             DestacarSelecao();
@@ -205,9 +224,8 @@ namespace Limk.VolleyBall.User_Constrols
 
         private async void CartaoExcluirEquipe(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || sender is not CardEquipes cartao) return;
-            SelecionarEquipe(cartao.EquipeId);
-            string aviso = $"Excluir a equipe '{textBox3.Text}'?\n\nA equipe, suas táticas e os atletas exclusivos dela serão apagados para todos os usuários com acesso. Atletas de outras equipes serão preservados.";
+            if (!_pronto || _operacao || sender is not CardEquipes cartao || LocalizarEquipe(cartao.EquipeId) is not { } registro) return;
+            string aviso = $"Excluir a equipe '{registro["nome"]}'?\n\nA equipe, suas táticas e os atletas exclusivos dela serão apagados para todos os usuários com acesso. Atletas de outras equipes serão preservados.";
             if (MessageBox.Show(FindForm(), aviso, "Excluir equipe", MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
             await ExcluirEquipeAsync(cartao.EquipeId);
@@ -223,11 +241,11 @@ namespace Limk.VolleyBall.User_Constrols
                 await DadosEquipe.ExcluirAsync(_usuario!.Id, equipeId, _encerramento.Token);
                 excluiu = true;
                 if (IsDisposed) return;
-                DataRow? removida = _equipes.AsEnumerable().FirstOrDefault(r => Convert.ToInt32(r["id"]) == equipeId);
+                DataRow? removida = LocalizarEquipe(equipeId);
                 if (removida != null) _equipes.Rows.Remove(removida);
-                NovaEquipe();
-                ExibirEquipes();
-                await RecarregarListaAsync();
+                if (_equipeSelecionadaId == equipeId) NovaEquipe();
+                ExibirEquipes(preservarEdicao: true);
+                await RecarregarListaAsync(preservarEdicao: true);
                 if (!IsDisposed) MostrarMensagem("Equipe excluída.");
             }
             catch (OperationCanceledException) { }

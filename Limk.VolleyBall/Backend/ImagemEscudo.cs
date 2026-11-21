@@ -27,9 +27,14 @@ namespace Limk.VolleyBall.Backend
 
         public static async Task<byte[]> LerArquivoAsync(string caminho, CancellationToken token)
         {
-            if (new FileInfo(caminho).Length > TamanhoMaximo)
+            using var arquivo = new FileStream(caminho, FileMode.Open, FileAccess.Read, FileShare.Read, 4096,
+                FileOptions.Asynchronous | FileOptions.SequentialScan);
+            long tamanho = arquivo.Length;
+            if (tamanho > TamanhoMaximo)
                 throw new ArgumentException("Escolha um escudo de até 4 MB.");
-            byte[] dados = await File.ReadAllBytesAsync(caminho, token);
+
+            byte[] dados = new byte[(int)tamanho];
+            await arquivo.ReadExactlyAsync(dados, token).ConfigureAwait(false);
             using Bitmap? imagem = CriarImagem(dados);
             if (imagem == null)
                 throw new ArgumentException("Escolha uma imagem válida, com até 4096 pixels de largura e altura.");

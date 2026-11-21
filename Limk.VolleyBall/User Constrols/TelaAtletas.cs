@@ -39,11 +39,7 @@ namespace Limk.VolleyBall.User_Constrols
             listaPosicoes.DisplayMember = nameof(PosicaoCadastro.Nome);
 
             Load += TelaAtletas_Load;
-            Disposed += (_, _) =>
-            {
-                _encerramento.Cancel();
-                _encerramento.Dispose();
-            };
+            Disposed += EncerrarOperacoes;
             cmbEquipe.SelectedIndexChanged += FiltroAlterado;
             txtbBuscarAtleta.TextChanged += FiltroAlterado;
             dataGridViewAtletas.SelectionChanged += AtletaSelecionado;
@@ -75,6 +71,13 @@ namespace Limk.VolleyBall.User_Constrols
         public TelaAtletas(int equipeId) : this()
         {
             _equipeInicialId = equipeId;
+        }
+
+        private void EncerrarOperacoes(object? sender, EventArgs e)
+        {
+            Disposed -= EncerrarOperacoes;
+            _encerramento.Cancel();
+            _encerramento.Dispose();
         }
 
         public void DefinirUsuario(UsuarioAutenticado usuario)

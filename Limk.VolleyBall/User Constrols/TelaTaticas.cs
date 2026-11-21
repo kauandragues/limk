@@ -8,6 +8,7 @@ namespace Limk.VolleyBall.User_Constrols
     {
         private UsuarioAutenticado? _usuario;
         private DataTable _taticas = new DataTable();
+        private readonly CancellationTokenSource _encerramento = new CancellationTokenSource();
         private bool _carregando;
         public event EventHandler<UserControl>? TelaSolicitada;
 
@@ -15,6 +16,7 @@ namespace Limk.VolleyBall.User_Constrols
         {
             InitializeComponent();
             Load += TelaTaticas_Load;
+            Disposed += EncerrarConsultas;
             textBox1.TextChanged += FiltroAlterado;
             comboBox1.SelectedIndexChanged += FiltroAlterado;
             comboBox2.SelectedIndexChanged += FiltroAlterado;
@@ -26,20 +28,28 @@ namespace Limk.VolleyBall.User_Constrols
             _usuario = usuario;
         }
 
+        private void EncerrarConsultas(object? sender, EventArgs e)
+        {
+            Disposed -= EncerrarConsultas;
+            _encerramento.Cancel();
+            _encerramento.Dispose();
+        }
+
         private async void TelaTaticas_Load(object? sender, EventArgs e)
         {
-            if (_usuario == null || DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            if (_usuario is not { } usuario || _carregando || _taticas.Columns.Count > 0 || IsDisposed ||
+                DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
 
+            CancellationToken token = _encerramento.Token;
             _carregando = true;
             label2.Text = "Carregando as táticas das suas equipes...";
             try
             {
-                DataTable equipes = await DadosUsuario.CarregarEquipesAsync(_usuario.Id);
-                DataTable taticas = await DadosUsuario.CarregarTaticasAsync(_usuario.Id);
-                if (IsDisposed)
+                DataTable equipes = await DadosUsuario.CarregarEquipesAsync(usuario.Id, token);
+                DataTable taticas = await DadosUsuario.CarregarTaticasAsync(usuario.Id, token);
+                if (IsDisposed || token.IsCancellationRequested)
                     return;
-                _taticas = taticas;
                 var opcoes = new List<KeyValuePair<int, string>> { new(0, "Todas as minhas equipes") };
                 foreach (DataRow equipe in equipes.Rows)
                     opcoes.Add(new(Convert.ToInt32(equipe["id"]), equipe["nome"].ToString()!));
@@ -53,17 +63,19 @@ namespace Limk.VolleyBall.User_Constrols
                 foreach (string tipo in taticas.AsEnumerable().Select(linha => linha["tipo"].ToString()!).Where(tipo => tipo.Length > 0).Distinct())
                     comboBox2.Items.Add(tipo);
                 comboBox2.SelectedIndex = 0;
+                _taticas = taticas;
             }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
             catch (Exception)
             {
-                if (!IsDisposed)
+                if (!IsDisposed && !token.IsCancellationRequested)
                     label2.Text = "Não foi possível carregar suas táticas.";
             }
             finally
             {
                 _carregando = false;
             }
-            if (!IsDisposed && _taticas.Columns.Count > 0)
+            if (!IsDisposed && !token.IsCancellationRequested && _taticas.Columns.Count > 0)
                 ExibirTaticas();
         }
 

@@ -51,6 +51,8 @@ git clone <URL_DO_REPOSITORIO>
 3. Copie `Limk.VolleyBall/.env.example` para `Limk.VolleyBall/.env` e preencha `DB_SERVER`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`. Use `limk` em `DB_NAME` para o banco criado pelo script.
 4. Abra `Limk.slnx` no Visual Studio e execute o projeto. Na tela de login, use o e-mail e a senha de um usuário cadastrado na tabela `usuario`. A coluna `senha_hash` armazena o hash bcrypt da senha.
 
+Ao publicar o aplicativo, configure as variáveis de conexão no ambiente de destino ou forneça um `.env` local ao lado do executável.
+
 As três contas de demonstração do script usam a senha **`Limk@Teste2026!`** no ambiente de desenvolvimento:
 
 | E-mail | Equipe no script |

@@ -78,7 +78,8 @@ namespace Limk.VolleyBall.Backend
             {
                 using MySqlConnection conexao = ConexaoBD.CriarConexao();
                 await conexao.OpenAsync(cancellationToken).ConfigureAwait(false);
-                using MySqlCommand comando = new(consulta, conexao) { CommandTimeout = 5 };
+                using MySqlTransaction transacao = await conexao.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+                using MySqlCommand comando = new(consulta, conexao, transacao) { CommandTimeout = 5 };
                 comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
                 comando.Parameters.Add("@corAtletaPrincipal", MySqlDbType.VarChar, 7).Value =
                     preferencias.CorAtletaPrincipal.ToUpperInvariant();
@@ -87,6 +88,8 @@ namespace Limk.VolleyBall.Backend
                 comando.Parameters.Add("@corBola", MySqlDbType.VarChar, 7).Value = preferencias.CorBola.ToUpperInvariant();
                 comando.Parameters.Add("@duracao", MySqlDbType.Int32).Value = preferencias.DuracaoQuadroPadraoMs;
                 await comando.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
             }
             catch (Exception erro) when (ErroDeBanco(erro))
             {

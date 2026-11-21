@@ -26,6 +26,7 @@ namespace Limk.VolleyBall.Backend
         public static async Task<UsuarioAutenticado?> AutenticarAsync(
             string email, string senha, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             email = email.Trim();
             if (email.Length is 0 or > LimiteEmail || string.IsNullOrEmpty(senha) ||
                 Encoding.UTF8.GetByteCount(senha) > LimiteSenhaEmBytes)

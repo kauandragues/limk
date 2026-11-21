@@ -7,6 +7,7 @@ namespace Limk.VolleyBall.User_Constrols
     {
         private UsuarioAutenticado? _usuario;
         private bool _carregando;
+        private readonly CancellationTokenSource _encerramento = new();
 
         public event EventHandler<UserControl>? TelaSolicitada;
 
@@ -14,6 +15,14 @@ namespace Limk.VolleyBall.User_Constrols
         {
             InitializeComponent();
             DoubleBuffered = true;
+            Disposed += EncerrarConsultas;
+        }
+
+        private void EncerrarConsultas(object? sender, EventArgs e)
+        {
+            Disposed -= EncerrarConsultas;
+            _encerramento.Cancel();
+            _encerramento.Dispose();
         }
 
         public void DefinirUsuario(UsuarioAutenticado usuario)
@@ -39,8 +48,9 @@ namespace Limk.VolleyBall.User_Constrols
 
         private async Task AtualizarInicioAsync()
         {
-            if (_carregando || _usuario == null)
+            if (_carregando || _usuario == null || IsDisposed)
                 return;
+            CancellationToken token = _encerramento.Token;
 
             _carregando = true;
             btnAtualizar.Enabled = false;
@@ -49,10 +59,10 @@ namespace Limk.VolleyBall.User_Constrols
 
             try
             {
-                ResumoInicio resumo = await DadosInicio.CarregarAsync(_usuario.Id);
+                ResumoInicio resumo = await DadosInicio.CarregarAsync(_usuario.Id, token);
 
                 // O usuário pode abrir outra tela enquanto a consulta está em andamento.
-                if (IsDisposed)
+                if (token.IsCancellationRequested)
                     return;
 
                 lblTotalEquipes.Text = resumo.Equipes.ToString("N0");
@@ -65,7 +75,7 @@ namespace Limk.VolleyBall.User_Constrols
             }
             catch (Exception)
             {
-                if (IsDisposed)
+                if (token.IsCancellationRequested)
                     return;
 
                 lblTotalEquipes.Text = "—";
@@ -84,7 +94,7 @@ namespace Limk.VolleyBall.User_Constrols
             finally
             {
                 _carregando = false;
-                if (!IsDisposed)
+                if (!token.IsCancellationRequested)
                     btnAtualizar.Enabled = true;
             }
         }

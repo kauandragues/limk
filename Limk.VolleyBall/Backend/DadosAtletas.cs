@@ -151,13 +151,8 @@ namespace Limk.VolleyBall.Backend
         private static async Task GarantirAcessoEquipeAsync(MySqlConnection conexao, MySqlTransaction transacao,
             int usuarioId, int equipeId, CancellationToken cancellationToken)
         {
-            using MySqlCommand comando = CriarComando(conexao, """
-                SELECT equipe_id FROM usuario_equipe
-                WHERE usuario_id = @usuarioId AND equipe_id = @equipeId FOR SHARE
-                """, transacao);
-            comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
-            comando.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
-            if (await comando.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
+            if (!await DadosEquipe.BloquearComAcessoAsync(conexao, transacao, usuarioId, equipeId,
+                exclusivo: false, cancellationToken).ConfigureAwait(false))
                 throw new FalhaAtletaException("Você não tem acesso à equipe selecionada.");
         }
 

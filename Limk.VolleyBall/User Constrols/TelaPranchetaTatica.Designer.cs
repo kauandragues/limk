@@ -1136,10 +1136,6 @@
         private Button btnDuplicarFase;
         private Button btnExcluirFase;
         private FlowLayoutPanel flowFases;
-        private CartaoFaseControl cartaoFase1;
-        private CartaoFaseControl cartaoFase2;
-        private CartaoFaseControl cartaoFase3;
-        private CartaoFaseControl cartaoFase4;
         private ToolTip dicasPrancheta;
     }
 }

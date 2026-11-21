@@ -4,13 +4,13 @@ namespace Limk.VolleyBall.Backend
 {
     internal static class DadosInicio
     {
-        public static async Task<ResumoInicio> CarregarAsync(int usuarioId)
+        public static async Task<ResumoInicio> CarregarAsync(int usuarioId, CancellationToken token = default)
         {
             if (usuarioId <= 0)
                 throw new ArgumentOutOfRangeException(nameof(usuarioId));
 
             using MySqlConnection conexao = ConexaoBD.CriarConexao();
-            await conexao.OpenAsync();
+            await conexao.OpenAsync(token).ConfigureAwait(false);
 
             // Conta os atletas pelo cadastro, sem repetir quem pertence a duas equipes.
             const string consulta = @"SELECT
@@ -28,12 +28,10 @@ namespace Limk.VolleyBall.Backend
                     WHERE ue.usuario_id = @usuarioId) AS quadros";
 
             ResumoInicio resumo = new ResumoInicio();
-            using (MySqlCommand comando = new MySqlCommand(consulta, conexao))
+            using (MySqlCommand comando = CriarComando(consulta))
             {
-                comando.CommandTimeout = 5;
-                comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
-                using var leitor = await comando.ExecuteReaderAsync();
-                await leitor.ReadAsync();
+                using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
+                await leitor.ReadAsync(token).ConfigureAwait(false);
                 resumo.Equipes = leitor.GetInt64(0);
                 resumo.Atletas = leitor.GetInt64(1);
                 resumo.Taticas = leitor.GetInt64(2);
@@ -50,12 +48,10 @@ namespace Limk.VolleyBall.Backend
                 ORDER BY t.id DESC
                 LIMIT 3";
 
-            using (MySqlCommand comando = new MySqlCommand(consultaTaticas, conexao))
+            using (MySqlCommand comando = CriarComando(consultaTaticas))
             {
-                comando.CommandTimeout = 5;
-                comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
-                using var leitor = await comando.ExecuteReaderAsync();
-                while (await leitor.ReadAsync())
+                using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
+                while (await leitor.ReadAsync(token).ConfigureAwait(false))
                 {
                     resumo.UltimasTaticas.Add(new TaticaInicio
                     {
@@ -78,12 +74,10 @@ namespace Limk.VolleyBall.Backend
                 ORDER BY e.nome, e.id
                 LIMIT 3";
 
-            using (MySqlCommand comando = new MySqlCommand(consultaEquipes, conexao))
+            using (MySqlCommand comando = CriarComando(consultaEquipes))
             {
-                comando.CommandTimeout = 5;
-                comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
-                using var leitor = await comando.ExecuteReaderAsync();
-                while (await leitor.ReadAsync())
+                using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
+                while (await leitor.ReadAsync(token).ConfigureAwait(false))
                 {
                     resumo.EquipesCadastradas.Add(new EquipeInicio
                     {
@@ -95,6 +89,13 @@ namespace Limk.VolleyBall.Backend
             }
 
             return resumo;
+
+            MySqlCommand CriarComando(string sql)
+            {
+                var comando = new MySqlCommand(sql, conexao) { CommandTimeout = 5 };
+                comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
+                return comando;
+            }
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Limk.VolleyBall.Backend
             return ConsultarAsync(consulta, usuarioId, cancellationToken);
         }
 
-        public static Task<DataTable> CarregarTaticasAsync(int usuarioId)
+        public static Task<DataTable> CarregarTaticasAsync(int usuarioId, CancellationToken cancellationToken = default)
         {
             const string consulta = @"SELECT t.id, t.equipe_id, t.nome, t.descricao,
                     e.nome AS equipe, tt.nome AS tipo, sj.nome AS sistema,
@@ -53,11 +53,11 @@ namespace Limk.VolleyBall.Backend
                 LEFT JOIN sistema_jogo sj ON sj.id = t.sistema_jogo_id
                 WHERE ue.usuario_id = @usuarioId
                 ORDER BY t.id DESC";
-            return ConsultarAsync(consulta, usuarioId);
+            return ConsultarAsync(consulta, usuarioId, cancellationToken);
         }
 
         private static async Task<DataTable> ConsultarAsync(string consulta, int usuarioId,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             if (usuarioId <= 0)
                 throw new ArgumentOutOfRangeException(nameof(usuarioId));
@@ -68,6 +68,7 @@ namespace Limk.VolleyBall.Backend
             comando.CommandTimeout = 5;
             comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
             using var leitor = await comando.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             DataTable tabela = new DataTable();
             tabela.Load(leitor);
             cancellationToken.ThrowIfCancellationRequested();

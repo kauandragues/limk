@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Limk.VolleyBall.User_Constrols
 {
@@ -62,7 +63,7 @@ namespace Limk.VolleyBall.User_Constrols
             MostrarStatus("Carregando a tática e suas equipes...");
             try
             {
-                _equipes = await DadosUsuario.CarregarEquipesAsync(_usuario.Id);
+                _equipes = await DadosUsuario.CarregarEquipesAsync(_usuario.Id, token);
                 _tipos = await DadosPrancheta.CarregarTiposAsync(token);
                 _sistemas = await DadosPrancheta.CarregarSistemasAsync(token);
                 try { _preferencias = await DadosPreferenciasUsuario.CarregarAsync(_usuario.Id, token); }
@@ -87,22 +88,22 @@ namespace Limk.VolleyBall.User_Constrols
                 if (IsDisposed || token.IsCancellationRequested)
                     return;
                 PrepararCamposTatica();
-                _pronto = true;
                 _indiceFaseSelecionada = 0;
                 MostrarFaseAtual();
+                _pronto = true;
                 MostrarStatus(_equipes.Rows.Count == 0
                     ? "Seu usuário não possui equipe vinculada para salvar táticas."
                     : "Sem um elemento selecionado, edite a tática e a fase nas propriedades à direita.");
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested) { }
-            catch (UnauthorizedAccessException erro) { if (!IsDisposed) MostrarStatus(erro.Message, true); }
-            catch (Exception) { if (!IsDisposed) MostrarStatus("Não foi possível carregar a prancheta. Verifique a conexão e abra a tela novamente.", true); }
+            catch (UnauthorizedAccessException erro) { if (!IsDisposed && !token.IsCancellationRequested) MostrarStatus(erro.Message, true); }
+            catch (Exception) { if (!IsDisposed && !token.IsCancellationRequested) MostrarStatus("Não foi possível carregar a prancheta. Verifique a conexão e abra a tela novamente.", true); }
             finally
             {
                 _operacao = false;
-                if (!IsDisposed) AtualizarSequenciaVisual();
+                if (!IsDisposed && !token.IsCancellationRequested) AtualizarSequenciaVisual();
             }
-            if (_pronto && _apresentarAoAbrir && !IsDisposed)
+            if (_pronto && _apresentarAoAbrir && !IsDisposed && !token.IsCancellationRequested)
                 AlternarApresentacao();
         }
 
@@ -219,32 +220,37 @@ namespace Limk.VolleyBall.User_Constrols
 
         private async void comboEquipeTatica_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (_atualizandoPropriedades || !_pronto || _operacao || _apresentando || _emTransicao || _tatica.Id > 0 ||
-                comboEquipeTatica.SelectedValue is not int equipeId || equipeId == _tatica.EquipeId)
+            if (_atualizandoPropriedades || !_pronto || _operacao || _apresentando || _emTransicao || _tatica.Id > 0 || _usuario is null ||
+                comboEquipeTatica.SelectedValue is not int equipeId || equipeId <= 0 || equipeId == _tatica.EquipeId)
                 return;
             GuardarFaseAtual();
-            _tatica.EquipeId = equipeId;
-            // Uma nova equipe não pode herdar os vínculos do elenco anterior.
-            foreach (QuadroTatica quadro in _tatica.Quadros)
-                foreach (AtletaQuadro atleta in quadro.Atletas)
-                {
-                    atleta.EquipeAtletaId = null;
-                    atleta.Nome = $"Atleta {atleta.NumeroCamisa}";
-                }
-            _elenco.Clear();
+            CancellationToken token = _encerramento.Token;
             _operacao = true;
             AtualizarAcoes();
             try
             {
-                _elenco = await DadosPrancheta.CarregarElencoAsync(_usuario!.Id, equipeId, _encerramento.Token);
-                if (!IsDisposed) MostrarStatus("Equipe atualizada na edição. Clique em Salvar tática para gravar no banco.");
+                List<AtletaDaEquipe> novoElenco = await DadosPrancheta.CarregarElencoAsync(_usuario.Id, equipeId, token);
+                if (IsDisposed || token.IsCancellationRequested)
+                    return;
+
+                // Só troca os vínculos da edição depois de confirmar o acesso ao novo elenco.
+                _tatica.EquipeId = equipeId;
+                _elenco = novoElenco;
+                foreach (QuadroTatica quadro in _tatica.Quadros)
+                    foreach (AtletaQuadro atleta in quadro.Atletas)
+                    {
+                        atleta.EquipeAtletaId = null;
+                        atleta.Nome = $"Atleta {atleta.NumeroCamisa}";
+                    }
+                MostrarStatus("Equipe atualizada na edição. Clique em Salvar tática para gravar no banco.");
             }
-            catch (OperationCanceledException) { }
-            catch (FalhaPranchetaException) { if (!IsDisposed) MostrarStatus("Não foi possível carregar o elenco da equipe.", true); }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+            catch (UnauthorizedAccessException erro) { if (!IsDisposed && !token.IsCancellationRequested) MostrarStatus(erro.Message, true); }
+            catch (FalhaPranchetaException) { if (!IsDisposed && !token.IsCancellationRequested) MostrarStatus("Não foi possível carregar o elenco da equipe.", true); }
             finally
             {
                 _operacao = false;
-                if (!IsDisposed) MostrarFaseAtual();
+                if (!IsDisposed && !token.IsCancellationRequested) MostrarFaseAtual();
             }
         }
 
@@ -433,7 +439,8 @@ namespace Limk.VolleyBall.User_Constrols
             if (!_pronto || _operacao || _apresentando || _emTransicao) return;
             GuardarFaseAtual();
             QuadroTatica copia = _tatica.Quadros[_indiceFaseSelecionada].Copiar();
-            copia.Nome = (copia.Nome.Length > 91 ? copia.Nome.Substring(0, 91) : copia.Nome) + " (cópia)";
+            const string sufixo = " (cópia)";
+            copia.Nome = string.Concat(copia.Nome.EnumerateRunes().Take(100 - sufixo.Length)) + sufixo;
             _tatica.Quadros.Insert(_indiceFaseSelecionada + 1, copia);
             _indiceFaseSelecionada++;
             MostrarFaseAtual();
