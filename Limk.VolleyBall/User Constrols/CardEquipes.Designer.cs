@@ -37,7 +37,6 @@
             label8 = new Label();
             pictureBox3 = new PictureBox();
             button1 = new Button();
-            button2 = new Button();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             SuspendLayout();
@@ -45,7 +44,6 @@
             // panel3
             // 
             panel3.BackColor = Color.White;
-            panel3.Controls.Add(button2);
             panel3.Controls.Add(button1);
             panel3.Controls.Add(button8);
             panel3.Controls.Add(label10);
@@ -131,18 +129,6 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
-            // button2
-            // 
-            button2.Image = (Image)resources.GetObject("button2.Image");
-            button2.AccessibleName = "Editar equipe";
-            button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button2.Location = new Point(303, 57);
-            button2.Name = "button2";
-            button2.Size = new Size(36, 29);
-            button2.TabIndex = 14;
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
-            // 
             // CardEquipes
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -165,7 +151,6 @@
         private Label label9;
         private Label label8;
         private PictureBox pictureBox3;
-        private Button button2;
         private Button button1;
     }
 }

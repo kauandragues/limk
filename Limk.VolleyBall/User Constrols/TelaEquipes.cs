@@ -71,7 +71,6 @@ namespace Limk.VolleyBall.User_Constrols
                 var cartao = new CardEquipes { Dock = DockStyle.Top, Margin = new Padding(0, 0, 0, 8) };
                 cartao.ExibirEquipe(equipe);
                 cartao.Click += CartaoSelecionado;
-                cartao.EditarEquipe += CartaoSelecionado;
                 cartao.ExcluirEquipe += CartaoExcluirEquipe;
                 cartao.VerElenco += CartaoVerElenco;
                 int linha = tableLayoutPanel1.RowCount++;
