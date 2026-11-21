@@ -1,10 +1,14 @@
 using Limk.VolleyBall.Backend;
+using System.ComponentModel;
 using System.Net.Mail;
 
 namespace Limk.VolleyBall.User_Constrols
 {
     public partial class TelaLogin : UserControl
     {
+        private static readonly Color CorBorda = Color.FromArgb(222, 215, 236);
+        private static readonly Color CorTextoSecundario = Color.FromArgb(100, 116, 139);
+        private static readonly Color CorAcao = Color.FromArgb(124, 58, 237);
         private const string MensagemCarregando = "Verificando seu acesso…";
         private readonly CancellationTokenSource encerramento = new();
         private bool autenticando;
@@ -34,8 +38,15 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void TelaLogin_SizeChanged(object? sender, EventArgs e) => AjustarLayout();
 
+        private void layoutFormulario_Paint(object? sender, PaintEventArgs e)
+        {
+            ControlPaint.DrawBorder(e.Graphics, layoutFormulario.ClientRectangle, CorBorda, ButtonBorderStyle.Solid);
+        }
+
         private void AjustarLayout()
         {
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
             bool compacto = ClientSize.Width < LogicalToDeviceUnits(760);
 
             SuspendLayout();
@@ -61,7 +72,8 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void PosicionarFormulario()
         {
-            if (organizandoFormulario || pnlConteudo.Width <= 0)
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
+                organizandoFormulario || pnlConteudo.Width <= 0)
                 return;
 
             organizandoFormulario = true;
@@ -96,43 +108,17 @@ namespace Limk.VolleyBall.User_Constrols
             return layoutFormulario.GetPreferredSize(new Size(largura, 0)).Height;
         }
 
-        private static TableLayoutPanel CriarCampo(TextBox caixa, CheckBox? mostrarSenha, int tabIndex, int espacoAbaixo)
+        private void campo_Paint(object? sender, PaintEventArgs e)
         {
-            TableLayoutPanel campo = new TableLayoutPanel
-            {
-                BackColor = CorFundo,
-                ColumnCount = mostrarSenha is null ? 1 : 2,
-                RowCount = 3,
-                Dock = DockStyle.Top,
-                Margin = new Padding(0, 0, 0, espacoAbaixo),
-                Padding = new Padding(12, 1, 1, 1),
-                MinimumSize = new Size(0, 42),
-                Height = 42,
-                TabIndex = tabIndex
-            };
-            campo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            campo.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            campo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            campo.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            if (sender is Control campo)
+                ControlPaint.DrawBorder(e.Graphics, campo.ClientRectangle,
+                    campo.ContainsFocus ? CorAcao : CorBorda, ButtonBorderStyle.Solid);
+        }
 
-            caixa.BackColor = CorFundo;
-            caixa.BorderStyle = BorderStyle.None;
-            caixa.Dock = DockStyle.Fill;
-            caixa.Font = new Font("Segoe UI", 11F);
-            caixa.Margin = new Padding(0);
-            campo.Controls.Add(caixa, 0, 1);
-
-            if (mostrarSenha is not null)
-            {
-                campo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 82F));
-                campo.Controls.Add(mostrarSenha, 1, 0);
-                campo.SetRowSpan(mostrarSenha, 3);
-            }
-
-            campo.Paint += (_, e) => ControlPaint.DrawBorder(e.Graphics, campo.ClientRectangle, campo.ContainsFocus ? CorAcao : CorBorda, ButtonBorderStyle.Solid);
-            campo.Enter += (_, _) => campo.Invalidate();
-            campo.Leave += (_, _) => campo.Invalidate();
-            return campo;
+        private void campo_FocoAlterado(object? sender, EventArgs e)
+        {
+            if (sender is Control campo)
+                campo.Invalidate();
         }
 
         private void chkMostrarSenha_CheckedChanged(object? sender, EventArgs e)
