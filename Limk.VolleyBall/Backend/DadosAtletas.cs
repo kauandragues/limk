@@ -59,16 +59,8 @@ namespace Limk.VolleyBall.Backend
                 await conexao.OpenAsync(cancellationToken).ConfigureAwait(false);
                 using MySqlTransaction transacao = await conexao.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-                using (MySqlCommand acesso = CriarComando(conexao, """
-                    SELECT equipe_id FROM usuario_equipe
-                    WHERE usuario_id = @usuarioId AND equipe_id = @equipeId FOR SHARE
-                    """, transacao))
-                {
-                    acesso.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
-                    acesso.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
-                    if (await acesso.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
-                        throw new FalhaAtletaException("Você não tem acesso à equipe selecionada.");
-                }
+                await GarantirAcessoEquipeAsync(conexao, transacao, usuarioId, equipeId, cancellationToken)
+                    .ConfigureAwait(false);
 
                 // Os dados pessoais e as posições pertencem ao cadastro compartilhado entre equipes.
                 bool podeEditarCadastro = novo || await VerificarVinculosAsync(conexao, transacao,
@@ -110,13 +102,63 @@ namespace Limk.VolleyBall.Backend
             catch (MySqlException erro) when (erro.Number == 1062)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                throw new FalhaAtletaException("Esse número de camisa já está em uso na equipe.", erro);
+                throw new FalhaAtletaException("Esse número de camisa já está em uso ou reservado na equipe.", erro);
             }
             catch (Exception erro) when (ErroDeBanco(erro))
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 throw new FalhaAtletaException("Não foi possível salvar o atleta. Verifique a conexão e tente novamente.", erro);
             }
+        }
+
+        public static async Task ExcluirAsync(int usuarioId, int atletaId, int equipeId,
+            CancellationToken cancellationToken = default)
+        {
+            if (usuarioId <= 0)
+                throw new FalhaAtletaException("Entre novamente para excluir um atleta.");
+            if (atletaId <= 0 || equipeId <= 0)
+                throw new FalhaAtletaException("Selecione um atleta do elenco para excluir.");
+
+            try
+            {
+                using MySqlConnection conexao = ConexaoBD.CriarConexao();
+                await conexao.OpenAsync(cancellationToken).ConfigureAwait(false);
+                using MySqlTransaction transacao = await conexao.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+                await GarantirAcessoEquipeAsync(conexao, transacao, usuarioId, equipeId, cancellationToken)
+                    .ConfigureAwait(false);
+
+                // A inativação preserva as referências das táticas salvas a este vínculo.
+                using MySqlCommand comando = CriarComando(conexao, """
+                    UPDATE equipe_atleta
+                    SET ativo = FALSE
+                    WHERE equipe_id = @equipeId AND atleta_id = @atletaId AND ativo = TRUE
+                    """, transacao);
+                comando.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
+                comando.Parameters.Add("@atletaId", MySqlDbType.Int32).Value = atletaId;
+                if (await comando.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
+                    throw new FalhaAtletaException("O atleta já saiu do elenco ativo. Reabra a tela para atualizar a lista.");
+
+                cancellationToken.ThrowIfCancellationRequested();
+                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
+            }
+            catch (Exception erro) when (ErroDeBanco(erro))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                throw new FalhaAtletaException("Não foi possível excluir o atleta do elenco. Verifique a conexão e tente novamente.", erro);
+            }
+        }
+
+        private static async Task GarantirAcessoEquipeAsync(MySqlConnection conexao, MySqlTransaction transacao,
+            int usuarioId, int equipeId, CancellationToken cancellationToken)
+        {
+            using MySqlCommand comando = CriarComando(conexao, """
+                SELECT equipe_id FROM usuario_equipe
+                WHERE usuario_id = @usuarioId AND equipe_id = @equipeId FOR SHARE
+                """, transacao);
+            comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
+            comando.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
+            if (await comando.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
+                throw new FalhaAtletaException("Você não tem acesso à equipe selecionada.");
         }
 
         private static async Task<bool> VerificarVinculosAsync(MySqlConnection conexao, MySqlTransaction transacao,

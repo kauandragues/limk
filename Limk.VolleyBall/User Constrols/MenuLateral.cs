@@ -74,43 +74,31 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnPranchetaTatica_Click(object? sender, EventArgs e)
         {
-            SelecionarBotao(btnPranchetaTatica);
-
             OnMenuSelecionado?.Invoke(this, new TelaPranchetaTatica());
         }
 
         private void btnInicio_Click_1(object? sender, EventArgs e)
         {
-            SelecionarBotao(btnInicio);
-
             OnMenuSelecionado?.Invoke(this, new TelaInicial());
         }
 
         private void btnTaticas_Click(object? sender, EventArgs e)
         {
-            SelecionarBotao(btnTaticas);
-
             OnMenuSelecionado?.Invoke(this, new TelaTaticas());
         }
 
         private void btnEquipes_Click(object? sender, EventArgs e)
         {
-            SelecionarBotao(btnEquipes);
-
             OnMenuSelecionado?.Invoke(this, new TelaEquipes());
         }
 
         private void btnAtletas_Click(object? sender, EventArgs e)
         {
-            SelecionarBotao(btnAtletas);
-
             OnMenuSelecionado?.Invoke(this, new TelaAtletas());
         }
 
         private void btnConfiguracoes_Click(object? sender, EventArgs e)
         {
-            SelecionarBotao(btnConfiguracoes);
-
             OnMenuSelecionado?.Invoke(this, new TelaConfiguracoes());
         }
     }

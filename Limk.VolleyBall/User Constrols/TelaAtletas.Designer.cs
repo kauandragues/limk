@@ -57,6 +57,7 @@ namespace Limk.VolleyBall.User_Constrols
             acoesFicha = new FlowLayoutPanel();
             btnSalvarAtleta = new Button();
             btnLimparAtleta = new Button();
+            btnExcluirAtleta = new Button();
             lblStatusAtleta = new Label();
             layoutResumo = new TableLayoutPanel();
             painelTotal = new TableLayoutPanel();
@@ -498,6 +499,7 @@ namespace Limk.VolleyBall.User_Constrols
             acoesFicha.TabIndex = 0;
             acoesFicha.Controls.Add(btnSalvarAtleta);
             acoesFicha.Controls.Add(btnLimparAtleta);
+            acoesFicha.Controls.Add(btnExcluirAtleta);
             btnSalvarAtleta.AutoSize = true;
             btnSalvarAtleta.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             btnSalvarAtleta.BackColor = Color.FromArgb(123, 57, 237);
@@ -528,6 +530,22 @@ namespace Limk.VolleyBall.User_Constrols
             btnLimparAtleta.TabIndex = 1;
             btnLimparAtleta.Text = "Limpar";
             btnLimparAtleta.UseVisualStyleBackColor = false;
+            btnExcluirAtleta.AccessibleName = "Excluir atleta do elenco";
+            btnExcluirAtleta.AutoSize = true;
+            btnExcluirAtleta.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnExcluirAtleta.BackColor = Color.White;
+            btnExcluirAtleta.Enabled = false;
+            btnExcluirAtleta.FlatAppearance.BorderColor = Color.FromArgb(181, 58, 69);
+            btnExcluirAtleta.FlatAppearance.MouseOverBackColor = Color.FromArgb(255, 238, 240);
+            btnExcluirAtleta.FlatStyle = FlatStyle.Flat;
+            btnExcluirAtleta.ForeColor = Color.FromArgb(155, 39, 64);
+            btnExcluirAtleta.Margin = new Padding(0, 0, 6, 4);
+            btnExcluirAtleta.MinimumSize = new Size(0, 28);
+            btnExcluirAtleta.Name = "btnExcluirAtleta";
+            btnExcluirAtleta.Padding = new Padding(8, 0, 8, 0);
+            btnExcluirAtleta.TabIndex = 2;
+            btnExcluirAtleta.Text = "Excluir";
+            btnExcluirAtleta.UseVisualStyleBackColor = false;
             lblStatusAtleta.AutoSize = true;
             lblStatusAtleta.Dock = DockStyle.Top;
             lblStatusAtleta.Margin = new Padding(0, 4, 0, 0);
@@ -736,6 +754,7 @@ namespace Limk.VolleyBall.User_Constrols
         private FlowLayoutPanel acoesFicha;
         private Button btnSalvarAtleta;
         private Button btnLimparAtleta;
+        private Button btnExcluirAtleta;
         private Label lblStatusAtleta;
         private TableLayoutPanel layoutResumo;
         private TableLayoutPanel painelTotal;

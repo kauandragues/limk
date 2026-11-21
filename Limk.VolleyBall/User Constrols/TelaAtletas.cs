@@ -18,6 +18,13 @@ namespace Limk.VolleyBall.User_Constrols
         private bool _ocupado;
         private bool _atualizandoGrid;
         private bool _dadosCarregados;
+        private bool _selecaoAgendada;
+        private EstadoFicha? _estadoOriginal;
+
+        private sealed record EstadoFicha(string Nome, string Apelido, string Camisa, int EquipeId,
+            DateTime? Nascimento, bool Titular, string Posicoes);
+
+        private bool TemAlteracoesPendentes => _estadoOriginal is not null && _estadoOriginal != CapturarFicha();
 
         public TelaAtletas()
         {
@@ -53,6 +60,7 @@ namespace Limk.VolleyBall.User_Constrols
             btnLimparAtleta.Click += NovoCadastro;
             btnCadastrarAtletas.Click += NovoCadastro;
             btnSalvarAtleta.Click += btnSalvarAtleta_Click;
+            btnExcluirAtleta.Click += btnExcluirAtleta_Click;
             btnFiltroTodosAtletas.Click += (_, _) => SelecionarFiltro(btnFiltroTodosAtletas, string.Empty);
             btnFiltroLevAtletas.Click += (_, _) => SelecionarFiltro(btnFiltroLevAtletas, "Levantador");
             btnFiltroPontAtleta.Click += (_, _) => SelecionarFiltro(btnFiltroPontAtleta, "Ponteiro");
@@ -72,6 +80,19 @@ namespace Limk.VolleyBall.User_Constrols
         public void DefinirUsuario(UsuarioAutenticado usuario)
         {
             _usuario = usuario;
+        }
+
+        internal bool ConfirmarSaida()
+        {
+            if (_ocupado && _dadosCarregados)
+            {
+                ExibirStatus("Aguarde a conclusão da operação no banco.");
+                return false;
+            }
+
+            return !TemAlteracoesPendentes || MessageBox.Show(this,
+                "Você tem alterações sem salvar. Deseja descartá-las?", "Alterações sem salvar",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes;
         }
 
         private void ConfigurarGrid()
@@ -160,8 +181,11 @@ namespace Limk.VolleyBall.User_Constrols
                 return;
 
             AplicarFiltros();
-            if (_edicao is null && ReferenceEquals(sender, cmbEquipe))
+            if (_edicao is null && ReferenceEquals(sender, cmbEquipe) && !TemAlteracoesPendentes)
+            {
                 SelecionarEquipeDoCadastro();
+                _estadoOriginal = CapturarFicha();
+            }
         }
 
         private void SelecionarFiltro(Button botao, string posicao)
@@ -196,21 +220,7 @@ namespace Limk.VolleyBall.User_Constrols
             try
             {
                 dataGridViewAtletas.DataSource = linhas.Count == 0 ? _atletas.Clone() : linhas.CopyToDataTable();
-                dataGridViewAtletas.CurrentCell = null;
-                dataGridViewAtletas.ClearSelection();
-                if (_edicao is { } edicao)
-                {
-                    foreach (DataGridViewRow linha in dataGridViewAtletas.Rows)
-                    {
-                        if (linha.DataBoundItem is not DataRowView registro ||
-                            registro.Row.Field<int>("id") != edicao.AtletaId || registro.Row.Field<int>("equipe_id") != edicao.EquipeId)
-                            continue;
-                        dataGridViewAtletas.CurrentCell = linha.Cells["nome"];
-                        linha.Selected = true;
-                        selecao = registro;
-                        break;
-                    }
-                }
+                selecao = SelecionarFichaNoGrid();
             }
             finally
             {
@@ -218,7 +228,7 @@ namespace Limk.VolleyBall.User_Constrols
             }
             if (selecao is not null && atualizarFicha)
                 PreencherFicha(selecao);
-            else if (selecao is null && _edicao is not null)
+            else if (selecao is null && _edicao is not null && !TemAlteracoesPendentes)
                 LimparFicha();
 
             lblQtdAtletas.Text = linhas.Select(linha => linha.Field<int>("id")).Distinct().Count().ToString();
@@ -231,14 +241,61 @@ namespace Limk.VolleyBall.User_Constrols
         private static IEnumerable<int> LerPosicaoIds(DataRow linha) =>
             (linha.Field<string>("posicao_ids") ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse);
 
+        private static (int AtletaId, int EquipeId) IdentificarVinculo(DataRow linha) =>
+            (linha.Field<int>("id"), linha.Field<int>("equipe_id"));
+
+        private DataRowView? SelecionarFichaNoGrid()
+        {
+            dataGridViewAtletas.CurrentCell = null;
+            dataGridViewAtletas.ClearSelection();
+            if (_edicao is not { } edicao)
+                return null;
+
+            foreach (DataGridViewRow linha in dataGridViewAtletas.Rows)
+            {
+                if (linha.DataBoundItem is not DataRowView registro || IdentificarVinculo(registro.Row) != edicao)
+                    continue;
+
+                dataGridViewAtletas.CurrentCell = linha.Cells["nome"];
+                linha.Selected = true;
+                return registro;
+            }
+
+            return null;
+        }
+
         private void AtletaSelecionado(object? sender, EventArgs e)
         {
-            if (_ocupado || _atualizandoGrid || dataGridViewAtletas.SelectedRows.Count != 1 ||
-                dataGridViewAtletas.SelectedRows[0].DataBoundItem is not DataRowView registro)
+            if (_ocupado || _atualizandoGrid || _selecaoAgendada || IsDisposed || !IsHandleCreated)
                 return;
 
-            if (_edicao == (registro.Row.Field<int>("id"), registro.Row.Field<int>("equipe_id")))
+            // A alteração de CurrentCell precisa terminar antes de restaurar a seleção recusada.
+            _selecaoAgendada = true;
+            BeginInvoke(() =>
+            {
+                try
+                {
+                    ProcessarSelecaoAtleta();
+                }
+                finally
+                {
+                    _selecaoAgendada = false;
+                }
+            });
+        }
+
+        private void ProcessarSelecaoAtleta()
+        {
+            if (IsDisposed || _ocupado || dataGridViewAtletas.SelectedRows.Count != 1 ||
+                dataGridViewAtletas.SelectedRows[0].DataBoundItem is not DataRowView registro ||
+                _edicao == IdentificarVinculo(registro.Row))
                 return;
+
+            if (!ConfirmarSaida())
+            {
+                SelecionarFichaNoGrid();
+                return;
+            }
 
             PreencherFicha(registro);
             ExibirStatus(_podeEditarDados ? string.Empty : "Atleta compartilhado. Você pode editar a camisa e a titularidade desta equipe.");
@@ -246,7 +303,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void PreencherFicha(DataRowView registro)
         {
-            _edicao = (registro.Row.Field<int>("id"), registro.Row.Field<int>("equipe_id"));
+            _edicao = IdentificarVinculo(registro.Row);
             _podeEditarDados = Convert.ToBoolean(registro["pode_editar_dados"]);
             txtbNomeCompleto.Text = registro["nome"].ToString();
             txtbNomeCamisa.Text = registro["apelido"].ToString();
@@ -281,11 +338,15 @@ namespace Limk.VolleyBall.User_Constrols
                 listaPosicoes.SetItemChecked(i, posicoes.Contains(((PosicaoCadastro)listaPosicoes.Items[i]).Id));
 
             label2.Text = "Editar atleta";
+            _estadoOriginal = CapturarFicha();
             AtualizarDisponibilidade();
         }
 
         private void NovoCadastro(object? sender, EventArgs e)
         {
+            if (!ConfirmarSaida())
+                return;
+
             dataGridViewAtletas.ClearSelection();
             dataGridViewAtletas.CurrentCell = null;
             LimparFicha();
@@ -311,8 +372,19 @@ namespace Limk.VolleyBall.User_Constrols
             for (int i = 0; i < listaPosicoes.Items.Count; i++)
                 listaPosicoes.SetItemChecked(i, false);
             label2.Text = "Novo atleta";
+            _estadoOriginal = CapturarFicha();
             AtualizarDisponibilidade();
         }
+
+        private IEnumerable<int> ObterPosicoesDaFicha() =>
+            listaPosicoes.CheckedItems.Cast<PosicaoCadastro>().Select(posicao => posicao.Id);
+
+        private DateTime? ObterNascimentoDaFicha() =>
+            dateTimePicker1.Checked ? _nascimentoForaDaFaixa ?? dateTimePicker1.Value.Date : null;
+
+        private EstadoFicha CapturarFicha() => new(txtbNomeCompleto.Text, txtbNomeCamisa.Text, txtbNumCamisa.Text,
+            cmbEquipeAtleta.SelectedValue is int equipeId ? equipeId : 0, ObterNascimentoDaFicha(),
+            checkBoxAtletaTitular.Checked, string.Join(",", ObterPosicoesDaFicha()));
 
         private void SelecionarEquipeDoCadastro()
         {
@@ -347,7 +419,7 @@ namespace Limk.VolleyBall.User_Constrols
                 cmbEquipeAtleta.Focus();
                 return;
             }
-            int[] posicoes = listaPosicoes.CheckedItems.Cast<PosicaoCadastro>().Select(posicao => posicao.Id).ToArray();
+            int[] posicoes = ObterPosicoesDaFicha().ToArray();
             if (_edicao is null && posicoes.Length == 0)
             {
                 ExibirStatus("Selecione ao menos uma posição.", erro: true);
@@ -361,7 +433,7 @@ namespace Limk.VolleyBall.User_Constrols
                 Nome = nome,
                 Apelido = txtbNomeCamisa.Text.Trim(),
                 NumeroCamisa = camisa,
-                DataNascimento = dateTimePicker1.Checked ? _nascimentoForaDaFaixa ?? dateTimePicker1.Value.Date : null,
+                DataNascimento = ObterNascimentoDaFicha(),
                 IdEquipe = equipeId,
                 Titular = checkBoxAtletaTitular.Checked
             };
@@ -377,6 +449,7 @@ namespace Limk.VolleyBall.User_Constrols
                     return;
                 salvo = true;
                 _edicao = (atletaId, equipeId);
+                _estadoOriginal = CapturarFicha();
                 DataTable atletas = await DadosUsuario.CarregarAtletasAsync(_usuario.Id, token);
                 if (token.IsCancellationRequested)
                     return;
@@ -402,6 +475,54 @@ namespace Limk.VolleyBall.User_Constrols
             }
         }
 
+        private async void btnExcluirAtleta_Click(object? sender, EventArgs e)
+        {
+            if (_usuario is null || _ocupado || _edicao is not { } edicao || _estadoOriginal is not { } original)
+                return;
+
+            string mensagem = $"Tem certeza que quer excluir {original.Nome}?\n\n" +
+                $"A exclusão vale para o elenco de {cmbEquipeAtleta.Text}. " +
+                "As táticas salvas manterão o vínculo e o número da camisa ficará reservado nesta equipe.";
+            if (TemAlteracoesPendentes)
+                mensagem += "\n\nAs alterações pendentes nesta ficha serão descartadas.";
+
+            if (MessageBox.Show(this, mensagem, "Excluir atleta do elenco", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                return;
+
+            CancellationToken token = _encerramento.Token;
+            DefinirOcupado(true);
+            ExibirStatus("Excluindo atleta do elenco…");
+            try
+            {
+                await DadosAtletas.ExcluirAsync(_usuario.Id, edicao.AtletaId, edicao.EquipeId, token);
+                if (token.IsCancellationRequested)
+                    return;
+
+                DataRow? removida = _atletas.AsEnumerable().FirstOrDefault(linha => IdentificarVinculo(linha) == edicao);
+                if (removida is not null)
+                    _atletas.Rows.Remove(removida);
+                LimparFicha();
+                AplicarFiltros();
+                ExibirStatus("Atleta excluído do elenco.", sucesso: true);
+            }
+            catch (FalhaAtletaException erro)
+            {
+                if (!token.IsCancellationRequested)
+                    ExibirStatus(erro.Message, erro: true);
+            }
+            catch (Exception)
+            {
+                if (!token.IsCancellationRequested)
+                    ExibirStatus("Não foi possível concluir a exclusão. Verifique a conexão e atualize a tela.", erro: true);
+            }
+            finally
+            {
+                if (!token.IsCancellationRequested)
+                    DefinirOcupado(false);
+            }
+        }
+
         private void DefinirOcupado(bool ocupado)
         {
             _ocupado = ocupado;
@@ -419,6 +540,7 @@ namespace Limk.VolleyBall.User_Constrols
             btnCadastrarAtletas.Enabled = disponivel && temEquipe;
             btnLimparAtleta.Enabled = disponivel && temEquipe;
             btnSalvarAtleta.Enabled = disponivel && temEquipe;
+            btnExcluirAtleta.Enabled = disponivel && _edicao is not null;
             cmbEquipeAtleta.Enabled = disponivel && temEquipe && _edicao is null;
             txtbNumCamisa.Enabled = disponivel && temEquipe;
             checkBoxAtletaTitular.Enabled = disponivel && temEquipe;

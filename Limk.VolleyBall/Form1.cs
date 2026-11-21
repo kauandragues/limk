@@ -24,6 +24,14 @@ namespace Limk.VolleyBall
             base.OnLoad(e);
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            if (!e.Cancel && (e.CloseReason is CloseReason.UserClosing or CloseReason.ApplicationExitCall))
+                e.Cancel = !ConfirmarSaidaDaTelaAtual();
+        }
+
         private void MenuLateral_OnMenuSelecionado(object? sender, UserControl TelaExibir)
         {
             MostrarTela(TelaExibir);
@@ -41,7 +49,7 @@ namespace Limk.VolleyBall
 
         private void MostrarTela(UserControl tela)
         {
-            if (_usuario == null || tela is not ITelaUsuario telaUsuario)
+            if (_usuario == null || tela is not ITelaUsuario telaUsuario || !ConfirmarSaidaDaTelaAtual())
             {
                 tela.Dispose();
                 return;
@@ -70,5 +78,8 @@ namespace Limk.VolleyBall
             tela.BringToFront();
             menuLateral1.SelecionarTela(tela);
         }
+
+        private bool ConfirmarSaidaDaTelaAtual() =>
+            panelTelas.Controls.Count == 0 || panelTelas.Controls[0] is not TelaAtletas atletas || atletas.ConfirmarSaida();
     }
 }
