@@ -93,3 +93,15 @@ A transição associa atletas cadastrados pelo vínculo com o elenco. Nos atleta
 O salvamento utiliza as tabelas existentes `tatica`, `quadro`, `atleta_quadro` e `bola_quadro`. Nome, descrição e referências da tática são gravados junto com todas as fases em uma transação: uma falha desfaz a gravação inteira. Ao atualizar, as fases são substituídas dentro dessa transação, preservando o ID da tática e seus favoritos. Os números são guardados em cada fase, mesmo que o elenco mude depois. As coordenadas permanecem normalizadas entre 0 e 1.
 
 O banco continua com 15 tabelas. A prancheta usa a configuração de conexão já existente no `.env`.
+
+## Gerenciando equipes
+
+A tela **Equipes** mostra somente os vínculos do usuário conectado. Clique em um cartão, no nome, no escudo ou no lápis para carregar a equipe no painel da direita. A busca também mantém o painel de acordo com a seleção visível.
+
+- **Cadastrar nova equipe** e **Limpar** abrem uma ficha vazia. Ao salvar, a nova equipe é vinculada ao usuário conectado.
+- **Salvar equipe** grava o nome e o escudo da equipe em edição. Uma equipe compartilhada é atualizada para os outros usuários que possuem acesso a ela.
+- **Escolher escudo** aceita uma imagem de até 4 MB, com até 4096 pixels por lado. O cartão e a prévia preservam a proporção. **Remover** retira o escudo da edição; salve para gravar essa mudança.
+- **Ver Elenco** abre a tela de atletas já filtrada pela equipe do cartão.
+- A **lixeira** pede confirmação. A exclusão remove a equipe, suas táticas, quadros, elementos e atletas exclusivos. Um atleta vinculado a outra equipe mantém seu cadastro e perde somente o vínculo com a equipe excluída. A operação é gravada em uma transação: uma falha desfaz a exclusão inteira.
+
+`Backend/DadosEquipe.cs` reúne as gravações e a verificação de acesso. `Backend/ImagemEscudo.cs` valida e carrega as imagens sem manter o arquivo aberto. O comportamento dos botões fica em `TelaEquipes.cs` e `CardEquipes.cs`; os controles permanecem nos respectivos arquivos `.Designer.cs`.

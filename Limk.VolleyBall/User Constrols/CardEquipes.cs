@@ -1,48 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
+using Limk.VolleyBall.Backend;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Limk.VolleyBall.User_Constrols
 {
     public partial class CardEquipes : UserControl
     {
         private Image? _escudo;
+        private readonly Image? _escudoPadrao;
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int EquipeId { get; private set; }
         public event EventHandler? VerElenco;
+        public event EventHandler? EditarEquipe;
+        public event EventHandler? ExcluirEquipe;
 
         public CardEquipes()
         {
             InitializeComponent();
-            button8.Click += (sender, e) => VerElenco?.Invoke(this, e);
-            Disposed += (sender, e) => _escudo?.Dispose();
+            _escudoPadrao = pictureBox3.Image;
         }
 
         internal void ExibirEquipe(DataRow equipe)
         {
+            EquipeId = Convert.ToInt32(equipe["id"]);
             label8.Text = equipe["nome"].ToString();
             label9.Text = $"{equipe["atletas"]} atletas";
             label10.Text = $"{equipe["taticas"]} táticas";
+            LiberarEscudo();
+            _escudo = ImagemEscudo.CriarImagem(equipe["escudo"] as byte[]);
+            pictureBox3.Image = _escudo ?? _escudoPadrao;
+            pictureBox3.BackColor = _escudo == null ? Color.MediumSlateBlue : Color.White;
+        }
+
+        internal void DefinirSelecionado(bool selecionado)
+        {
+            panel3.BackColor = selecionado ? Color.FromArgb(243, 237, 255) : Color.White;
+            label8.ForeColor = selecionado ? Color.FromArgb(92, 48, 154) : Color.Black;
+        }
+
+        private void SelecionarCartao(object? sender, EventArgs e)
+        {
+            Focus();
+            OnClick(EventArgs.Empty);
+        }
+
+        private void button8_Click(object? sender, EventArgs e) => VerElenco?.Invoke(this, e);
+        private void button2_Click(object? sender, EventArgs e) => EditarEquipe?.Invoke(this, e);
+        private void button1_Click(object? sender, EventArgs e) => ExcluirEquipe?.Invoke(this, e);
+
+        private void LiberarEscudo()
+        {
+            pictureBox3.Image = null;
             _escudo?.Dispose();
             _escudo = null;
-            pictureBox3.Image = null;
-            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
-            if (equipe["escudo"] is byte[] imagem && imagem.Length > 0)
-            {
-                try
-                {
-                    using MemoryStream arquivo = new MemoryStream(imagem);
-                    using Image original = Image.FromStream(arquivo);
-                    _escudo = new Bitmap(original);
-                    pictureBox3.Image = _escudo;
-                }
-                catch (ArgumentException)
-                {
-                    // Um arquivo inválido não impede a leitura dos dados da equipe.
-                }
-            }
         }
     }
 }
