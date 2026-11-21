@@ -13,9 +13,10 @@
         /// <param name="disposing">true se for necessário descartar os recursos gerenciados; caso contrário, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && !IsDisposed)
             {
-                components.Dispose();
+                LiberarEscudo();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -56,6 +57,8 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(396, 95);
             panel3.TabIndex = 7;
+            panel3.Cursor = Cursors.Hand;
+            panel3.Click += SelecionarCartao;
             // 
             // button8
             // 
@@ -67,6 +70,7 @@
             button8.TabIndex = 10;
             button8.Text = "Ver Elenco";
             button8.UseVisualStyleBackColor = false;
+            button8.Click += button8_Click;
             // 
             // label10
             // 
@@ -77,6 +81,7 @@
             label10.Size = new Size(137, 16);
             label10.TabIndex = 9;
             label10.Text = "0 Táticas Cadastradas";
+            label10.Click += SelecionarCartao;
             // 
             // label9
             // 
@@ -87,6 +92,7 @@
             label9.Size = new Size(135, 16);
             label9.TabIndex = 7;
             label9.Text = "0 Atletas Cadastrados";
+            label9.Click += SelecionarCartao;
             // 
             // label8
             // 
@@ -99,6 +105,7 @@
             label8.TabIndex = 8;
             label8.Text = "Vôlei Taubaté";
             label8.UseMnemonic = false;
+            label8.Click += SelecionarCartao;
             // 
             // pictureBox3
             // 
@@ -106,32 +113,41 @@
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
             pictureBox3.Location = new Point(12, 12);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(61, 53);
+            pictureBox3.Size = new Size(64, 64);
+            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.TabIndex = 7;
             pictureBox3.TabStop = false;
+            pictureBox3.Click += SelecionarCartao;
             // 
             // button1
             // 
             button1.Image = (Image)resources.GetObject("button1.Image");
-            button1.Location = new Point(314, 57);
+            button1.AccessibleName = "Excluir equipe";
+            button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button1.Location = new Point(346, 57);
             button1.Name = "button1";
-            button1.Size = new Size(47, 29);
+            button1.Size = new Size(36, 29);
             button1.TabIndex = 13;
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // button2
             // 
             button2.Image = (Image)resources.GetObject("button2.Image");
-            button2.Location = new Point(261, 57);
+            button2.AccessibleName = "Editar equipe";
+            button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button2.Location = new Point(303, 57);
             button2.Name = "button2";
-            button2.Size = new Size(47, 29);
+            button2.Size = new Size(36, 29);
             button2.TabIndex = 14;
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // CardEquipes
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Font = new Font("Segoe UI", 9F);
             Controls.Add(panel3);
             Name = "CardEquipes";
             Size = new Size(396, 95);
