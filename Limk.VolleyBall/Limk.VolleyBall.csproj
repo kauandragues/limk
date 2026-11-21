@@ -51,6 +51,9 @@
     <Compile Update="User Constrols\TelaConfiguracoes.Designer.cs">
       <DependentUpon>TelaConfiguracoes.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Update="User Constrols\TelaConfiguracoes.resx">
+      <DependentUpon>TelaConfiguracoes.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Update="User Constrols\TelaLogin.cs">
       <SubType>UserControl</SubType>
     </Compile>

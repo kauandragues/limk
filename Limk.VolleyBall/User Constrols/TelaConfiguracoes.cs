@@ -13,6 +13,8 @@ namespace Limk.VolleyBall.User_Constrols
         public TelaConfiguracoes()
         {
             InitializeComponent();
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
             DefinirOcupado(false);
         }
 
@@ -144,6 +146,27 @@ namespace Limk.VolleyBall.User_Constrols
             ExibirStatus(string.Empty);
         }
 
+        private void btnCorAtletaPrincipal_Click(object? sender, EventArgs e)
+        {
+            AlterarCor(amostraCorAtletaPrincipal, lblCorAtletaPrincipal);
+        }
+
+        private void btnCorAtletaAdversario_Click(object? sender, EventArgs e)
+        {
+            AlterarCor(amostraCorAtletaAdversario, lblCorAtletaAdversario);
+        }
+
+        private void btnCorBola_Click(object? sender, EventArgs e)
+        {
+            AlterarCor(amostraCorBola, lblCorBola);
+        }
+
+        private void numDuracaoQuadro_ValueChanged(object? sender, EventArgs e)
+        {
+            if (!ocupado && preferenciasCarregadas)
+                ExibirStatus(string.Empty);
+        }
+
         private static void ExibirCor(Panel amostra, Label rotulo, string cor)
         {
             amostra.BackColor = ColorTranslator.FromHtml(cor);
@@ -167,13 +190,15 @@ namespace Limk.VolleyBall.User_Constrols
         private void ExibirStatus(string texto, bool erro = false, bool sucesso = false)
         {
             lblStatus.ForeColor = erro ? Color.FromArgb(155, 39, 64)
-                : sucesso ? Color.FromArgb(26, 103, 67) : CorSecundaria;
+                : sucesso ? Color.FromArgb(26, 103, 67) : Color.FromArgb(100, 116, 139);
             lblStatus.Text = texto;
             lblStatus.Visible = texto.Length > 0;
         }
 
         private void AjustarLayout(object? sender, EventArgs e)
         {
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
             int largura = Math.Max(1, layoutConteudo.ClientSize.Width - layoutConteudo.Padding.Horizontal);
             lblTitulo.MaximumSize = new Size(largura, 0);
             lblDescricao.MaximumSize = new Size(largura, 0);
