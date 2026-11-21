@@ -25,6 +25,9 @@ namespace Limk.VolleyBall.User_Constrols
             dataGridViewAtletas.AllowUserToAddRows = false;
             dataGridViewAtletas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewAtletas.MultiSelect = false;
+            btnLimparAtleta.Click += btnLimparAtleta_Click;
+            btnSalvarAtleta.Click += btnSalvarAtleta_Click;
+
         }
 
         public TelaAtletas(int equipeId) : this()
@@ -178,6 +181,81 @@ namespace Limk.VolleyBall.User_Constrols
             dataGridViewAtletas.CurrentCell = null;
             LimparFicha();
             txtbNomeCompleto.Focus();
+        }
+
+        private async void btnSalvarAtleta_Click(object sender, EventArgs e)
+        {
+            if (_usuario == null)
+                return;
+
+            string nome = txtbNomeCompleto.Text.Trim();
+            string apelido = txtbNomeCamisa.Text.Trim();
+            string posicao = cmbPosicao.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(nome))
+            {
+                MessageBox.Show("Informe o nome do atleta.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtbNomeCompleto.Focus();
+                return;
+            }
+
+            if (!int.TryParse(txtbNumCamisa.Text.Trim(), out int numeroCamisa) || numeroCamisa < 1 || numeroCamisa > 99)
+            {
+                MessageBox.Show("Informe um número de camisa válido (1 a 99).", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtbNomeCamisa.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(posicao))
+            {
+                MessageBox.Show("Selecione ou informe uma posição.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbPosicao.Focus();
+                return;
+            }
+
+            int equipeId = ObterEquipeIdFicha();
+            if (equipeId <= 0)
+            {
+                MessageBox.Show("Selecione uma equipe válida no topo ou informe o nome da equipe na ficha.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DateTime? dataNascimento = dateTimePicker1.Checked ? dateTimePicker1.Value.Date : null;
+            bool titular = checkBoxAtletaTitular.Checked;
+
+            var atleta = new Atleta
+            {
+                Nome = nome,
+                Apelido = apelido,
+                NumeroCamisa = numeroCamisa,
+                DataNascimento = dataNascimento,
+                IdEquipe = equipeId,
+                Titular = titular
+            };
+
+            if (!atleta.CadastrarAtleta(posicao, out string erro))
+            {
+                MessageBox.Show(erro, "Erro ao salvar", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show("Atleta salvo com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            LimparFicha();
+            await RecarregarAtletasAsync();
+        }
+
+        private int ObterEquipeIdFicha()
+        {
+            if (cmbEquipe.SelectedValue is int idFiltro && idFiltro > 0)
+                return idFiltro;
+
+            string nomeEquipeDigitado = txtbEquipeAtleta.Text.Trim();
+            if (string.IsNullOrWhiteSpace(nomeEquipeDigitado) || cmbEquipe.DataSource is not IEnumerable<KeyValuePair<int, string>> itens)
+                return 0;
+
+            var encontrada = itens.FirstOrDefault(item => item.Key > 0 && item.Value.Equals(nomeEquipeDigitado, StringComparison.OrdinalIgnoreCase));
+
+            return encontrada.Key;
         }
     }
 }

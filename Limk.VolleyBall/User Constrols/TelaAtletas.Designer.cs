@@ -485,6 +485,7 @@
             btnSalvarAtleta.TabIndex = 15;
             btnSalvarAtleta.Text = "✔️ Salvar Atleta";
             btnSalvarAtleta.UseVisualStyleBackColor = false;
+            btnSalvarAtleta.Click += btnSalvarAtleta_Click;
             // 
             // label7
             // 

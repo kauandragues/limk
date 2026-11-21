@@ -56,6 +56,7 @@ namespace Limk.VolleyBall.Backend
                         cmd.Parameters.AddWithValue("@numero_camisa", NumeroCamisa);
                         cmd.Parameters.AddWithValue("@data_nascimento", DataNascimento.HasValue ? (object)DataNascimento.Value.Date : DBNull.Value);
                         cmd.Parameters.AddWithValue("@idEquipe", IdEquipe);
+                        cmd.Parameters.AddWithValue("@titular", Titular);
 
                         Id = Convert.ToInt32(cmd.ExecuteScalar());
                     }
