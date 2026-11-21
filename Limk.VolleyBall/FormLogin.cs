@@ -15,6 +15,7 @@ namespace Limk.VolleyBall
             AutoScaleMode = AutoScaleMode.Dpi;
             MinimumSize = new Size(400, 480);
             ClientSize = new Size(900, 590);
+            Icon = Properties.Resources.IconeLIMK;
             StartPosition = FormStartPosition.CenterScreen;
             MostrarLogin();
             Shown += FormLogin_Shown;

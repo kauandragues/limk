@@ -44,14 +44,16 @@ Para executar o projeto, é necessário ter instalado:
 1. Clone o repositório:
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/kauandragues/limk.git
 ```
 
-2. Para uma instalação nova, importe `banco/limk_banco.sql` no MySQL.
+2. Para uma instalação nova, execute [banco/limk-completo.sql](banco/limk-completo.sql) no MySQL.
 3. Copie `Limk.VolleyBall/.env.example` para `Limk.VolleyBall/.env` e preencha `DB_SERVER`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`. Use `limk` em `DB_NAME` para o banco criado pelo script.
 4. Abra `Limk.slnx` no Visual Studio e execute o projeto. Na tela de login, clique em **Criar conta** ou use o e-mail e a senha de um usuário já cadastrado. A coluna `usuario.senha_hash` armazena o hash bcrypt da senha.
 
 Ao publicar o aplicativo, configure as variáveis de conexão no ambiente de destino ou forneça um `.env` local ao lado do executável.
+
+Se você já importou as táticas de exemplo com as equipes em cima e embaixo, execute a [correção da orientação](docs/entrega/corrigir-orientacao-taticas.sql) no banco `limk` e reabra a tática. Nas formações corrigidas, a equipe principal ocupa a metade esquerda da quadra e a adversária ocupa a direita.
 
 As três contas de demonstração do script usam a senha **`Limk@Teste2026!`** no ambiente de desenvolvimento:
 
@@ -77,7 +79,7 @@ O acesso aos dados segue os vínculos da tabela `usuario_equipe`:
 - os totais e os cartões do início usam a mesma regra;
 - uma conta sem equipes vinculadas apresenta listas vazias e totais iguais a zero.
 
-Dois usuários vinculados à mesma equipe compartilham acesso aos dados dela. A troca de usuário descarta a tela anterior e suas informações.
+O usuário administra as equipes às quais está vinculado. Para trocar de conta, clique em **Sair da conta** no menu lateral. O LIMK fecha a tela atual e volta ao login. Fechar a janela de login encerra o programa.
 
 ## Usando a prancheta
 
@@ -89,6 +91,8 @@ Dois usuários vinculados à mesma equipe compartilham acesso aos dados dela. A 
 6. Abra uma tática pelo repositório **Táticas** ou pelos cartões do início. Clicar nos cartões ou em **Anterior/Próxima** mostra imediatamente o quadro escolhido para edição. **Executar** anima atletas e bola, avançando do primeiro quadro até o último na ordem da sequência. **Duração (ms)** define o tempo para sair do quadro atual e chegar ao seguinte: `1000` corresponde a um segundo. O último quadro permanece visível pela própria duração durante a apresentação. **Parar** interrompe a prévia e restaura as posições do quadro de origem da transição. O botão **Apresentar** do repositório abre e inicia a sequência.
 
 A transição associa atletas cadastrados pelo vínculo com o elenco. Nos atletas sem vínculo, mantenha o mesmo número e lado entre os quadros para representar o mesmo elemento. A bola se move quando está presente nos dois quadros. Elementos que só existem em um dos quadros aparecem ou desaparecem ao concluir a transição. A animação altera apenas o desenho, preservando as posições definidas em cada quadro.
+
+Em **Táticas**, cada cartão tem o botão **Excluir tática**. Confira o nome da jogada e da equipe no aviso. Confirmar remove os quadros e as posições daquela tática. Cancelar mantém a jogada disponível na lista.
 
 ### Organização do código
 
@@ -111,3 +115,12 @@ A tela **Equipes** mostra somente os vínculos do usuário conectado. Clique em 
 - A **lixeira** pede confirmação. A exclusão remove a equipe, suas táticas, quadros, elementos e atletas exclusivos. Um atleta vinculado a outra equipe mantém seu cadastro e perde somente o vínculo com a equipe excluída. A operação é gravada em uma transação: uma falha desfaz a exclusão inteira.
 
 `Backend/DadosEquipe.cs` reúne as gravações e a verificação de acesso. `Backend/ImagemEscudo.cs` valida e carrega as imagens sem manter o arquivo aberto. O comportamento dos botões fica em `TelaEquipes.cs` e `CardEquipes.cs`; os controles permanecem nos respectivos arquivos `.Designer.cs`.
+
+## Documentação do projeto
+
+- Trabalho escrito final em [PDF](docs/entrega/trabalho-escrito.pdf) e [Word editável](docs/entrega/trabalho-escrito.docx).
+- [Especificação de requisitos](docs/LIMK_Requisitos.md).
+- [Casos de uso](docs/entrega/casos-de-uso.pdf) e [diagramas de classes](docs/diagramas-de-classes.md), também disponíveis em [PDF](docs/entrega/diagrama-de-classes.pdf).
+- [Modelo entidade-relacionamento](docs/mer.md), [esquema físico](docs/eer.md) e [diagramas do banco em PDF](docs/entrega/modelo-de-dados.pdf).
+- [Script integrado de implantação e demonstração](banco/limk-completo.sql) e [consultas documentadas por tela](docs/entrega/consultas-interfaces.sql).
+- [Testes funcionais e roteiro de verificação](docs/testes-funcionais.md).

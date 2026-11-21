@@ -139,6 +139,13 @@ namespace Limk.VolleyBall.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
+        internal static System.Drawing.Icon IconeLIMK {
+            get {
+                object obj = ResourceManager.GetObject("IconeLIMK", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
         
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.

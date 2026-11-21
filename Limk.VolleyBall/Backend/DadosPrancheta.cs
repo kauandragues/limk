@@ -272,6 +272,31 @@ namespace Limk.VolleyBall.Backend
             }
         }
 
+        public static async Task<bool> ExcluirAsync(int usuarioId, int taticaId, CancellationToken token = default)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(taticaId);
+            const string sql = """
+                DELETE FROM tatica
+                WHERE id = @taticaId AND EXISTS (
+                    SELECT 1 FROM usuario_equipe ue
+                    WHERE ue.equipe_id = tatica.equipe_id AND ue.usuario_id = @usuarioId
+                )
+                """;
+            try
+            {
+                using var conexao = ConexaoBD.CriarConexao();
+                await conexao.OpenAsync(token).ConfigureAwait(false);
+                using var comando = ConsultaTatica(conexao, null, sql, usuarioId, taticaId);
+                return await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false) == 1;
+            }
+            catch (Exception erro) when (ErroDeBanco(erro))
+            {
+                token.ThrowIfCancellationRequested();
+                throw new FalhaPranchetaException(erro);
+            }
+        }
+
         internal static void Validar(Tatica tatica)
         {
             if (tatica.Id < 0 || tatica.EquipeId <= 0)
@@ -320,7 +345,7 @@ namespace Limk.VolleyBall.Backend
         private static bool ErroDeBanco(Exception erro) =>
             erro is MySqlException or InvalidOperationException or FormatException or OverflowException or TimeoutException;
 
-        private static MySqlCommand ConsultaTatica(MySqlConnection conexao, MySqlTransaction transacao, string sql, int usuarioId, int taticaId)
+        private static MySqlCommand ConsultaTatica(MySqlConnection conexao, MySqlTransaction? transacao, string sql, int usuarioId, int taticaId)
         {
             var comando = Comando(conexao, transacao, sql);
             comando.Parameters.AddWithValue("@usuarioId", usuarioId);

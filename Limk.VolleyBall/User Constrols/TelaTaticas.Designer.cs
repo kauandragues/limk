@@ -139,7 +139,7 @@
             textBox1.ForeColor = Color.Black;
             textBox1.Location = new Point(19, 12);
             textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "🔍 Buscar por nome de jogada ou rotação...";
+            textBox1.PlaceholderText = "Buscar por nome da tática...";
             textBox1.Size = new Size(378, 27);
             textBox1.TabIndex = 4;
             // 

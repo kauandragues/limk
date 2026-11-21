@@ -125,6 +125,7 @@ namespace Limk.VolleyBall.User_Constrols
                 cartao.ExibirTatica(tatica);
                 cartao.AbrirTatica += (sender, id) => TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id));
                 cartao.ApresentarTatica += (sender, id) => TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id, apresentar: true));
+                cartao.ExcluirTatica += async (sender, e) => await ExcluirTaticaAsync(tatica);
                 cartao.Dock = DockStyle.Top;
                 int linha = indice / 2;
                 if (linha >= tableLayoutPanel1.RowCount)
@@ -137,6 +138,41 @@ namespace Limk.VolleyBall.User_Constrols
             }
             tableLayoutPanel1.ResumeLayout(true);
             label2.Text = indice == 0 ? "Nenhuma tática nas equipes selecionadas." : $"{indice} táticas das suas equipes";
+        }
+
+        private async Task ExcluirTaticaAsync(DataRow tatica)
+        {
+            if (_usuario is not { } usuario || !tableLayoutPanel1.Enabled)
+                return;
+
+            string mensagem = $"Excluir a tática “{tatica["nome"]}” da equipe “{tatica["equipe"]}”?\n\n" +
+                "Todos os seus quadros e as posições de atletas e bola serão apagados.";
+            if (MessageBox.Show(this, mensagem, "Excluir tática", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                return;
+
+            CancellationToken token = _encerramento.Token;
+            tableLayoutPanel1.Enabled = false;
+            try
+            {
+                bool excluida = await DadosPrancheta.ExcluirAsync(usuario.Id, Convert.ToInt32(tatica["id"]), token);
+                if (token.IsCancellationRequested || IsDisposed) return;
+                _taticas.Rows.Remove(tatica);
+                ExibirTaticas();
+                if (!excluida)
+                    label2.Text = "Esta tática já foi excluída ou você perdeu o acesso à equipe.";
+            }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+            catch (FalhaPranchetaException)
+            {
+                if (!token.IsCancellationRequested && !IsDisposed)
+                    label2.Text = "Não foi possível confirmar a exclusão. Reabra Táticas para atualizar a lista.";
+            }
+            finally
+            {
+                if (!token.IsCancellationRequested && !IsDisposed)
+                    tableLayoutPanel1.Enabled = true;
+            }
         }
     }
 }

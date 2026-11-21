@@ -8,12 +8,13 @@ namespace Limk.VolleyBall.User_Constrols
         private static readonly Color CorHover = Color.FromArgb(52, 37, 71);
 
         public event EventHandler<UserControl>? OnMenuSelecionado;
+        internal event EventHandler? SaidaDaContaSolicitada;
 
         public MenuLateral()
         {
             InitializeComponent();
 
-            foreach (Button botao in new[] { btnInicio, btnPranchetaTatica, btnTaticas, btnAtletas, btnEquipes, btnConfiguracoes })
+            foreach (Button botao in new[] { btnInicio, btnPranchetaTatica, btnTaticas, btnAtletas, btnEquipes, btnConfiguracoes, btnSairDaConta })
             {
                 botao.BackColor = BackColor;
                 botao.ForeColor = Color.FromArgb(244, 239, 250);
@@ -35,7 +36,8 @@ namespace Limk.VolleyBall.User_Constrols
 
             int larguraCabecalho = tableLayoutPanel1.Padding.Horizontal + larguraIcone + larguraMarca +
                 SystemInformation.VerticalScrollBarWidth;
-            int larguraRodape = panelRodape.Padding.Horizontal + btnConfiguracoes.GetPreferredSize(Size.Empty).Width;
+            int larguraRodape = panelRodape.Padding.Horizontal + Math.Max(
+                btnConfiguracoes.GetPreferredSize(Size.Empty).Width, btnSairDaConta.GetPreferredSize(Size.Empty).Width);
             return Math.Max(larguraCabecalho, larguraRodape);
         }
 
@@ -100,6 +102,11 @@ namespace Limk.VolleyBall.User_Constrols
         private void btnConfiguracoes_Click(object? sender, EventArgs e)
         {
             OnMenuSelecionado?.Invoke(this, new TelaConfiguracoes());
+        }
+
+        private void btnSairDaConta_Click(object? sender, EventArgs e)
+        {
+            SaidaDaContaSolicitada?.Invoke(this, EventArgs.Empty);
         }
     }
 }

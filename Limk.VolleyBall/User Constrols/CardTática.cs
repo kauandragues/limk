@@ -13,11 +13,13 @@ namespace Limk.VolleyBall.User_Constrols
         private int _taticaId;
         public event EventHandler<int>? AbrirTatica;
         public event EventHandler<int>? ApresentarTatica;
+        internal event EventHandler? ExcluirTatica;
         public CardTática()
         {
             InitializeComponent();
             button1.Click += (sender, e) => AbrirTatica?.Invoke(this, _taticaId);
             button2.Click += (sender, e) => ApresentarTatica?.Invoke(this, _taticaId);
+            btnExcluirTatica.Click += (sender, e) => ExcluirTatica?.Invoke(this, EventArgs.Empty);
         }
 
         internal void ExibirTatica(DataRow tatica)
@@ -28,6 +30,7 @@ namespace Limk.VolleyBall.User_Constrols
             label3.Text = tatica["descricao"] == DBNull.Value ? "Sem descrição cadastrada." : tatica["descricao"].ToString();
             label4.Text = $"{tatica["quadros"]} quadros configurados";
             button1.Enabled = _taticaId > 0;
+            btnExcluirTatica.Enabled = _taticaId > 0;
             button2.Enabled = _taticaId > 0 && Convert.ToInt32(tatica["quadros"]) > 0;
         }
     }

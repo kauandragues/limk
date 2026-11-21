@@ -39,6 +39,7 @@ namespace Limk.VolleyBall.User_Constrols
             btnTaticas = new Button();
             panelRodape = new Panel();
             btnConfiguracoes = new Button();
+            btnSairDaConta = new Button();
             panel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             panelRodape.SuspendLayout();
@@ -52,7 +53,7 @@ namespace Limk.VolleyBall.User_Constrols
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(200, 449);
+            panel1.Size = new Size(200, 405);
             panel1.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -183,11 +184,12 @@ namespace Limk.VolleyBall.User_Constrols
             // panelRodape
             //
             panelRodape.Controls.Add(btnConfiguracoes);
+            panelRodape.Controls.Add(btnSairDaConta);
             panelRodape.Dock = DockStyle.Bottom;
-            panelRodape.Location = new Point(0, 449);
+            panelRodape.Location = new Point(0, 405);
             panelRodape.Name = "panelRodape";
             panelRodape.Padding = new Padding(12, 12, 12, 12);
-            panelRodape.Size = new Size(200, 68);
+            panelRodape.Size = new Size(200, 112);
             panelRodape.TabIndex = 1;
             //
             // btnConfiguracoes
@@ -203,6 +205,20 @@ namespace Limk.VolleyBall.User_Constrols
             btnConfiguracoes.Text = "⚙️ Configurações";
             btnConfiguracoes.UseVisualStyleBackColor = false;
             btnConfiguracoes.Click += btnConfiguracoes_Click;
+            //
+            // btnSairDaConta
+            //
+            btnSairDaConta.AccessibleName = "Sair da conta";
+            btnSairDaConta.Dock = DockStyle.Bottom;
+            btnSairDaConta.FlatAppearance.BorderSize = 0;
+            btnSairDaConta.FlatStyle = FlatStyle.Flat;
+            btnSairDaConta.Location = new Point(12, 56);
+            btnSairDaConta.Name = "btnSairDaConta";
+            btnSairDaConta.Size = new Size(176, 44);
+            btnSairDaConta.TabIndex = 1;
+            btnSairDaConta.Text = "Sair da conta";
+            btnSairDaConta.UseVisualStyleBackColor = false;
+            btnSairDaConta.Click += btnSairDaConta_Click;
             //
             // MenuLateral
             // 
@@ -233,5 +249,6 @@ namespace Limk.VolleyBall.User_Constrols
         private TableLayoutPanel tableLayoutPanel1;
         private Panel panelRodape;
         private Button btnConfiguracoes;
+        private Button btnSairDaConta;
     }
 }
