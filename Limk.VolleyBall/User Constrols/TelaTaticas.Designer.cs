@@ -93,6 +93,7 @@
             // 
             // button2
             // 
+            button2.AccessibleName = "Limpar filtros";
             button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             button2.BackColor = Color.Transparent;
             button2.FlatAppearance.BorderColor = Color.White;
@@ -104,6 +105,7 @@
             button2.Size = new Size(40, 29);
             button2.TabIndex = 4;
             button2.UseVisualStyleBackColor = false;
+            button2.Click += LimparFiltros_Click;
             // 
             // comboBox2
             // 

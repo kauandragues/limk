@@ -73,6 +73,22 @@ namespace Limk.VolleyBall.User_Constrols
                 ExibirTaticas();
         }
 
+        private void LimparFiltros_Click(object? sender, EventArgs e)
+        {
+            if (_carregando)
+                return;
+
+            // Evita recriar os cartões a cada filtro removido.
+            _carregando = true;
+            textBox1.Clear();
+            if (comboBox1.Items.Count > 0)
+                comboBox1.SelectedIndex = 0;
+            if (comboBox2.Items.Count > 0)
+                comboBox2.SelectedIndex = 0;
+            _carregando = false;
+            ExibirTaticas();
+        }
+
         private void ExibirTaticas()
         {
             if (_taticas.Columns.Count == 0)
