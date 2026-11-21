@@ -72,6 +72,7 @@ namespace Limk.VolleyBall.User_Constrols
             imgQuadra.Visible = !compacto;
             lblPrancheta.Visible = !compacto;
             ResumeLayout(true);
+            layoutLogo.PerformLayout();
 
             PosicionarFormulario();
         }
