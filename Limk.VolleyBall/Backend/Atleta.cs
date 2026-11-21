@@ -45,15 +45,14 @@ namespace Limk.VolleyBall.Backend
                     transacao = conexao.BeginTransaction();
 
                     string sqlAtleta = @"
-                        INSERT INTO atleta (nome, apelido, numero_camisa, data_nascimento, idEquipe, titular)
-                        VALUES (@nome, @apelido, @numero_camisa, @data_nascimento, @idEquipe, @titular);
+                        INSERT INTO atleta (nome, apelido, data_nascimento, idEquipe, titular)
+                        VALUES (@nome, @apelido, @data_nascimento, @idEquipe, @titular);
                         SELECT LAST_INSERT_ID();";
 
                     using (MySqlCommand cmd = new MySqlCommand(sqlAtleta, conexao, transacao))
                     {
                         cmd.Parameters.AddWithValue("@nome", Nome.Trim());
                         cmd.Parameters.AddWithValue("@apelido", string.IsNullOrWhiteSpace(Apelido) ? (object)DBNull.Value : Apelido.Trim());
-                        cmd.Parameters.AddWithValue("@numero_camisa", NumeroCamisa);
                         cmd.Parameters.AddWithValue("@data_nascimento", DataNascimento.HasValue ? (object)DataNascimento.Value.Date : DBNull.Value);
                         cmd.Parameters.AddWithValue("@idEquipe", IdEquipe);
                         cmd.Parameters.AddWithValue("@titular", Titular);
@@ -64,7 +63,7 @@ namespace Limk.VolleyBall.Backend
                     if (!string.IsNullOrWhiteSpace(nomePosicao))
                     {
                         string sqlPos = "SELECT id FROM posicao WHERE nome = @nomePosicao LIMIT 1;";
-                        object posIdObj;
+                        object? posIdObj;
 
                         using (MySqlCommand cmdPos = new MySqlCommand(sqlPos, conexao, transacao))
                         {
@@ -84,7 +83,10 @@ namespace Limk.VolleyBall.Backend
                         }
                     }
 
-                    string sqlEqAtleta = @"INSERT INTO equipe_atleta (equipe_id, atleta_id, numero_camisa, ativo) VALUES (@equipeId, @atletaId, @numeroCamisa, TRUE);";
+                    string sqlEqAtleta = @"
+                        INSERT INTO equipe_atleta (equipe_id, atleta_id, numero_camisa, ativo)
+                        VALUES (@equipeId, @atletaId, @numeroCamisa, TRUE);";
+
                     using (MySqlCommand cmdEq = new MySqlCommand(sqlEqAtleta, conexao, transacao))
                     {
                         cmdEq.Parameters.AddWithValue("@equipeId", IdEquipe);

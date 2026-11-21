@@ -170,9 +170,19 @@ namespace Limk.VolleyBall.User_Constrols
             if (_usuario == null || IsDisposed)
                 return;
 
-            _atletas = await DadosUsuario.CarregarAtletasAsync(_usuario.Id);
-            if (!IsDisposed && _atletas.Columns.Count > 0)
-                AplicarFiltros();
+            try
+            {
+                _atletas = await DadosUsuario.CarregarAtletasAsync(_usuario.Id);
+                if (!IsDisposed && _atletas.Columns.Count > 0)
+                    AplicarFiltros();
+            }
+            catch (Exception ex)
+            {
+                if (!IsDisposed)
+                {
+                    MessageBox.Show("Não foi possível atualizar a lista de atletas: " + ex.Message, "Erro ao atualizar", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void btnLimparAtleta_Click(object sender, EventArgs e)
