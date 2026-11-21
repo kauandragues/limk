@@ -125,7 +125,7 @@
             label1.Font = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label1.Location = new Point(3, 19);
             label1.Name = "label1";
-            label1.Size = new Size(323, 14);
+            label1.Size = new Size(307, 14);
             label1.TabIndex = 3;
             label1.Text = "Gerencie o elenco de atletas e posições táticas da sua equipe";
             // 
@@ -217,7 +217,7 @@
             label14.ForeColor = SystemColors.ControlText;
             label14.Location = new Point(252, 10);
             label14.Name = "label14";
-            label14.Size = new Size(53, 15);
+            label14.Size = new Size(95, 15);
             label14.TabIndex = 6;
             label14.Text = "0 posições no elenco";
             // 
@@ -227,7 +227,7 @@
             lblPorcentagem.Font = new Font("Arial", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblPorcentagem.Location = new Point(43, 17);
             lblPorcentagem.Name = "lblPorcentagem";
-            lblPorcentagem.Size = new Size(37, 15);
+            lblPorcentagem.Size = new Size(24, 15);
             lblPorcentagem.TabIndex = 2;
             lblPorcentagem.Text = "0/5";
             // 
@@ -465,6 +465,7 @@
             btnLimparAtleta.TabIndex = 16;
             btnLimparAtleta.Text = "🗑️ Limpar";
             btnLimparAtleta.UseVisualStyleBackColor = true;
+            btnLimparAtleta.Click += btnLimparAtleta_Click;
             // 
             // btnSalvarAtleta
             // 

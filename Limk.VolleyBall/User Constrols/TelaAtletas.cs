@@ -161,5 +161,23 @@ namespace Limk.VolleyBall.User_Constrols
         private void btnFiltroPontAtleta_Click(object sender, EventArgs e) => SelecionarFiltro(btnFiltroPontAtleta, "Ponteiro");
         private void btnFiltroCentAtletas_Click(object sender, EventArgs e) => SelecionarFiltro(btnFiltroCentAtletas, "Central");
         private void btnFiltroLibeAtletas_Click(object? sender, EventArgs e) => SelecionarFiltro(btnFiltroLibeAtletas, "Líbero");
+
+        private async Task RecarregarAtletasAsync()
+        {
+            if (_usuario == null || IsDisposed)
+                return;
+
+            _atletas = await DadosUsuario.CarregarAtletasAsync(_usuario.Id);
+            if (!IsDisposed && _atletas.Columns.Count > 0)
+                AplicarFiltros();
+        }
+
+        private void btnLimparAtleta_Click(object sender, EventArgs e)
+        {
+            dataGridViewAtletas.ClearSelection();
+            dataGridViewAtletas.CurrentCell = null;
+            LimparFicha();
+            txtbNomeCompleto.Focus();
+        }
     }
 }

@@ -172,6 +172,8 @@ namespace Limk.VolleyBall.User_Constrols
             lblStatus.Visible = texto.Length > 0;
         }
 
+      
+
         private void AjustarLayout(object? sender, EventArgs e)
         {
             int largura = Math.Max(1, layoutConteudo.ClientSize.Width - layoutConteudo.Padding.Horizontal);
