@@ -25,6 +25,7 @@ namespace Limk.VolleyBall.User_Constrols
         private CheckBox chkMostrarSenha;
         private Button btnEntrar;
         private Label lblMensagem;
+        private LinkLabel lnkCriarConta;
 
         private void InitializeComponent()
         {
@@ -48,6 +49,7 @@ namespace Limk.VolleyBall.User_Constrols
             chkMostrarSenha = new CheckBox();
             btnEntrar = new Button();
             lblMensagem = new Label();
+            lnkCriarConta = new LinkLabel();
             SuspendLayout();
             pnlMarca.SuspendLayout();
             layoutMarca.SuspendLayout();
@@ -136,12 +138,13 @@ namespace Limk.VolleyBall.User_Constrols
             layoutFormulario.Name = "layoutFormulario";
             layoutFormulario.BackColor = Color.White;
             layoutFormulario.ColumnCount = 1;
-            layoutFormulario.RowCount = 8;
+            layoutFormulario.RowCount = 9;
             layoutFormulario.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             layoutFormulario.Padding = new Padding(26, 24, 26, 24);
             layoutFormulario.Location = new Point(61, 110);
             layoutFormulario.Size = new Size(452, 360);
             layoutFormulario.Paint += layoutFormulario_Paint;
+            layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layoutFormulario.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -286,6 +289,17 @@ namespace Limk.VolleyBall.User_Constrols
             lblMensagem.Margin = new Padding(0, 10, 0, 0);
             lblMensagem.Visible = false;
 
+            lnkCriarConta.Name = "lnkCriarConta";
+            lnkCriarConta.AutoSize = true;
+            lnkCriarConta.Dock = DockStyle.Top;
+            lnkCriarConta.LinkColor = Color.FromArgb(124, 58, 237);
+            lnkCriarConta.Margin = new Padding(0, 14, 0, 0);
+            lnkCriarConta.TabIndex = 3;
+            lnkCriarConta.TabStop = true;
+            lnkCriarConta.Text = "Não tem conta? Criar conta";
+            lnkCriarConta.TextAlign = ContentAlignment.MiddleCenter;
+            lnkCriarConta.LinkClicked += lnkCriarConta_LinkClicked;
+
             layoutFormulario.Controls.Add(lblTitulo, 0, 0);
             layoutFormulario.Controls.Add(lblInstrucao, 0, 1);
             layoutFormulario.Controls.Add(lblEmail, 0, 2);
@@ -294,6 +308,7 @@ namespace Limk.VolleyBall.User_Constrols
             layoutFormulario.Controls.Add(layoutCampoSenha, 0, 5);
             layoutFormulario.Controls.Add(btnEntrar, 0, 6);
             layoutFormulario.Controls.Add(lblMensagem, 0, 7);
+            layoutFormulario.Controls.Add(lnkCriarConta, 0, 8);
 
             AccessibleName = "Acesso ao LIMK Volleyball";
             AutoScaleDimensions = new SizeF(96F, 96F);

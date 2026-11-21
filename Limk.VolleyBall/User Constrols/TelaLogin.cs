@@ -15,6 +15,7 @@ namespace Limk.VolleyBall.User_Constrols
         private bool organizandoFormulario;
 
         internal event EventHandler<UsuarioAutenticado>? LoginConcluido;
+        internal event EventHandler? CriarContaSolicitada;
         internal IButtonControl BotaoEntrar => btnEntrar;
 
         public TelaLogin()
@@ -24,6 +25,13 @@ namespace Limk.VolleyBall.User_Constrols
         }
 
         public void FocarEmail() => txtEmail.Select();
+
+        internal void MostrarContaCriada(string email)
+        {
+            txtEmail.Text = email;
+            ExibirMensagem("Conta criada com sucesso. Entre com sua senha.");
+            txtSenha.Select();
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -134,6 +142,12 @@ namespace Limk.VolleyBall.User_Constrols
                 ExibirMensagem(string.Empty);
         }
 
+        private void lnkCriarConta_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (!autenticando)
+                CriarContaSolicitada?.Invoke(this, EventArgs.Empty);
+        }
+
         private async void btnEntrar_Click(object? sender, EventArgs e)
         {
             if (autenticando)
@@ -199,6 +213,7 @@ namespace Limk.VolleyBall.User_Constrols
             txtSenha.ReadOnly = carregando;
             chkMostrarSenha.Enabled = !carregando;
             btnEntrar.Enabled = !carregando;
+            lnkCriarConta.Enabled = !carregando;
             UseWaitCursor = carregando;
 
             if (carregando)
