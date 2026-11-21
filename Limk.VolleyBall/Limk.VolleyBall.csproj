@@ -37,6 +37,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="User Constrols\TelaCadastroUsuario.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="User Constrols\TelaCadastroUsuario.Designer.cs">
+      <DependentUpon>TelaCadastroUsuario.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="User Constrols\TelaCadastroUsuario.resx">
+      <DependentUpon>TelaCadastroUsuario.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Update="User Constrols\TelaConfiguracoes.cs">
       <SubType>UserControl</SubType>
     </Compile>
