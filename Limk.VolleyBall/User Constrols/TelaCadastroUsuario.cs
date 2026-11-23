@@ -5,13 +5,15 @@ namespace Limk.VolleyBall.User_Constrols
 {
     public partial class TelaCadastroUsuario : UserControl
     {
-        private readonly CancellationTokenSource _encerramento = new();
         private bool _cadastrando;
         private bool _organizandoFormulario;
 
         internal event EventHandler<UsuarioAutenticado>? CadastroConcluido;
         internal event EventHandler? VoltarParaLogin;
-        internal IButtonControl BotaoCadastrar => btnCadastrar;
+        internal IButtonControl BotaoCadastrar
+        {
+            get { return btnCadastrar; }
+        }
 
         public TelaCadastroUsuario()
         {
@@ -19,9 +21,15 @@ namespace Limk.VolleyBall.User_Constrols
             AjustarLayout();
         }
 
-        public void FocarNome() => txtNome.Select();
+        public void FocarNome()
+        {
+            txtNome.Select();
+        }
 
-        private void TelaCadastroUsuario_SizeChanged(object? sender, EventArgs e) => AjustarLayout();
+        private void TelaCadastroUsuario_SizeChanged(object? sender, EventArgs e)
+        {
+            AjustarLayout();
+        }
 
         private void AjustarLayout()
         {
@@ -47,7 +55,10 @@ namespace Limk.VolleyBall.User_Constrols
             PosicionarFormulario();
         }
 
-        private void pnlConteudo_Layout(object? sender, LayoutEventArgs e) => PosicionarFormulario();
+        private void pnlConteudo_Layout(object? sender, LayoutEventArgs e)
+        {
+            PosicionarFormulario();
+        }
 
         private void PosicionarFormulario()
         {
@@ -105,7 +116,7 @@ namespace Limk.VolleyBall.User_Constrols
                 VoltarParaLogin?.Invoke(this, EventArgs.Empty);
         }
 
-        private async void btnCadastrar_Click(object? sender, EventArgs e)
+        private void btnCadastrar_Click(object? sender, EventArgs e)
         {
             if (_cadastrando)
                 return;
@@ -116,37 +127,27 @@ namespace Limk.VolleyBall.User_Constrols
                 return;
             }
 
-            CancellationToken token = _encerramento.Token;
             DefinirCarregamento(true);
             UsuarioAutenticado usuario;
             try
             {
-                usuario = await CadastroUsuario.CadastrarAsync(txtNome.Text, txtEmail.Text, txtSenha.Text, token);
+                usuario = DadosUsuario.Cadastrar(txtNome.Text, txtEmail.Text, txtSenha.Text);
             }
-            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            catch (ValidacaoException erro)
             {
+                ExibirMensagem(erro.Message, erro: true);
                 return;
             }
-            catch (ArgumentException erro)
+            catch (BancoDeDadosException)
             {
-                if (!token.IsCancellationRequested)
-                    ExibirMensagem(erro.Message, erro: true);
-                return;
-            }
-            catch (FalhaCadastroUsuarioException)
-            {
-                if (!token.IsCancellationRequested)
-                    ExibirMensagem("Não foi possível criar sua conta. Verifique a conexão e tente novamente.", erro: true);
+                ExibirMensagem("Não foi possível criar sua conta. Verifique a conexão e tente novamente.", erro: true);
                 return;
             }
             finally
             {
-                if (!token.IsCancellationRequested)
-                    DefinirCarregamento(false);
+                DefinirCarregamento(false);
             }
 
-            if (token.IsCancellationRequested)
-                return;
             txtSenha.Clear();
             txtConfirmarSenha.Clear();
             chkMostrarSenhas.Checked = false;

@@ -1,353 +1,369 @@
 using MySql.Data.MySqlClient;
 using System.Data;
-using System.Text;
 
 namespace Limk.VolleyBall.Backend
 {
-    internal sealed class FalhaPranchetaException(Exception causa)
-        : Exception("Não foi possível carregar ou salvar a tática no banco de dados.", causa) { }
-
     internal static class DadosPrancheta
     {
-        public static Task<DataTable> CarregarTiposAsync(CancellationToken token = default) =>
-            CarregarReferenciaAsync("SELECT id, nome FROM tipo_tatica ORDER BY nome", token);
-
-        public static Task<DataTable> CarregarSistemasAsync(CancellationToken token = default) =>
-            CarregarReferenciaAsync("SELECT id, nome FROM sistema_jogo ORDER BY nome", token);
-
-        private static async Task<DataTable> CarregarReferenciaAsync(string consulta, CancellationToken token)
+        public static DataTable Listar(int usuarioId)
         {
-            try
-            {
-                using var conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var comando = Comando(conexao, null, consulta);
-                using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
-                DataTable tabela = new DataTable();
-                tabela.Load(leitor);
-                token.ThrowIfCancellationRequested();
-                return tabela;
-            }
-            catch (Exception erro) when (ErroDeBanco(erro))
-            {
-                token.ThrowIfCancellationRequested();
-                throw new FalhaPranchetaException(erro);
-            }
+            const string consulta = @"SELECT tatica.id, tatica.equipe_id, tatica.nome, tatica.descricao,
+                    equipe.nome AS equipe, tipo_tatica.nome AS tipo, sistema_jogo.nome AS sistema,
+                    (SELECT COUNT(*) FROM quadro WHERE quadro.tatica_id = tatica.id) AS quadros
+                FROM tatica
+                INNER JOIN equipe ON equipe.id = tatica.equipe_id
+                INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+                LEFT JOIN tipo_tatica ON tipo_tatica.id = tatica.tipo_tatica_id
+                LEFT JOIN sistema_jogo ON sistema_jogo.id = tatica.sistema_jogo_id
+                WHERE usuario_equipe.usuario_id = @usuarioId
+                ORDER BY tatica.id DESC";
+            return ConexaoBD.ConsultarTabela(consulta, usuarioId);
         }
 
-        public static async Task<List<AtletaDaEquipe>> CarregarElencoAsync(int usuarioId, int equipeId, CancellationToken token = default)
+        public static DataTable CarregarTipos()
+        {
+            return ConexaoBD.ConsultarTabela("SELECT id, nome FROM tipo_tatica ORDER BY nome");
+        }
+
+        public static DataTable CarregarSistemas()
+        {
+            return ConexaoBD.ConsultarTabela("SELECT id, nome FROM sistema_jogo ORDER BY nome");
+        }
+
+        public static List<AtletaDaEquipe> CarregarElenco(int usuarioId, int equipeId)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(equipeId);
-            const string consulta = @"SELECT ea.id, a.nome, ea.numero_camisa
-                FROM usuario_equipe ue
-                LEFT JOIN equipe_atleta ea ON ea.equipe_id = ue.equipe_id AND ea.ativo = TRUE
-                LEFT JOIN atleta a ON a.id = ea.atleta_id
-                WHERE ue.usuario_id = @usuarioId AND ue.equipe_id = @equipeId
-                ORDER BY ea.numero_camisa, a.nome";
+            const string consulta = @"SELECT equipe_atleta.id, atleta.nome, equipe_atleta.numero_camisa
+                FROM usuario_equipe
+                LEFT JOIN equipe_atleta ON equipe_atleta.equipe_id = usuario_equipe.equipe_id AND equipe_atleta.ativo = TRUE
+                LEFT JOIN atleta ON atleta.id = equipe_atleta.atleta_id
+                WHERE usuario_equipe.usuario_id = @usuarioId AND usuario_equipe.equipe_id = @equipeId
+                ORDER BY equipe_atleta.numero_camisa, atleta.nome";
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using var conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var comando = Comando(conexao, null, consulta);
+                ConexaoBD.Abrir(conexao);
+                using MySqlCommand comando = Comando(conexao, null, consulta);
                 comando.Parameters.AddWithValue("@usuarioId", usuarioId);
                 comando.Parameters.AddWithValue("@equipeId", equipeId);
-                using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
-                if (!await leitor.ReadAsync(token).ConfigureAwait(false))
+                using MySqlDataReader leitor = comando.ExecuteReader();
+                if (!leitor.Read())
                     throw new UnauthorizedAccessException("Você não tem acesso à equipe desta tática.");
 
-                var elenco = new List<AtletaDaEquipe>();
+                List<AtletaDaEquipe> elenco = new List<AtletaDaEquipe>();
                 do
                 {
                     if (!leitor.IsDBNull(0))
-                        elenco.Add(new AtletaDaEquipe { EquipeAtletaId = leitor.GetInt32(0), Nome = leitor.GetString(1), NumeroCamisa = leitor.GetInt32(2) });
-                } while (await leitor.ReadAsync(token).ConfigureAwait(false));
+                    {
+                        AtletaDaEquipe registroAtletaDaEquipe = new AtletaDaEquipe();
+                        registroAtletaDaEquipe.SetEquipeAtletaId(leitor.GetInt32(0));
+                        registroAtletaDaEquipe.SetNome(leitor.GetString(1));
+                        registroAtletaDaEquipe.SetNumeroCamisa(leitor.GetInt32(2));
+                        elenco.Add(registroAtletaDaEquipe);
+                    }
+                } while (leitor.Read());
                 return elenco;
             }
-            catch (Exception erro) when (ErroDeBanco(erro))
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                token.ThrowIfCancellationRequested();
-                throw new FalhaPranchetaException(erro);
+                throw new BancoDeDadosException("Não foi possível acessar os dados da tática.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        public static async Task<Tatica> CarregarAsync(int usuarioId, int taticaId, CancellationToken token = default)
+        public static Tatica Carregar(int usuarioId, int taticaId)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(taticaId);
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using var conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(token).ConfigureAwait(false);
+                ConexaoBD.Abrir(conexao);
                 // As consultas leem o mesmo retrato, mesmo que outra pessoa salve a tática.
-                using var transacao = await conexao.BeginTransactionAsync(IsolationLevel.RepeatableRead, token).ConfigureAwait(false);
-                const string raiz = @"SELECT t.id, t.equipe_id, t.nome, t.descricao, t.tipo_tatica_id, t.sistema_jogo_id
-                    FROM tatica t INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-                    WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId";
+                using MySqlTransaction transacao = conexao.BeginTransaction(IsolationLevel.RepeatableRead);
+                const string raiz = @"SELECT tatica.id, tatica.equipe_id, tatica.nome, tatica.descricao,
+                        tatica.tipo_tatica_id, tatica.sistema_jogo_id
+                    FROM tatica
+                    INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+                    WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId";
                 Tatica tatica;
-                using (var comando = ConsultaTatica(conexao, transacao, raiz, usuarioId, taticaId))
-                using (var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false))
+                using (MySqlCommand comando = ConsultaTatica(conexao, transacao, raiz, usuarioId, taticaId))
+                using (MySqlDataReader leitor = comando.ExecuteReader())
                 {
-                    if (!await leitor.ReadAsync(token).ConfigureAwait(false))
+                    if (!leitor.Read())
                         throw new UnauthorizedAccessException("Tática não encontrada nas suas equipes.");
-                    tatica = new Tatica
-                    {
-                        Id = leitor.GetInt32(0), EquipeId = leitor.GetInt32(1), Nome = leitor.GetString(2),
-                        Descricao = leitor.IsDBNull(3) ? "" : leitor.GetString(3),
-                        TipoTaticaId = leitor.IsDBNull(4) ? null : leitor.GetInt32(4),
-                        SistemaJogoId = leitor.IsDBNull(5) ? null : leitor.GetInt32(5)
-                    };
+                    tatica = new Tatica();
+                    tatica.SetId(leitor.GetInt32(0));
+                    tatica.SetEquipeId(leitor.GetInt32(1));
+                    tatica.SetNome(leitor.GetString(2));
+                    tatica.SetDescricao(leitor.IsDBNull(3) ? "" : leitor.GetString(3));
+                    tatica.SetTipoTaticaId(leitor.IsDBNull(4) ? null : leitor.GetInt32(4));
+                    tatica.SetSistemaJogoId(leitor.IsDBNull(5) ? null : leitor.GetInt32(5));
                 }
 
-                var quadros = new Dictionary<int, QuadroTatica>();
-                const string fases = @"SELECT q.id, q.nome, q.duracao_ms, q.rotacao
-                    FROM quadro q INNER JOIN tatica t ON t.id = q.tatica_id
-                    INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-                    WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId ORDER BY q.ordem";
-                using (var comando = ConsultaTatica(conexao, transacao, fases, usuarioId, taticaId))
-                using (var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false))
+                Dictionary<int, QuadroTatica> quadros = new Dictionary<int, QuadroTatica>();
+                const string fases = @"SELECT quadro.id, quadro.nome, quadro.duracao_ms, quadro.rotacao
+                    FROM quadro
+                    INNER JOIN tatica ON tatica.id = quadro.tatica_id
+                    INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+                    WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId
+                    ORDER BY quadro.ordem";
+                using (MySqlCommand comando = ConsultaTatica(conexao, transacao, fases, usuarioId, taticaId))
+                using (MySqlDataReader leitor = comando.ExecuteReader())
                 {
-                    while (await leitor.ReadAsync(token).ConfigureAwait(false))
+                    while (leitor.Read())
                     {
-                        var quadro = new QuadroTatica
-                        {
-                            Nome = leitor.GetString(1), DuracaoMs = leitor.GetInt32(2),
-                            Rotacao = leitor.IsDBNull(3) ? null : leitor.GetInt32(3)
-                        };
+                        QuadroTatica quadro = new QuadroTatica();
+                        quadro.SetNome(leitor.GetString(1));
+                        quadro.SetDuracaoMs(leitor.GetInt32(2));
+                        quadro.SetRotacao(leitor.IsDBNull(3) ? null : leitor.GetInt32(3));
                         quadros.Add(leitor.GetInt32(0), quadro);
-                        tatica.Quadros.Add(quadro);
+                        tatica.GetQuadros().Add(quadro);
                     }
                 }
 
                 // Um vínculo de outra equipe não revela o cadastro de um atleta alheio.
-                const string atletas = @"SELECT aq.quadro_id, ea.id, a.nome, aq.numero, aq.lado, aq.posicao_x, aq.posicao_y
-                    FROM atleta_quadro aq INNER JOIN quadro q ON q.id = aq.quadro_id
-                    INNER JOIN tatica t ON t.id = q.tatica_id
-                    INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-                    LEFT JOIN equipe_atleta ea ON ea.id = aq.equipe_atleta_id AND ea.equipe_id = t.equipe_id
-                    LEFT JOIN atleta a ON a.id = ea.atleta_id
-                    WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId ORDER BY q.ordem, aq.lado, aq.numero";
-                using (var comando = ConsultaTatica(conexao, transacao, atletas, usuarioId, taticaId))
-                using (var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false))
+                const string atletas = @"SELECT atleta_quadro.quadro_id, equipe_atleta.id, atleta.nome, atleta_quadro.numero,
+                        atleta_quadro.lado, atleta_quadro.posicao_x, atleta_quadro.posicao_y
+                    FROM atleta_quadro
+                    INNER JOIN quadro ON quadro.id = atleta_quadro.quadro_id
+                    INNER JOIN tatica ON tatica.id = quadro.tatica_id
+                    INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+                    LEFT JOIN equipe_atleta ON equipe_atleta.id = atleta_quadro.equipe_atleta_id AND equipe_atleta.equipe_id = tatica.equipe_id
+                    LEFT JOIN atleta ON atleta.id = equipe_atleta.atleta_id
+                    WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId
+                    ORDER BY quadro.ordem, atleta_quadro.lado, atleta_quadro.numero";
+                using (MySqlCommand comando = ConsultaTatica(conexao, transacao, atletas, usuarioId, taticaId))
+                using (MySqlDataReader leitor = comando.ExecuteReader())
                 {
-                    while (await leitor.ReadAsync(token).ConfigureAwait(false))
+                    while (leitor.Read())
                     {
                         int numero = leitor.GetInt32(3);
-                        quadros[leitor.GetInt32(0)].Atletas.Add(new AtletaQuadro
-                        {
-                            EquipeAtletaId = leitor.IsDBNull(1) ? null : leitor.GetInt32(1),
-                            Nome = leitor.IsDBNull(2) ? $"Atleta {numero}" : leitor.GetString(2),
-                            NumeroCamisa = numero,
-                            Lado = leitor.GetString(4) == "ADVERSARIO" ? LadoAtleta.Adversario : LadoAtleta.Principal,
-                            X = (float)leitor.GetDecimal(5), Y = (float)leitor.GetDecimal(6)
-                        });
+                        AtletaQuadro atletaDaFase = new AtletaQuadro();
+                        atletaDaFase.SetEquipeAtletaId(leitor.IsDBNull(1) ? null : leitor.GetInt32(1));
+                        atletaDaFase.SetNome(leitor.IsDBNull(2) ? $"Atleta {numero}" : leitor.GetString(2));
+                        atletaDaFase.SetNumeroCamisa(numero);
+                        atletaDaFase.SetLado(leitor.GetString(4) == "ADVERSARIO" ? LadoAtleta.Adversario : LadoAtleta.Principal);
+                        atletaDaFase.SetX((float)leitor.GetDecimal(5));
+                        atletaDaFase.SetY((float)leitor.GetDecimal(6));
+                        quadros[leitor.GetInt32(0)].GetAtletas().Add(atletaDaFase);
                     }
                 }
 
-                const string bolas = @"SELECT b.quadro_id, b.posicao_x, b.posicao_y
-                    FROM bola_quadro b INNER JOIN quadro q ON q.id = b.quadro_id
-                    INNER JOIN tatica t ON t.id = q.tatica_id
-                    INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-                    WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId";
-                using (var comando = ConsultaTatica(conexao, transacao, bolas, usuarioId, taticaId))
-                using (var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false))
+                const string bolas = @"SELECT bola_quadro.quadro_id, bola_quadro.posicao_x, bola_quadro.posicao_y
+                    FROM bola_quadro
+                    INNER JOIN quadro ON quadro.id = bola_quadro.quadro_id
+                    INNER JOIN tatica ON tatica.id = quadro.tatica_id
+                    INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+                    WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId";
+                using (MySqlCommand comando = ConsultaTatica(conexao, transacao, bolas, usuarioId, taticaId))
+                using (MySqlDataReader leitor = comando.ExecuteReader())
                 {
-                    while (await leitor.ReadAsync(token).ConfigureAwait(false))
-                        quadros[leitor.GetInt32(0)].Bola = new PosicaoBola { X = (float)leitor.GetDecimal(1), Y = (float)leitor.GetDecimal(2) };
+                    while (leitor.Read())
+                    {
+                        PosicaoBola bolaDaFase = new PosicaoBola();
+                        bolaDaFase.SetX((float)leitor.GetDecimal(1));
+                        bolaDaFase.SetY((float)leitor.GetDecimal(2));
+                        quadros[leitor.GetInt32(0)].SetBola(bolaDaFase);
+                    }
                 }
-                await transacao.CommitAsync(token).ConfigureAwait(false);
+                transacao.Commit();
                 return tatica;
             }
-            catch (Exception erro) when (ErroDeBanco(erro))
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                token.ThrowIfCancellationRequested();
-                throw new FalhaPranchetaException(erro);
+                throw new BancoDeDadosException("Não foi possível acessar os dados da tática.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        public static async Task<int> SalvarAsync(int usuarioId, Tatica original, CancellationToken token = default)
+        public static int Salvar(int usuarioId, Tatica tatica)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
-            ArgumentNullException.ThrowIfNull(original);
-            Tatica tatica = original.Copiar();
-            Validar(tatica);
+            ArgumentNullException.ThrowIfNull(tatica);
+            tatica.Validar();
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using var conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var transacao = await conexao.BeginTransactionAsync(token).ConfigureAwait(false);
-                if (!await DadosEquipe.BloquearComAcessoAsync(conexao, transacao, usuarioId, tatica.EquipeId,
-                    exclusivo: false, token).ConfigureAwait(false))
-                    throw new UnauthorizedAccessException("Você não tem acesso à equipe desta tática.");
-                if (tatica.Id > 0)
-                {
-                    const string consulta = @"SELECT t.equipe_id FROM tatica t
-                        INNER JOIN usuario_equipe ue ON ue.equipe_id=t.equipe_id
-                        WHERE t.id=@taticaId AND ue.usuario_id=@usuarioId FOR UPDATE OF t FOR SHARE OF ue";
-                    using var comando = ConsultaTatica(conexao, transacao, consulta, usuarioId, tatica.Id);
-                    object? equipe = await comando.ExecuteScalarAsync(token).ConfigureAwait(false);
-                    if (equipe == null)
-                        throw new UnauthorizedAccessException("Tática não encontrada nas suas equipes.");
-                    if (Convert.ToInt32(equipe) != tatica.EquipeId)
-                        throw new ArgumentException("A equipe de uma tática salva não pode ser alterada.");
-                }
-
-                var vinculos = new HashSet<int>();
-                using (var comando = Comando(conexao, transacao, "SELECT id FROM equipe_atleta WHERE equipe_id=@equipeId FOR SHARE"))
-                {
-                    comando.Parameters.AddWithValue("@equipeId", tatica.EquipeId);
-                    using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
-                    while (await leitor.ReadAsync(token).ConfigureAwait(false))
-                        vinculos.Add(leitor.GetInt32(0));
-                }
-                foreach (var quadro in tatica.Quadros)
-                    foreach (var atleta in quadro.Atletas)
-                        if (atleta.EquipeAtletaId.HasValue && !vinculos.Contains(atleta.EquipeAtletaId.Value))
-                            throw new ArgumentException("Um atleta vinculado não pertence à equipe da tática.");
-
-                string sql = tatica.Id == 0
-                    ? "INSERT INTO tatica (equipe_id,nome,descricao,tipo_tatica_id,sistema_jogo_id) VALUES (@equipeId,@nome,@descricao,@tipo,@sistema)"
-                    : "UPDATE tatica SET nome=@nome,descricao=@descricao,tipo_tatica_id=@tipo,sistema_jogo_id=@sistema WHERE id=@id AND equipe_id=@equipeId";
-                using (var comando = Comando(conexao, transacao, sql))
-                {
-                    comando.Parameters.AddWithValue("@id", tatica.Id);
-                    comando.Parameters.AddWithValue("@equipeId", tatica.EquipeId);
-                    comando.Parameters.AddWithValue("@nome", tatica.Nome.Trim());
-                    comando.Parameters.AddWithValue("@descricao", tatica.Descricao);
-                    comando.Parameters.AddWithValue("@tipo", (object?)tatica.TipoTaticaId ?? DBNull.Value);
-                    comando.Parameters.AddWithValue("@sistema", (object?)tatica.SistemaJogoId ?? DBNull.Value);
-                    await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
-                    if (tatica.Id == 0)
-                        tatica.Id = checked((int)comando.LastInsertedId);
-                }
-
-                // Substitui as fases como uma unidade. Uma falha desfaz também esta exclusão.
-                using (var comando = Comando(conexao, transacao, "DELETE FROM quadro WHERE tatica_id=@id"))
-                {
-                    comando.Parameters.AddWithValue("@id", tatica.Id);
-                    await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
-                }
-                for (int i = 0; i < tatica.Quadros.Count; i++)
-                {
-                    QuadroTatica quadro = tatica.Quadros[i];
-                    int quadroId;
-                    using (var comando = Comando(conexao, transacao,
-                        "INSERT INTO quadro (tatica_id,nome,ordem,duracao_ms,rotacao) VALUES (@taticaId,@nome,@ordem,@duracao,@rotacao)"))
-                    {
-                        comando.Parameters.AddWithValue("@taticaId", tatica.Id);
-                        comando.Parameters.AddWithValue("@nome", quadro.Nome.Trim());
-                        comando.Parameters.AddWithValue("@ordem", i + 1);
-                        comando.Parameters.AddWithValue("@duracao", quadro.DuracaoMs);
-                        comando.Parameters.AddWithValue("@rotacao", (object?)quadro.Rotacao ?? DBNull.Value);
-                        await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
-                        quadroId = checked((int)comando.LastInsertedId);
-                    }
-                    foreach (AtletaQuadro atleta in quadro.Atletas)
-                    {
-                        using var comando = Comando(conexao, transacao,
-                            "INSERT INTO atleta_quadro (quadro_id,equipe_atleta_id,numero,lado,posicao_x,posicao_y) VALUES (@quadroId,@vinculo,@numero,@lado,@x,@y)");
-                        comando.Parameters.AddWithValue("@quadroId", quadroId);
-                        comando.Parameters.AddWithValue("@vinculo", (object?)atleta.EquipeAtletaId ?? DBNull.Value);
-                        comando.Parameters.AddWithValue("@numero", atleta.NumeroCamisa);
-                        comando.Parameters.AddWithValue("@lado", atleta.Lado == LadoAtleta.Adversario ? "ADVERSARIO" : "PRINCIPAL");
-                        AdicionarCoordenadas(comando, atleta.X, atleta.Y);
-                        await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
-                    }
-                    if (quadro.Bola != null)
-                    {
-                        using var comando = Comando(conexao, transacao, "INSERT INTO bola_quadro (quadro_id,posicao_x,posicao_y) VALUES (@quadroId,@x,@y)");
-                        comando.Parameters.AddWithValue("@quadroId", quadroId);
-                        AdicionarCoordenadas(comando, quadro.Bola.X, quadro.Bola.Y);
-                        await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
-                    }
-                }
-                token.ThrowIfCancellationRequested();
-                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
-                return tatica.Id;
+                ConexaoBD.Abrir(conexao);
+                using MySqlTransaction transacao = conexao.BeginTransaction();
+                VerificarEquipeEVinculos(conexao, transacao, usuarioId, tatica);
+                int taticaId = GravarCabecalho(conexao, transacao, tatica);
+                GravarFases(conexao, transacao, taticaId, tatica.GetQuadros());
+                transacao.Commit();
+                return taticaId;
             }
-            catch (Exception erro) when (ErroDeBanco(erro))
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                token.ThrowIfCancellationRequested();
-                throw new FalhaPranchetaException(erro);
+                throw new BancoDeDadosException("Não foi possível acessar os dados da tática.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        public static async Task<bool> ExcluirAsync(int usuarioId, int taticaId, CancellationToken token = default)
+        private static void VerificarEquipeEVinculos(MySqlConnection conexao, MySqlTransaction transacao,
+            int usuarioId, Tatica tatica)
+        {
+            if (!DadosEquipe.BloquearComAcesso(conexao, transacao, usuarioId, tatica.GetEquipeId(),
+                exclusivo: false))
+                throw new UnauthorizedAccessException("Você não tem acesso à equipe desta tática.");
+            if (tatica.GetId() > 0)
+            {
+                const string consulta = @"SELECT tatica.equipe_id FROM tatica
+                    INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+                    WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId
+                    FOR UPDATE OF tatica FOR SHARE OF usuario_equipe";
+                using MySqlCommand comando = ConsultaTatica(conexao, transacao, consulta, usuarioId, tatica.GetId());
+                object? equipe = comando.ExecuteScalar();
+                if (equipe == null)
+                    throw new UnauthorizedAccessException("Tática não encontrada nas suas equipes.");
+                if (Convert.ToInt32(equipe) != tatica.GetEquipeId())
+                    throw new ValidacaoException("A equipe de uma tática salva não pode ser alterada.");
+            }
+
+            HashSet<int> vinculos = new HashSet<int>();
+            using (MySqlCommand comando = Comando(conexao, transacao, "SELECT id FROM equipe_atleta WHERE equipe_id = @equipeId FOR SHARE"))
+            {
+                comando.Parameters.AddWithValue("@equipeId", tatica.GetEquipeId());
+                using MySqlDataReader leitor = comando.ExecuteReader();
+                while (leitor.Read())
+                    vinculos.Add(leitor.GetInt32(0));
+            }
+            foreach (QuadroTatica quadro in tatica.GetQuadros())
+            {
+                foreach (AtletaQuadro atleta in quadro.GetAtletas())
+                {
+                    int? vinculo = atleta.GetEquipeAtletaId();
+                    if (vinculo.HasValue && !vinculos.Contains(vinculo.Value))
+                        throw new ValidacaoException("Um atleta vinculado não pertence à equipe da tática.");
+                }
+            }
+        }
+
+        private static int GravarCabecalho(MySqlConnection conexao, MySqlTransaction transacao, Tatica tatica)
+        {
+            string sql = tatica.GetId() == 0
+                ? """
+                    INSERT INTO tatica (equipe_id, nome, descricao, tipo_tatica_id, sistema_jogo_id)
+                    VALUES (@equipeId, @nome, @descricao, @tipo, @sistema)
+                    """
+                : """
+                    UPDATE tatica
+                    SET nome = @nome, descricao = @descricao, tipo_tatica_id = @tipo, sistema_jogo_id = @sistema
+                    WHERE id = @id AND equipe_id = @equipeId
+                    """;
+            using (MySqlCommand comando = Comando(conexao, transacao, sql))
+            {
+                comando.Parameters.AddWithValue("@id", tatica.GetId());
+                comando.Parameters.AddWithValue("@equipeId", tatica.GetEquipeId());
+                comando.Parameters.AddWithValue("@nome", tatica.GetNome().Trim());
+                comando.Parameters.AddWithValue("@descricao", tatica.GetDescricao());
+                comando.Parameters.AddWithValue("@tipo", (object?)tatica.GetTipoTaticaId() ?? DBNull.Value);
+                comando.Parameters.AddWithValue("@sistema", (object?)tatica.GetSistemaJogoId() ?? DBNull.Value);
+                comando.ExecuteNonQuery();
+                if (tatica.GetId() == 0)
+                    return checked((int)comando.LastInsertedId);
+            }
+            return tatica.GetId();
+        }
+
+        private static void GravarFases(MySqlConnection conexao, MySqlTransaction transacao,
+            int taticaId, List<QuadroTatica> fases)
+        {
+            // Substitui as fases como uma unidade. Uma falha desfaz também esta exclusão.
+            using (MySqlCommand comando = Comando(conexao, transacao, "DELETE FROM quadro WHERE tatica_id = @id"))
+            {
+                comando.Parameters.AddWithValue("@id", taticaId);
+                comando.ExecuteNonQuery();
+            }
+            for (int i = 0; i < fases.Count; i++)
+            {
+                QuadroTatica quadro = fases[i];
+                int quadroId;
+                using (MySqlCommand comando = Comando(conexao, transacao,
+                    """
+                        INSERT INTO quadro (tatica_id, nome, ordem, duracao_ms, rotacao)
+                        VALUES (@taticaId, @nome, @ordem, @duracao, @rotacao)
+                        """))
+                {
+                    comando.Parameters.AddWithValue("@taticaId", taticaId);
+                    comando.Parameters.AddWithValue("@nome", quadro.GetNome().Trim());
+                    comando.Parameters.AddWithValue("@ordem", i + 1);
+                    comando.Parameters.AddWithValue("@duracao", quadro.GetDuracaoMs());
+                    comando.Parameters.AddWithValue("@rotacao", (object?)quadro.GetRotacao() ?? DBNull.Value);
+                    comando.ExecuteNonQuery();
+                    quadroId = checked((int)comando.LastInsertedId);
+                }
+                foreach (AtletaQuadro atleta in quadro.GetAtletas())
+                {
+                    using MySqlCommand comando = Comando(conexao, transacao,
+                        """
+                            INSERT INTO atleta_quadro (quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y)
+                            VALUES (@quadroId, @vinculo, @numero, @lado, @x, @y)
+                            """);
+                    comando.Parameters.AddWithValue("@quadroId", quadroId);
+                    comando.Parameters.AddWithValue("@vinculo", (object?)atleta.GetEquipeAtletaId() ?? DBNull.Value);
+                    comando.Parameters.AddWithValue("@numero", atleta.GetNumeroCamisa());
+                    comando.Parameters.AddWithValue("@lado", atleta.GetLado() == LadoAtleta.Adversario ? "ADVERSARIO" : "PRINCIPAL");
+                    AdicionarCoordenadas(comando, atleta.GetX(), atleta.GetY());
+                    comando.ExecuteNonQuery();
+                }
+                PosicaoBola? bola = quadro.GetBola();
+                if (bola != null)
+                {
+                    using MySqlCommand comando = Comando(conexao, transacao, "INSERT INTO bola_quadro (quadro_id, posicao_x, posicao_y) VALUES (@quadroId, @x, @y)");
+                    comando.Parameters.AddWithValue("@quadroId", quadroId);
+                    AdicionarCoordenadas(comando, bola.GetX(), bola.GetY());
+                    comando.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static bool Excluir(int usuarioId, int taticaId)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(taticaId);
             const string sql = """
                 DELETE FROM tatica
                 WHERE id = @taticaId AND EXISTS (
-                    SELECT 1 FROM usuario_equipe ue
-                    WHERE ue.equipe_id = tatica.equipe_id AND ue.usuario_id = @usuarioId
+                    SELECT 1 FROM usuario_equipe
+                    WHERE usuario_equipe.equipe_id = tatica.equipe_id AND usuario_equipe.usuario_id = @usuarioId
                 )
                 """;
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using var conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var comando = ConsultaTatica(conexao, null, sql, usuarioId, taticaId);
-                return await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false) == 1;
+                ConexaoBD.Abrir(conexao);
+                using MySqlCommand comando = ConsultaTatica(conexao, null, sql, usuarioId, taticaId);
+                return comando.ExecuteNonQuery() == 1;
             }
-            catch (Exception erro) when (ErroDeBanco(erro))
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                token.ThrowIfCancellationRequested();
-                throw new FalhaPranchetaException(erro);
+                throw new BancoDeDadosException("Não foi possível acessar os dados da tática.", erro);
             }
-        }
-
-        internal static void Validar(Tatica tatica)
-        {
-            if (tatica.Id < 0 || tatica.EquipeId <= 0)
-                throw new ArgumentException("Selecione uma equipe para a tática.");
-            if (string.IsNullOrWhiteSpace(tatica.Nome) || tatica.Nome.Trim().EnumerateRunes().Count() > 100)
-                throw new ArgumentException("Informe um nome de tática com até 100 caracteres.");
-            if (Encoding.UTF8.GetByteCount(tatica.Descricao) > 65535)
-                throw new ArgumentException("A descrição da tática está muito longa.");
-            if (tatica.TipoTaticaId <= 0 || tatica.SistemaJogoId <= 0)
-                throw new ArgumentException("Selecione um tipo e um sistema válidos, ou deixe-os sem definição.");
-            if (tatica.Quadros.Count == 0)
-                throw new ArgumentException("A tática precisa ter pelo menos uma fase.");
-            foreach (QuadroTatica quadro in tatica.Quadros)
+            finally
             {
-                if (string.IsNullOrWhiteSpace(quadro.Nome) || quadro.Nome.Trim().EnumerateRunes().Count() > 100)
-                    throw new ArgumentException("Cada fase precisa de um nome com até 100 caracteres.");
-                if (quadro.DuracaoMs <= 0 || (quadro.Rotacao.HasValue && (quadro.Rotacao < 1 || quadro.Rotacao > 6)))
-                    throw new ArgumentException("Informe uma duração positiva e uma rotação entre P1 e P6, ou sem rotação.");
-                var numeros = new HashSet<(LadoAtleta, int)>();
-                var vinculos = new HashSet<int>();
-                foreach (AtletaQuadro atleta in quadro.Atletas)
-                {
-                    if (atleta.NumeroCamisa < 1 || atleta.NumeroCamisa > 99 ||
-                        (atleta.Lado != LadoAtleta.Principal && atleta.Lado != LadoAtleta.Adversario))
-                        throw new ArgumentException("Os atletas precisam de números entre 1 e 99 e um lado válido.");
-                    if (!numeros.Add((atleta.Lado, atleta.NumeroCamisa)))
-                        throw new ArgumentException("Dois atletas do mesmo lado não podem ter o mesmo número na mesma fase.");
-                    if (atleta.EquipeAtletaId.HasValue && !vinculos.Add(atleta.EquipeAtletaId.Value))
-                        throw new ArgumentException("Um atleta cadastrado só pode aparecer uma vez em cada fase.");
-                    ValidarCoordenadas(atleta.X, atleta.Y);
-                }
-                if (quadro.Bola != null)
-                    ValidarCoordenadas(quadro.Bola.X, quadro.Bola.Y);
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        private static void ValidarCoordenadas(float x, float y)
+        private static MySqlCommand Comando(MySqlConnection conexao, MySqlTransaction? transacao, string sql)
         {
-            if (!float.IsFinite(x) || !float.IsFinite(y) || x < 0 || x > 1 || y < 0 || y > 1)
-                throw new ArgumentException("As posições dos elementos precisam permanecer dentro da quadra.");
+            return new MySqlCommand(sql, conexao, transacao) { CommandTimeout = 5 };
         }
-
-        private static MySqlCommand Comando(MySqlConnection conexao, MySqlTransaction? transacao, string sql) =>
-            new MySqlCommand(sql, conexao, transacao) { CommandTimeout = 5 };
-
-        private static bool ErroDeBanco(Exception erro) =>
-            erro is MySqlException or InvalidOperationException or FormatException or OverflowException or TimeoutException;
 
         private static MySqlCommand ConsultaTatica(MySqlConnection conexao, MySqlTransaction? transacao, string sql, int usuarioId, int taticaId)
         {
-            var comando = Comando(conexao, transacao, sql);
+            MySqlCommand comando = Comando(conexao, transacao, sql);
             comando.Parameters.AddWithValue("@usuarioId", usuarioId);
             comando.Parameters.AddWithValue("@taticaId", taticaId);
             return comando;

@@ -1,80 +1,101 @@
+using System.Data;
 using System.Text;
 using MySql.Data.MySqlClient;
 
 namespace Limk.VolleyBall.Backend
 {
-    internal sealed record PosicaoCadastro(int Id, string Nome);
-
-    internal sealed class FalhaAtletaException(string mensagem, Exception? erro = null) : Exception(mensagem, erro);
-
     internal static class DadosAtletas
     {
-        public static async Task<List<PosicaoCadastro>> CarregarPosicoesAsync(CancellationToken cancellationToken = default)
+        public static DataTable Listar(int usuarioId)
         {
+            // O vínculo também é filtrado: um atleta pode atuar em duas equipes.
+            const string consulta = @"SELECT atleta.id, equipe_atleta.equipe_id, equipe_atleta.numero_camisa,
+                    atleta.nome, atleta.apelido, atleta.data_nascimento, equipe.nome AS equipe, equipe_atleta.titular,
+                    (SELECT GROUP_CONCAT(DISTINCT posicao.nome ORDER BY posicao.nome SEPARATOR ', ')
+                        FROM atleta_posicao
+                        INNER JOIN posicao ON posicao.id = atleta_posicao.posicao_id
+                        WHERE atleta_posicao.atleta_id = atleta.id) AS posicoes,
+                    (SELECT GROUP_CONCAT(atleta_posicao.posicao_id ORDER BY atleta_posicao.posicao_id)
+                        FROM atleta_posicao WHERE atleta_posicao.atleta_id = atleta.id) AS posicao_ids,
+                    NOT EXISTS (SELECT 1 FROM equipe_atleta
+                        LEFT JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe_atleta.equipe_id
+                            AND usuario_equipe.usuario_id = @usuarioId
+                        WHERE equipe_atleta.atleta_id = atleta.id AND usuario_equipe.usuario_id IS NULL) AS pode_editar_dados
+                FROM atleta
+                INNER JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id AND equipe_atleta.ativo = TRUE
+                INNER JOIN equipe ON equipe.id = equipe_atleta.equipe_id
+                INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe.id
+                WHERE usuario_equipe.usuario_id = @usuarioId
+                ORDER BY atleta.nome, equipe.nome, atleta.id, equipe.id";
+            return ConexaoBD.ConsultarTabela(consulta, usuarioId);
+        }
+
+        public static List<PosicaoCadastro> CarregarPosicoes()
+        {
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using MySqlConnection conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(cancellationToken).ConfigureAwait(false);
+                ConexaoBD.Abrir(conexao);
                 using MySqlCommand comando = CriarComando(conexao, "SELECT id, nome FROM posicao ORDER BY nome, id");
-                using var leitor = await comando.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                using MySqlDataReader leitor = comando.ExecuteReader();
 
-                var posicoes = new List<PosicaoCadastro>();
-                while (await leitor.ReadAsync(cancellationToken).ConfigureAwait(false))
+                List<PosicaoCadastro> posicoes = new List<PosicaoCadastro>();
+                while (leitor.Read())
                     posicoes.Add(new PosicaoCadastro(leitor.GetInt32(0), leitor.GetString(1)));
 
                 return posicoes;
             }
-            catch (Exception erro) when (ErroDeBanco(erro))
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                throw new FalhaAtletaException("Não foi possível carregar as posições. Verifique a conexão e tente novamente.", erro);
+                throw new BancoDeDadosException("Não foi possível carregar as posições. Verifique a conexão e tente novamente.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        public static async Task<int> SalvarAsync(int usuarioId, Atleta atleta, IReadOnlyCollection<int> posicaoIds,
-            CancellationToken cancellationToken = default)
+        public static int Salvar(int usuarioId, Atleta atleta, IReadOnlyCollection<int> posicaoIds)
         {
             ArgumentNullException.ThrowIfNull(atleta);
             ArgumentNullException.ThrowIfNull(posicaoIds);
-            int atletaId = atleta.Id;
-            int equipeId = atleta.IdEquipe;
-            int numeroCamisa = atleta.NumeroCamisa;
-            bool titular = atleta.Titular;
-            string nome = atleta.Nome?.Trim() ?? string.Empty;
-            string apelido = atleta.Apelido?.Trim() ?? string.Empty;
-            DateTime? nascimento = atleta.DataNascimento?.Date;
+            int atletaId = atleta.GetId();
+            int equipeId = atleta.GetIdEquipe();
+            int numeroCamisa = atleta.GetNumeroCamisa();
+            bool titular = atleta.GetTitular();
+            string nome = atleta.GetNome()?.Trim() ?? string.Empty;
+            string apelido = atleta.GetApelido()?.Trim() ?? string.Empty;
+            DateTime? nascimento = atleta.GetDataNascimento()?.Date;
             bool novo = atletaId == 0;
             int[] posicoes = posicaoIds.Distinct().ToArray();
 
             if (usuarioId <= 0)
-                throw new FalhaAtletaException("Entre novamente para salvar um atleta.");
+                throw new ValidacaoException("Entre novamente para salvar um atleta.");
             if (atletaId < 0 || equipeId <= 0)
-                throw new FalhaAtletaException("Selecione uma equipe válida para o atleta.");
-            if (numeroCamisa is < 1 or > 99)
-                throw new FalhaAtletaException("Informe um número de camisa de 1 a 99.");
+                throw new ValidacaoException("Selecione uma equipe válida para o atleta.");
+            if (numeroCamisa < 1 || numeroCamisa > 99)
+                throw new ValidacaoException("Informe um número de camisa de 1 a 99.");
 
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using MySqlConnection conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(cancellationToken).ConfigureAwait(false);
-                using MySqlTransaction transacao = await conexao.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+                ConexaoBD.Abrir(conexao);
+                using MySqlTransaction transacao = conexao.BeginTransaction();
 
-                await GarantirAcessoEquipeAsync(conexao, transacao, usuarioId, equipeId, cancellationToken)
-                    .ConfigureAwait(false);
+                GarantirAcessoEquipe(conexao, transacao, usuarioId, equipeId);
 
                 // Os dados pessoais e as posições pertencem ao cadastro compartilhado entre equipes.
-                bool podeEditarCadastro = novo || await VerificarVinculosAsync(conexao, transacao,
-                    usuarioId, atletaId, equipeId, cancellationToken).ConfigureAwait(false);
+                bool podeEditarCadastro = novo || VerificarVinculos(conexao, transacao,
+                    usuarioId, atletaId, equipeId);
                 if (podeEditarCadastro)
                 {
                     ValidarCadastro(nome, apelido, nascimento);
                     if (novo && posicoes.Length == 0)
-                        throw new FalhaAtletaException("Selecione pelo menos uma posição para o novo atleta.");
+                        throw new ValidacaoException("Selecione pelo menos uma posição para o novo atleta.");
 
-                    atletaId = await GravarCadastroAsync(conexao, transacao, atletaId,
-                        nome, apelido, nascimento, cancellationToken).ConfigureAwait(false);
-                    await GravarPosicoesAsync(conexao, transacao, atletaId, posicoes, novo, cancellationToken)
-                        .ConfigureAwait(false);
+                    atletaId = GravarCadastro(conexao, transacao, atletaId,
+                        nome, apelido, nascimento);
+                    GravarPosicoes(conexao, transacao, atletaId, posicoes, novo);
                 }
 
                 string consultaDoVinculo = novo
@@ -92,40 +113,39 @@ namespace Limk.VolleyBall.Backend
                     vinculo.Parameters.Add("@atletaId", MySqlDbType.Int32).Value = atletaId;
                     vinculo.Parameters.Add("@numeroCamisa", MySqlDbType.UByte).Value = (byte)numeroCamisa;
                     vinculo.Parameters.Add("@titular", MySqlDbType.Byte).Value = titular ? 1 : 0;
-                    await vinculo.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    vinculo.ExecuteNonQuery();
                 }
 
-                cancellationToken.ThrowIfCancellationRequested();
-                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
+                transacao.Commit();
                 return atletaId;
             }
             catch (MySqlException erro) when (erro.Number == 1062)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                throw new FalhaAtletaException("Esse número de camisa já está em uso ou reservado na equipe.", erro);
+                throw new ValidacaoException("Esse número de camisa já está em uso ou reservado na equipe.", erro);
             }
-            catch (Exception erro) when (ErroDeBanco(erro))
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                throw new FalhaAtletaException("Não foi possível salvar o atleta. Verifique a conexão e tente novamente.", erro);
+                throw new BancoDeDadosException("Não foi possível salvar o atleta. Verifique a conexão e tente novamente.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        public static async Task ExcluirAsync(int usuarioId, int atletaId, int equipeId,
-            CancellationToken cancellationToken = default)
+        public static void Excluir(int usuarioId, int atletaId, int equipeId)
         {
             if (usuarioId <= 0)
-                throw new FalhaAtletaException("Entre novamente para excluir um atleta.");
+                throw new ValidacaoException("Entre novamente para excluir um atleta.");
             if (atletaId <= 0 || equipeId <= 0)
-                throw new FalhaAtletaException("Selecione um atleta do elenco para excluir.");
+                throw new ValidacaoException("Selecione um atleta do elenco para excluir.");
 
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using MySqlConnection conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(cancellationToken).ConfigureAwait(false);
-                using MySqlTransaction transacao = await conexao.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-                await GarantirAcessoEquipeAsync(conexao, transacao, usuarioId, equipeId, cancellationToken)
-                    .ConfigureAwait(false);
+                ConexaoBD.Abrir(conexao);
+                using MySqlTransaction transacao = conexao.BeginTransaction();
+                GarantirAcessoEquipe(conexao, transacao, usuarioId, equipeId);
 
                 // A inativação preserva as referências das táticas salvas a este vínculo.
                 using MySqlCommand comando = CriarComando(conexao, """
@@ -135,51 +155,54 @@ namespace Limk.VolleyBall.Backend
                     """, transacao);
                 comando.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
                 comando.Parameters.Add("@atletaId", MySqlDbType.Int32).Value = atletaId;
-                if (await comando.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
-                    throw new FalhaAtletaException("O atleta já saiu do elenco ativo. Reabra a tela para atualizar a lista.");
+                if (comando.ExecuteNonQuery() != 1)
+                    throw new ValidacaoException("O atleta já saiu do elenco ativo. Reabra a tela para atualizar a lista.");
 
-                cancellationToken.ThrowIfCancellationRequested();
-                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
+                transacao.Commit();
             }
-            catch (Exception erro) when (ErroDeBanco(erro))
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                throw new FalhaAtletaException("Não foi possível excluir o atleta do elenco. Verifique a conexão e tente novamente.", erro);
+                throw new BancoDeDadosException("Não foi possível excluir o atleta do elenco. Verifique a conexão e tente novamente.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        private static async Task GarantirAcessoEquipeAsync(MySqlConnection conexao, MySqlTransaction transacao,
-            int usuarioId, int equipeId, CancellationToken cancellationToken)
+        private static void GarantirAcessoEquipe(MySqlConnection conexao, MySqlTransaction transacao,
+            int usuarioId, int equipeId)
         {
-            if (!await DadosEquipe.BloquearComAcessoAsync(conexao, transacao, usuarioId, equipeId,
-                exclusivo: false, cancellationToken).ConfigureAwait(false))
-                throw new FalhaAtletaException("Você não tem acesso à equipe selecionada.");
+            if (!DadosEquipe.BloquearComAcesso(conexao, transacao, usuarioId, equipeId,
+                exclusivo: false))
+                throw new ValidacaoException("Você não tem acesso à equipe selecionada.");
         }
 
-        private static async Task<bool> VerificarVinculosAsync(MySqlConnection conexao, MySqlTransaction transacao,
-            int usuarioId, int atletaId, int equipeId, CancellationToken cancellationToken)
+        private static bool VerificarVinculos(MySqlConnection conexao, MySqlTransaction transacao,
+            int usuarioId, int atletaId, int equipeId)
         {
             // Serializa alterações neste cadastro, inclusive a entrada de novos vínculos pela chave estrangeira.
             using (MySqlCommand cadastro = CriarComando(conexao, "SELECT id FROM atleta WHERE id = @atletaId FOR UPDATE", transacao))
             {
                 cadastro.Parameters.Add("@atletaId", MySqlDbType.Int32).Value = atletaId;
-                if (await cadastro.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
-                    throw new FalhaAtletaException("O atleta não está mais no elenco ativo da equipe selecionada.");
+                if (cadastro.ExecuteScalar() == null)
+                    throw new ValidacaoException("O atleta não está mais no elenco ativo da equipe selecionada.");
             }
 
             using MySqlCommand comando = CriarComando(conexao, """
-                SELECT ea.equipe_id, ea.ativo, ue.usuario_id
-                FROM equipe_atleta ea
-                LEFT JOIN usuario_equipe ue ON ue.equipe_id = ea.equipe_id AND ue.usuario_id = @usuarioId
-                WHERE ea.atleta_id = @atletaId FOR UPDATE OF ea FOR SHARE OF ue
+                SELECT equipe_atleta.equipe_id, equipe_atleta.ativo, usuario_equipe.usuario_id
+                FROM equipe_atleta
+                LEFT JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe_atleta.equipe_id AND usuario_equipe.usuario_id = @usuarioId
+                WHERE equipe_atleta.atleta_id = @atletaId
+                FOR UPDATE OF equipe_atleta FOR SHARE OF usuario_equipe
                 """, transacao);
             comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
             comando.Parameters.Add("@atletaId", MySqlDbType.Int32).Value = atletaId;
-            using var leitor = await comando.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            using MySqlDataReader leitor = comando.ExecuteReader();
 
             bool vinculoAtivo = false;
             bool podeEditarCadastro = true;
-            while (await leitor.ReadAsync(cancellationToken).ConfigureAwait(false))
+            while (leitor.Read())
             {
                 if (leitor.GetInt32(0) == equipeId && leitor.GetBoolean(1))
                     vinculoAtivo = true;
@@ -188,7 +211,7 @@ namespace Limk.VolleyBall.Backend
             }
 
             if (!vinculoAtivo)
-                throw new FalhaAtletaException("O atleta não está mais no elenco ativo da equipe selecionada.");
+                throw new ValidacaoException("O atleta não está mais no elenco ativo da equipe selecionada.");
 
             return podeEditarCadastro;
         }
@@ -196,15 +219,15 @@ namespace Limk.VolleyBall.Backend
         private static void ValidarCadastro(string nome, string apelido, DateTime? nascimento)
         {
             if (nome.Length == 0 || nome.EnumerateRunes().Count() > 100)
-                throw new FalhaAtletaException("Informe um nome de até 100 caracteres.");
+                throw new ValidacaoException("Informe um nome de até 100 caracteres.");
             if (apelido.EnumerateRunes().Count() > 50)
-                throw new FalhaAtletaException("Informe um apelido de até 50 caracteres.");
+                throw new ValidacaoException("Informe um apelido de até 50 caracteres.");
             if (nascimento is { Year: < 1000 })
-                throw new FalhaAtletaException("Informe uma data de nascimento válida.");
+                throw new ValidacaoException("Informe uma data de nascimento válida.");
         }
 
-        private static async Task<int> GravarCadastroAsync(MySqlConnection conexao, MySqlTransaction transacao, int atletaId,
-            string nome, string apelido, DateTime? nascimento, CancellationToken cancellationToken)
+        private static int GravarCadastro(MySqlConnection conexao, MySqlTransaction transacao, int atletaId,
+            string nome, string apelido, DateTime? nascimento)
         {
             string consulta = atletaId == 0
                 ? "INSERT INTO atleta (nome, apelido, data_nascimento) VALUES (@nome, @apelido, @nascimento)"
@@ -214,19 +237,19 @@ namespace Limk.VolleyBall.Backend
             comando.Parameters.Add("@nome", MySqlDbType.VarChar, 100).Value = nome;
             comando.Parameters.Add("@apelido", MySqlDbType.VarChar, 50).Value = apelido.Length == 0 ? DBNull.Value : apelido;
             comando.Parameters.Add("@nascimento", MySqlDbType.Date).Value = (object?)nascimento ?? DBNull.Value;
-            await comando.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            comando.ExecuteNonQuery();
 
             return atletaId == 0 ? checked((int)comando.LastInsertedId) : atletaId;
         }
 
-        private static async Task GravarPosicoesAsync(MySqlConnection conexao, MySqlTransaction transacao, int atletaId,
-            int[] posicoes, bool novo, CancellationToken cancellationToken)
+        private static void GravarPosicoes(MySqlConnection conexao, MySqlTransaction transacao, int atletaId,
+            int[] posicoes, bool novo)
         {
             if (!novo)
             {
                 using MySqlCommand remover = CriarComando(conexao, "DELETE FROM atleta_posicao WHERE atleta_id = @atletaId", transacao);
                 remover.Parameters.Add("@atletaId", MySqlDbType.Int32).Value = atletaId;
-                await remover.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                remover.ExecuteNonQuery();
             }
 
             using MySqlCommand gravar = CriarComando(conexao, """
@@ -238,15 +261,14 @@ namespace Limk.VolleyBall.Backend
             foreach (int posicaoId in posicoes)
             {
                 parametroPosicao.Value = posicaoId;
-                if (await gravar.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
-                    throw new FalhaAtletaException("Uma das posições selecionadas não está mais disponível.");
+                if (gravar.ExecuteNonQuery() != 1)
+                    throw new ValidacaoException("Uma das posições selecionadas não está mais disponível.");
             }
         }
 
-        private static MySqlCommand CriarComando(MySqlConnection conexao, string consulta, MySqlTransaction? transacao = null) =>
-            new MySqlCommand(consulta, conexao, transacao) { CommandTimeout = 5 };
-
-        private static bool ErroDeBanco(Exception erro) => erro is MySqlException or InvalidOperationException
-            or ArgumentException or FormatException or OverflowException or TimeoutException;
+        private static MySqlCommand CriarComando(MySqlConnection conexao, string consulta, MySqlTransaction? transacao = null)
+        {
+            return new MySqlCommand(consulta, conexao, transacao) { CommandTimeout = 5 };
+        }
     }
 }

@@ -67,7 +67,7 @@ Digite essa senha no login. O bcrypt não permite recuperar a senha original a p
 
 O cadastro pede nome, e-mail, senha e confirmação. A senha precisa ter pelo menos 8 caracteres e respeitar o limite de 72 bytes do bcrypt; ela é gravada somente como hash. E-mails já cadastrados são recusados. Ao concluir, a tela volta ao login com o e-mail preenchido. A nova conta recebe as preferências padrão e começa sem equipes vinculadas; o usuário pode criar sua primeira equipe pela tela **Equipes**. O cadastro usa as tabelas existentes `usuario` e `preferencia_usuario`, sem alterar o esquema do banco.
 
-`Backend/CadastroUsuario.cs` valida e grava a conta e suas preferências em uma transação. `User Constrols/TelaCadastroUsuario.Designer.cs` contém o layout editável no Visual Studio; `TelaCadastroUsuario.cs` trata os campos e o botão. `FormLogin.cs` alterna entre login e cadastro na mesma janela.
+`Backend/DadosUsuario.cs` valida e grava a conta e suas preferências em uma transação. `User Constrols/TelaCadastroUsuario.Designer.cs` contém o layout editável no Visual Studio; `TelaCadastroUsuario.cs` trata os campos e o botão. `FormLogin.cs` alterna entre login e cadastro na mesma janela.
 
 O login informa o ID, o nome e o e-mail do usuário ao formulário principal. A interface `ITelaUsuario` permite que o formulário entregue essa identidade a cada tela antes de carregá-la, tanto pelo menu quanto pelos atalhos.
 
@@ -96,9 +96,11 @@ Em **Táticas**, cada cartão tem o botão **Excluir tática**. Confira o nome d
 
 ### Organização do código
 
+O [guia ilustrado do código](docs/Guia_do_codigo_LIMK.pdf) acompanha a entrada no sistema, o desenho de um atleta, o zoom, o arraste e o salvamento de uma jogada.
+
 - `Backend/Tatica.cs`, `QuadroTatica.cs` e `AtletaQuadro.cs` representam os dados editados. Os métodos `Copiar()` criam cópias independentes das fases, atletas e bola.
-- `Backend/DadosPrancheta.cs` concentra as consultas e gravações no MySQL, a validação dos dados e a verificação de acesso às equipes do usuário.
-- `User Constrols/TelaPranchetaTatica.cs` liga os botões aos dados e transfere os elementos entre a fase selecionada e o desenho. O painel de propriedades alterna entre tática/fase, atleta e bola conforme a seleção. Todo o layout continua em `TelaPranchetaTatica.Designer.cs`.
+- `Tatica.Validar()` verifica as regras da jogada. `DadosPrancheta` verifica o acesso à equipe e grava cabeçalho e fases na mesma transação.
+- `User Constrols/TelaPranchetaTatica.cs` liga os botões aos dados e transfere os elementos entre a fase selecionada e o desenho. O painel de propriedades alterna entre tática/fase, atleta e bola conforme a seleção. `PranchetaControl.cs` calcula o retângulo da quadra, desenha os elementos e trata o mouse. O layout está em `TelaPranchetaTatica.Designer.cs`.
 
 O salvamento utiliza as tabelas existentes `tatica`, `quadro`, `atleta_quadro` e `bola_quadro`. Nome, descrição e referências da tática são gravados junto com todas as fases em uma transação: uma falha desfaz a gravação inteira. Ao atualizar, as fases são substituídas dentro dessa transação, preservando o ID da tática e seus favoritos. Os números são guardados em cada fase, mesmo que o elenco mude depois. As coordenadas permanecem normalizadas entre 0 e 1.
 
@@ -120,7 +122,7 @@ A tela **Equipes** mostra somente os vínculos do usuário conectado. Clique em 
 
 - Trabalho escrito final em [PDF](docs/entrega/trabalho-escrito.pdf) e [Word editável](docs/entrega/trabalho-escrito.docx).
 - [Especificação de requisitos](docs/LIMK_Requisitos.md).
-- [Casos de uso](docs/entrega/casos-de-uso.pdf) e [diagramas de classes](docs/diagramas-de-classes.md), também disponíveis em [PDF](docs/entrega/diagrama-de-classes.pdf).
+- [Casos de uso](docs/entrega/casos-de-uso.pdf) e [diagramas de classes atuais](docs/diagramas-de-classes.md). O [PDF da entrega de 21/11](docs/entrega/diagrama-de-classes.pdf) registra a versão anterior à refatoração.
 - [Modelo entidade-relacionamento](docs/mer.md), [esquema físico](docs/eer.md) e [diagramas do banco em PDF](docs/entrega/modelo-de-dados.pdf).
 - [Script integrado de implantação e demonstração](banco/limk-completo.sql) e [consultas documentadas por tela](docs/entrega/consultas-interfaces.sql).
 - [Testes funcionais e roteiro de verificação](docs/testes-funcionais.md).

@@ -10,13 +10,15 @@ namespace Limk.VolleyBall.User_Constrols
         private static readonly Color CorTextoSecundario = Color.FromArgb(100, 116, 139);
         private static readonly Color CorAcao = Color.FromArgb(124, 58, 237);
         private const string MensagemCarregando = "Verificando seu acesso…";
-        private readonly CancellationTokenSource encerramento = new();
         private bool autenticando;
         private bool organizandoFormulario;
 
         internal event EventHandler<UsuarioAutenticado>? LoginConcluido;
         internal event EventHandler? CriarContaSolicitada;
-        internal IButtonControl BotaoEntrar => btnEntrar;
+        internal IButtonControl BotaoEntrar
+        {
+            get { return btnEntrar; }
+        }
 
         public TelaLogin()
         {
@@ -24,7 +26,10 @@ namespace Limk.VolleyBall.User_Constrols
             AjustarLayout();
         }
 
-        public void FocarEmail() => txtEmail.Select();
+        public void FocarEmail()
+        {
+            txtEmail.Select();
+        }
 
         internal void MostrarContaCriada(string email)
         {
@@ -33,18 +38,10 @@ namespace Limk.VolleyBall.User_Constrols
             txtSenha.Select();
         }
 
-        protected override void Dispose(bool disposing)
+        private void TelaLogin_SizeChanged(object? sender, EventArgs e)
         {
-            if (disposing && !Disposing && !IsDisposed)
-            {
-                encerramento.Cancel();
-                encerramento.Dispose();
-            }
-
-            base.Dispose(disposing);
+            AjustarLayout();
         }
-
-        private void TelaLogin_SizeChanged(object? sender, EventArgs e) => AjustarLayout();
 
         private void layoutFormulario_Paint(object? sender, PaintEventArgs e)
         {
@@ -77,7 +74,10 @@ namespace Limk.VolleyBall.User_Constrols
             PosicionarFormulario();
         }
 
-        private void pnlConteudo_Layout(object? sender, LayoutEventArgs e) => PosicionarFormulario();
+        private void pnlConteudo_Layout(object? sender, LayoutEventArgs e)
+        {
+            PosicionarFormulario();
+        }
 
         private void PosicionarFormulario()
         {
@@ -149,7 +149,7 @@ namespace Limk.VolleyBall.User_Constrols
                 CriarContaSolicitada?.Invoke(this, EventArgs.Empty);
         }
 
-        private async void btnEntrar_Click(object? sender, EventArgs e)
+        private void btnEntrar_Click(object? sender, EventArgs e)
         {
             if (autenticando)
                 return;
@@ -169,35 +169,25 @@ namespace Limk.VolleyBall.User_Constrols
                 return;
             }
 
-            CancellationToken token = encerramento.Token;
             DefinirCarregamento(true);
             UsuarioAutenticado? usuario;
             try
             {
-                usuario = await AutenticacaoUsuario.AutenticarAsync(email, txtSenha.Text, token);
+                usuario = DadosUsuario.Autenticar(email, txtSenha.Text);
             }
-            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            catch (BancoDeDadosException)
             {
-                return;
-            }
-            catch (FalhaAutenticacaoException)
-            {
-                if (!token.IsCancellationRequested)
-                    ExibirMensagem("Não foi possível conectar ao banco. Verifique a conexão e tente novamente.", erro: true);
+                ExibirMensagem("Não foi possível conectar ao banco. Verifique a conexão e tente novamente.", erro: true);
                 return;
             }
             finally
             {
-                if (!token.IsCancellationRequested)
-                    DefinirCarregamento(false);
+                DefinirCarregamento(false);
             }
-
-            if (token.IsCancellationRequested)
-                return;
 
             txtSenha.Clear();
             chkMostrarSenha.Checked = false;
-            if (usuario is null)
+            if (usuario == null)
             {
                 txtSenha.Select();
                 ExibirMensagem("E-mail ou senha inválidos.", erro: true);

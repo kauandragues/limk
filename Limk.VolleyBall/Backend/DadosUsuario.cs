@@ -1,78 +1,139 @@
+using System.Net.Mail;
+using System.Text;
+using System.Text.RegularExpressions;
+using BCrypt.Net;
 using MySql.Data.MySqlClient;
-using System.Data;
 
 namespace Limk.VolleyBall.Backend
 {
     internal static class DadosUsuario
     {
-        public static Task<DataTable> CarregarEquipesAsync(int usuarioId, CancellationToken cancellationToken = default)
+        private const int LimiteEmail = 254;
+        private const int LimiteSenhaEmBytes = 72;
+
+        // Mantém o custo da verificação também quando o e-mail não está cadastrado.
+        private const string HashDeExemplo = "$2a$12$cUje9FWL5jmZceN2x1X.GuhtK39/IKvktskYQs/dYtNwyeULurrqS";
+        private static readonly Regex FormatoBcrypt = new Regex(
+            @"\A\$2[aby]\$(?:0[4-9]|[12][0-9]|3[01])\$[./A-Za-z0-9]{53}\z",
+            RegexOptions.CultureInvariant);
+
+        public static UsuarioAutenticado Cadastrar(string nome, string email, string senha)
         {
-            const string consulta = @"SELECT e.id, e.nome, e.escudo,
-                    (SELECT COUNT(*) FROM equipe_atleta ea
-                        WHERE ea.equipe_id = e.id AND ea.ativo = TRUE) AS atletas,
-                    (SELECT COUNT(*) FROM tatica t WHERE t.equipe_id = e.id) AS taticas
-                FROM equipe e
-                INNER JOIN usuario_equipe ue ON ue.equipe_id = e.id
-                WHERE ue.usuario_id = @usuarioId
-                ORDER BY e.nome, e.id";
-            return ConsultarAsync(consulta, usuarioId, cancellationToken);
+            nome = nome.Trim();
+            email = email.Trim();
+            if (nome.Length == 0 || nome.EnumerateRunes().Count() > 100)
+                throw new ValidacaoException("Informe seu nome com até 100 caracteres.");
+            if (email.Length > LimiteEmail || !MailAddress.TryCreate(email, out MailAddress? endereco) || endereco.Address != email)
+                throw new ValidacaoException("Informe um e-mail válido.");
+            if (string.IsNullOrWhiteSpace(senha) || senha.EnumerateRunes().Count() < 8)
+                throw new ValidacaoException("Use uma senha com pelo menos 8 caracteres.");
+            // O bcrypt usado no login aceita no máximo 72 bytes, inclusive em senhas com acentos.
+            if (Encoding.UTF8.GetByteCount(senha) > LimiteSenhaEmBytes)
+                throw new ValidacaoException("A senha é muito longa. Use uma senha menor.");
+
+            string hash = BCrypt.Net.BCrypt.HashPassword(senha, workFactor: 12);
+
+            MySqlConnection conexao = new MySqlConnection();
+            try
+            {
+                ConexaoBD.Abrir(conexao);
+                using MySqlTransaction transacao = conexao.BeginTransaction();
+
+                const string sql = "INSERT INTO usuario (nome, email, senha_hash) VALUES (@nome, @email, @hash)";
+                using MySqlCommand comando = new MySqlCommand(sql, conexao, transacao) { CommandTimeout = 5 };
+                comando.Parameters.Add("@nome", MySqlDbType.VarChar, 100).Value = nome;
+                comando.Parameters.Add("@email", MySqlDbType.VarChar, LimiteEmail).Value = email;
+                comando.Parameters.Add("@hash", MySqlDbType.VarChar, 255).Value = hash;
+                comando.ExecuteNonQuery();
+                int usuarioId = checked((int)comando.LastInsertedId);
+
+                // A conta e suas preferências são gravadas juntas. As cores e a duração usam os padrões do banco.
+                using MySqlCommand preferencias = new MySqlCommand(
+                    "INSERT INTO preferencia_usuario (usuario_id) VALUES (@usuarioId)", conexao, transacao)
+                    { CommandTimeout = 5 };
+                preferencias.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
+                preferencias.ExecuteNonQuery();
+                transacao.Commit();
+                return new UsuarioAutenticado(usuarioId, nome, email);
+            }
+            catch (MySqlException erro) when (erro.Number == 1062)
+            {
+                throw new ValidacaoException("Já existe uma conta com este e-mail. Entre com sua senha ou use outro e-mail.", erro);
+            }
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
+            {
+                throw new BancoDeDadosException("Não foi possível criar a conta no banco.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
+            }
         }
 
-        public static Task<DataTable> CarregarAtletasAsync(int usuarioId, CancellationToken cancellationToken = default)
+        public static UsuarioAutenticado? Autenticar(string email, string senha)
         {
-            // O vínculo também é filtrado: um atleta pode atuar em duas equipes.
-            const string consulta = @"SELECT a.id, ea.equipe_id, ea.numero_camisa,
-                    a.nome, a.apelido, a.data_nascimento, e.nome AS equipe, ea.titular,
-                    (SELECT GROUP_CONCAT(DISTINCT p.nome ORDER BY p.nome SEPARATOR ', ')
-                        FROM atleta_posicao ap INNER JOIN posicao p ON p.id = ap.posicao_id
-                        WHERE ap.atleta_id = a.id) AS posicoes,
-                    (SELECT GROUP_CONCAT(ap.posicao_id ORDER BY ap.posicao_id)
-                        FROM atleta_posicao ap WHERE ap.atleta_id = a.id) AS posicao_ids,
-                    NOT EXISTS (SELECT 1 FROM equipe_atleta outro
-                        LEFT JOIN usuario_equipe acesso ON acesso.equipe_id = outro.equipe_id
-                            AND acesso.usuario_id = @usuarioId
-                        WHERE outro.atleta_id = a.id AND acesso.usuario_id IS NULL) AS pode_editar_dados
-                FROM atleta a
-                INNER JOIN equipe_atleta ea ON ea.atleta_id = a.id AND ea.ativo = TRUE
-                INNER JOIN equipe e ON e.id = ea.equipe_id
-                INNER JOIN usuario_equipe ue ON ue.equipe_id = e.id
-                WHERE ue.usuario_id = @usuarioId
-                ORDER BY a.nome, e.nome, a.id, e.id";
-            return ConsultarAsync(consulta, usuarioId, cancellationToken);
+            email = email.Trim();
+            if (email.Length == 0 || email.Length > LimiteEmail || string.IsNullOrEmpty(senha) ||
+                Encoding.UTF8.GetByteCount(senha) > LimiteSenhaEmBytes)
+            {
+                return null;
+            }
+
+            string? hash;
+            UsuarioAutenticado? usuario = ConsultarUsuario(email, out hash);
+
+            bool formatoValido = hash != null && FormatoBcrypt.IsMatch(hash);
+            string hashParaVerificar = formatoValido ? hash! : HashDeExemplo;
+            bool senhaValida = VerificarSenha(senha, hashParaVerificar);
+            return formatoValido && senhaValida ? usuario : null;
         }
 
-        public static Task<DataTable> CarregarTaticasAsync(int usuarioId, CancellationToken cancellationToken = default)
+        private static UsuarioAutenticado? ConsultarUsuario(string email, out string? hash)
         {
-            const string consulta = @"SELECT t.id, t.equipe_id, t.nome, t.descricao,
-                    e.nome AS equipe, tt.nome AS tipo, sj.nome AS sistema,
-                    (SELECT COUNT(*) FROM quadro q WHERE q.tatica_id = t.id) AS quadros
-                FROM tatica t
-                INNER JOIN equipe e ON e.id = t.equipe_id
-                INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-                LEFT JOIN tipo_tatica tt ON tt.id = t.tipo_tatica_id
-                LEFT JOIN sistema_jogo sj ON sj.id = t.sistema_jogo_id
-                WHERE ue.usuario_id = @usuarioId
-                ORDER BY t.id DESC";
-            return ConsultarAsync(consulta, usuarioId, cancellationToken);
+            const string consulta = """
+                SELECT id, nome, email, senha_hash
+                FROM usuario
+                WHERE email = @email
+                LIMIT 1
+                """;
+
+            MySqlConnection conexao = new MySqlConnection();
+            try
+            {
+                ConexaoBD.Abrir(conexao);
+                using MySqlCommand comando = new MySqlCommand(consulta, conexao) { CommandTimeout = 5 };
+                comando.Parameters.Add("@email", MySqlDbType.VarChar, LimiteEmail).Value = email;
+                using MySqlDataReader leitor = comando.ExecuteReader();
+
+                if (!leitor.Read())
+                {
+                    hash = null;
+                    return null;
+                }
+
+                hash = leitor.GetString(3);
+                return new UsuarioAutenticado(leitor.GetInt32(0), leitor.GetString(1), leitor.GetString(2));
+            }
+            catch (Exception ex) when (ConexaoBD.EhFalhaDeBanco(ex))
+            {
+                throw new BancoDeDadosException("Não foi possível consultar o banco para entrar.", ex);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
+            }
         }
 
-        private static async Task<DataTable> ConsultarAsync(string consulta, int usuarioId,
-            CancellationToken cancellationToken)
+        private static bool VerificarSenha(string senha, string hash)
         {
-            if (usuarioId <= 0)
-                throw new ArgumentOutOfRangeException(nameof(usuarioId));
-
-            using MySqlConnection conexao = ConexaoBD.CriarConexao();
-            await conexao.OpenAsync(cancellationToken).ConfigureAwait(false);
-            using MySqlCommand comando = new MySqlCommand(consulta, conexao);
-            comando.CommandTimeout = 5;
-            comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
-            using var leitor = await comando.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-            cancellationToken.ThrowIfCancellationRequested();
-            DataTable tabela = new DataTable();
-            tabela.Load(leitor);
-            cancellationToken.ThrowIfCancellationRequested();
-            return tabela;
+            try
+            {
+                return BCrypt.Net.BCrypt.Verify(senha, hash);
+            }
+            catch (Exception ex) when (ex is SaltParseException || ex is ArgumentException)
+            {
+                return false;
+            }
         }
     }
 }

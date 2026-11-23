@@ -1,6 +1,6 @@
 # LIMK Volleyball · Requisitos da versão implementada
 
-Revisão de 21 de novembro de 2026. Esta especificação descreve o aplicativo Windows Forms e o esquema MySQL distribuídos com o projeto. Os identificadores dos requisitos foram mantidos para permitir a comparação com as revisões anteriores.
+Revisão de 22 de novembro de 2026. Esta especificação descreve o aplicativo Windows Forms e o esquema MySQL distribuídos com o projeto. Os identificadores dos requisitos foram mantidos para permitir a comparação com as revisões anteriores.
 
 ## Objetivo e usuário
 
@@ -70,7 +70,7 @@ Na interface, **fase** é o quadro de uma tática. **Atleta do elenco** é o cad
 | RNF02 | Acesso direto ao MySQL via ADO.NET e MySql.Data | Os dados salvos voltam a ser consultados em outra sessão. A configuração aceita servidor e porta e usa localhost e 3306 por padrão. |
 | RNF03 | Credenciais e consultas | A conta da aplicação usa hash bcrypt. SQL recebe os valores da interface por parâmetros e a conexão obtém suas credenciais do ambiente. |
 | RNF04 | Posicionamento relativo | Redimensionar ou ampliar a quadra conserva as coordenadas dos atletas e da bola. |
-| RNF05 | Operações de dados assíncronas | Consultas e gravações usam operações assíncronas. O descarte das telas solicita cancelamento das operações associadas. |
+| RNF05 | Operações de dados síncronas | Uma ação termina a consulta ou a gravação antes de devolver o controle à tela. A janela aguarda o retorno do banco. |
 | RNF06 | Integridade das gravações | Cadastro de conta com preferências, equipe com acesso inicial e salvamento da tática com todos os quadros usam transações. A exclusão individual usa um único DELETE com as ações em cascata do InnoDB. |
 | RNF07 | Mensagens compreensíveis | Login, validação de campos, falha de conexão e confirmação de exclusão apresentam mensagens em português. |
 | RNF08 | Tratamento da edição local | Na ficha de atletas, sair com alterações pede confirmação de descarte e uma gravação em curso impede a saída. Na prancheta, o usuário grava a edição explicitamente com **Salvar Tática**. |
@@ -80,10 +80,10 @@ Na interface, **fase** é o quadro de uma tática. **Atleta do elenco** é o cad
 
 | Área | Componentes do código | Tabelas principais |
 |---|---|---|
-| Cadastro e sessão | FormLogin, FormPrincipal, TelaLogin, TelaCadastroUsuario, MenuLateral | usuario, preferencia_usuario |
-| Equipes e acesso | TelaEquipes, CardEquipes, DadosEquipe, DadosUsuario | equipe, usuario_equipe |
+| Cadastro e sessão | FormLogin, FormPrincipal, TelaLogin, TelaCadastroUsuario, DadosUsuario, MenuLateral | usuario, preferencia_usuario |
+| Equipes e acesso | TelaEquipes, CardEquipes, DadosEquipe | equipe, usuario_equipe |
 | Elenco e posições | TelaAtletas, Atleta, DadosAtletas | atleta, equipe_atleta, posicao, atleta_posicao |
-| Biblioteca de táticas | TelaTaticas, CardTática, DadosUsuario, DadosPrancheta | tatica, equipe, tipo_tatica, sistema_jogo |
+| Biblioteca de táticas | TelaTaticas, CardTática, DadosPrancheta | tatica, equipe, tipo_tatica, sistema_jogo |
 | Editor e apresentação | TelaPranchetaTatica, PranchetaControl, Tatica, QuadroTatica, DadosPrancheta | tatica, quadro, atleta_quadro, bola_quadro |
 | Início e preferências | TelaInicial, DadosInicio, TelaConfiguracoes, DadosPreferenciasUsuario | usuario_equipe, equipe_atleta, tatica, quadro, preferencia_usuario |
 

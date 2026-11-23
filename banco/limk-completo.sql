@@ -1,12 +1,4 @@
--- LIMK Volleyball | Estrutura, dados de demonstração e consultas das telas
--- Execute este arquivo inteiro no MySQL 8.0.46 para instalar em uma base vazia.
-
-SET NAMES utf8mb4;
-
-CREATE DATABASE IF NOT EXISTS limk
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_0900_ai_ci;
-
+CREATE DATABASE limk;
 USE limk;
 
 CREATE TABLE usuario (
@@ -15,7 +7,7 @@ CREATE TABLE usuario (
     email VARCHAR(254) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE preferencia_usuario (
     usuario_id INT PRIMARY KEY,
@@ -25,13 +17,13 @@ CREATE TABLE preferencia_usuario (
     duracao_quadro_padrao_ms INT NOT NULL DEFAULT 1000,
     FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
     CHECK (duracao_quadro_padrao_ms > 0)
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE equipe (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     escudo MEDIUMBLOB NULL
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE usuario_equipe (
     usuario_id INT NOT NULL,
@@ -39,19 +31,19 @@ CREATE TABLE usuario_equipe (
     PRIMARY KEY (usuario_id, equipe_id),
     FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
     FOREIGN KEY (equipe_id) REFERENCES equipe(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE atleta (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     apelido VARCHAR(50),
     data_nascimento DATE
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE posicao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(30) NOT NULL UNIQUE
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE atleta_posicao (
     atleta_id INT NOT NULL,
@@ -59,7 +51,7 @@ CREATE TABLE atleta_posicao (
     PRIMARY KEY (atleta_id, posicao_id),
     FOREIGN KEY (atleta_id) REFERENCES atleta(id) ON DELETE CASCADE,
     FOREIGN KEY (posicao_id) REFERENCES posicao(id) ON DELETE RESTRICT
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE equipe_atleta (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -73,18 +65,18 @@ CREATE TABLE equipe_atleta (
     FOREIGN KEY (equipe_id) REFERENCES equipe(id) ON DELETE CASCADE,
     FOREIGN KEY (atleta_id) REFERENCES atleta(id) ON DELETE RESTRICT,
     CHECK (numero_camisa BETWEEN 1 AND 99)
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE tipo_tatica (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(50) NOT NULL UNIQUE
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE sistema_jogo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(20) NOT NULL UNIQUE,
     descricao VARCHAR(255)
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE tatica (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -96,7 +88,7 @@ CREATE TABLE tatica (
     FOREIGN KEY (equipe_id) REFERENCES equipe(id) ON DELETE CASCADE,
     FOREIGN KEY (tipo_tatica_id) REFERENCES tipo_tatica(id) ON DELETE SET NULL,
     FOREIGN KEY (sistema_jogo_id) REFERENCES sistema_jogo(id) ON DELETE SET NULL
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE quadro (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -110,7 +102,7 @@ CREATE TABLE quadro (
     CHECK (ordem >= 1),
     CHECK (duracao_ms > 0),
     CHECK (rotacao IS NULL OR rotacao BETWEEN 1 AND 6)
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE atleta_quadro (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -127,7 +119,7 @@ CREATE TABLE atleta_quadro (
     CHECK (numero BETWEEN 1 AND 99),
     CHECK (posicao_x BETWEEN 0 AND 1),
     CHECK (posicao_y BETWEEN 0 AND 1)
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE bola_quadro (
     quadro_id INT PRIMARY KEY,
@@ -136,7 +128,7 @@ CREATE TABLE bola_quadro (
     FOREIGN KEY (quadro_id) REFERENCES quadro(id) ON DELETE CASCADE,
     CHECK (posicao_x BETWEEN 0 AND 1),
     CHECK (posicao_y BETWEEN 0 AND 1)
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE tatica_favorita (
     usuario_id INT NOT NULL,
@@ -145,11 +137,8 @@ CREATE TABLE tatica_favorita (
     PRIMARY KEY (usuario_id, tatica_id),
     FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
     FOREIGN KEY (tatica_id) REFERENCES tatica(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
--- Contas de demonstracao para desenvolvimento.
--- Senha de Ana, Bruno e Carla no login: Limk@Teste2026!
--- O banco armazena apenas os hashes bcrypt dessa senha.
 INSERT INTO usuario (id, nome, email, senha_hash) VALUES (1, 'Ana Lima', 'ana@limk.example', '$2a$12$Kt3qTUbIJ1/UZW9NfchKdug/OYWTAwpKCar0Bl1Et1CoBNIlgVl1O');
 INSERT INTO usuario (id, nome, email, senha_hash) VALUES (2, 'Bruno Alves', 'bruno@limk.example', '$2a$12$gwvYYMqLKmnuWzu4iBIoz.IkwvvshsJTFVh.kKAP.W05NgpbEZtae');
 INSERT INTO usuario (id, nome, email, senha_hash) VALUES (3, 'Carla Mendes', 'carla@limk.example', '$2a$12$p7jWkJ8Hx9od3y7n/Wea1OpZUdmbSRkcNgjoA0gu4XvnLufVkhUq6');
@@ -233,7 +222,7 @@ INSERT INTO tatica (id, equipe_id, tipo_tatica_id, sistema_jogo_id, nome, descri
 INSERT INTO tatica (id, equipe_id, tipo_tatica_id, sistema_jogo_id, nome, descricao) VALUES (2, 1, 3, 1, 'Ataque pela entrada', 'Exemplo de aproximação de ataque pela entrada de rede.');
 INSERT INTO tatica (id, equipe_id, tipo_tatica_id, sistema_jogo_id, nome, descricao) VALUES (3, 2, 4, 2, 'Organização defensiva', 'Exemplo de deslocamento defensivo após ataque adversário.');
 INSERT INTO tatica (id, equipe_id, tipo_tatica_id, sistema_jogo_id, nome, descricao) VALUES (4, 2, 6, 2, 'Cobertura do ataque', 'Exemplo de aproximação para cobertura do atacante.');
--- Quadra deitada: a rede passa por X = 0,50. Nos exemplos, a equipe principal joga à esquerda.
+
 INSERT INTO quadro (id, tatica_id, nome, ordem, duracao_ms, rotacao) VALUES (1, 1, 'Recepção inicial', 1, 1000, 1);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (1, 1, 1, 4, 'PRINCIPAL', 0.12, 0.78);
 INSERT INTO atleta_quadro (id, quadro_id, equipe_atleta_id, numero, lado, posicao_x, posicao_y) VALUES (2, 1, 2, 8, 'PRINCIPAL', 0.38, 0.78);
@@ -406,177 +395,3 @@ INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (1, 1);
 INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (1, 2);
 INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (2, 1);
 INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (3, 3);
-
--- Consultas DQL das interfaces
--- Consultas da aplicação, agrupadas por finalidade, usando os dados inseridos acima.
-USE limk;
-SET @usuarioId = 1, @equipeId = 1, @atletaId = 1, @taticaId = 1, @email = 'ana@limk.example';
-
--- 01. Login por e-mail e leitura do hash para autenticação (AutenticacaoUsuario.cs)
-SELECT id, nome, email, senha_hash
-FROM usuario
-WHERE email = @email
-LIMIT 1;
-
--- 02. Início · totais das equipes acessíveis (DadosInicio.cs)
-SELECT
-(SELECT COUNT(*) FROM usuario_equipe ue
-    WHERE ue.usuario_id = @usuarioId) AS equipes,
-(SELECT COUNT(DISTINCT ea.atleta_id) FROM equipe_atleta ea
-    INNER JOIN usuario_equipe ue ON ue.equipe_id = ea.equipe_id
-    WHERE ue.usuario_id = @usuarioId AND ea.ativo = TRUE) AS atletas,
-(SELECT COUNT(*) FROM tatica t
-    INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-    WHERE ue.usuario_id = @usuarioId) AS taticas,
-(SELECT COUNT(*) FROM quadro q
-    INNER JOIN tatica t ON t.id = q.tatica_id
-    INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-    WHERE ue.usuario_id = @usuarioId) AS quadros;
-
--- 03. Início · três últimas táticas (DadosInicio.cs)
-SELECT t.nome, t.descricao, e.nome AS equipe,
-    (SELECT COUNT(*) FROM quadro q WHERE q.tatica_id = t.id) AS quadros, t.id
-FROM tatica t
-INNER JOIN equipe e ON e.id = t.equipe_id
-INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-WHERE ue.usuario_id = @usuarioId
-ORDER BY t.id DESC
-LIMIT 3;
-
--- 04. Início · equipes e totais de elenco e táticas (DadosInicio.cs)
-SELECT e.nome,
-    (SELECT COUNT(*) FROM equipe_atleta ea
-        WHERE ea.equipe_id = e.id AND ea.ativo = TRUE) AS atletas,
-    (SELECT COUNT(*) FROM tatica t WHERE t.equipe_id = e.id) AS taticas
-FROM equipe e
-INNER JOIN usuario_equipe ue ON ue.equipe_id = e.id
-WHERE ue.usuario_id = @usuarioId
-ORDER BY e.nome, e.id
-LIMIT 3;
-
--- 05. Equipes · cartões, escudos e contagens (DadosUsuario.cs)
-SELECT e.id, e.nome, e.escudo,
-    (SELECT COUNT(*) FROM equipe_atleta ea
-        WHERE ea.equipe_id = e.id AND ea.ativo = TRUE) AS atletas,
-    (SELECT COUNT(*) FROM tatica t WHERE t.equipe_id = e.id) AS taticas
-FROM equipe e
-INNER JOIN usuario_equipe ue ON ue.equipe_id = e.id
-WHERE ue.usuario_id = @usuarioId
-ORDER BY e.nome, e.id;
-
--- 06. Atletas · elenco ativo, posições e permissão de edição (DadosUsuario.cs)
-SELECT a.id, ea.equipe_id, ea.numero_camisa,
-    a.nome, a.apelido, a.data_nascimento, e.nome AS equipe, ea.titular,
-    (SELECT GROUP_CONCAT(DISTINCT p.nome ORDER BY p.nome SEPARATOR ', ')
-        FROM atleta_posicao ap INNER JOIN posicao p ON p.id = ap.posicao_id
-        WHERE ap.atleta_id = a.id) AS posicoes,
-    (SELECT GROUP_CONCAT(ap.posicao_id ORDER BY ap.posicao_id)
-        FROM atleta_posicao ap WHERE ap.atleta_id = a.id) AS posicao_ids,
-    NOT EXISTS (SELECT 1 FROM equipe_atleta outro
-        LEFT JOIN usuario_equipe acesso ON acesso.equipe_id = outro.equipe_id
-            AND acesso.usuario_id = @usuarioId
-        WHERE outro.atleta_id = a.id AND acesso.usuario_id IS NULL) AS pode_editar_dados
-FROM atleta a
-INNER JOIN equipe_atleta ea ON ea.atleta_id = a.id AND ea.ativo = TRUE
-INNER JOIN equipe e ON e.id = ea.equipe_id
-INNER JOIN usuario_equipe ue ON ue.equipe_id = e.id
-WHERE ue.usuario_id = @usuarioId
-ORDER BY a.nome, e.nome, a.id, e.id;
-
--- 07. Táticas · cartões e quantidade de quadros (DadosUsuario.cs)
-SELECT t.id, t.equipe_id, t.nome, t.descricao,
-    e.nome AS equipe, tt.nome AS tipo, sj.nome AS sistema,
-    (SELECT COUNT(*) FROM quadro q WHERE q.tatica_id = t.id) AS quadros
-FROM tatica t
-INNER JOIN equipe e ON e.id = t.equipe_id
-INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-LEFT JOIN tipo_tatica tt ON tt.id = t.tipo_tatica_id
-LEFT JOIN sistema_jogo sj ON sj.id = t.sistema_jogo_id
-WHERE ue.usuario_id = @usuarioId
-ORDER BY t.id DESC;
-
--- 08. Ficha de atleta · catálogo de posições (DadosAtletas.cs)
-SELECT id, nome FROM posicao ORDER BY nome, id;
-
--- 09. Configurações e prancheta · preferências da conta (DadosPreferenciasUsuario.cs)
-SELECT cor_atleta_principal, cor_atleta_adversario, cor_bola, duracao_quadro_padrao_ms
-FROM preferencia_usuario
-WHERE usuario_id = @usuarioId;
-
--- 10. Prancheta · tipos de tática (DadosPrancheta.cs)
-SELECT id, nome FROM tipo_tatica ORDER BY nome;
-
--- 11. Prancheta · sistemas de jogo (DadosPrancheta.cs)
-SELECT id, nome FROM sistema_jogo ORDER BY nome;
-
--- 12. Prancheta · elenco ativo e acesso à equipe (DadosPrancheta.cs)
-SELECT ea.id, a.nome, ea.numero_camisa
-FROM usuario_equipe ue
-LEFT JOIN equipe_atleta ea ON ea.equipe_id = ue.equipe_id AND ea.ativo = TRUE
-LEFT JOIN atleta a ON a.id = ea.atleta_id
-WHERE ue.usuario_id = @usuarioId AND ue.equipe_id = @equipeId
-ORDER BY ea.numero_camisa, a.nome;
-
--- 13. Abrir tática · cabeçalho da jogada (DadosPrancheta.cs)
-SELECT t.id, t.equipe_id, t.nome, t.descricao, t.tipo_tatica_id, t.sistema_jogo_id
-FROM tatica t INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId;
-
--- 14. Abrir tática · quadros em ordem (DadosPrancheta.cs)
-SELECT q.id, q.nome, q.duracao_ms, q.rotacao
-FROM quadro q INNER JOIN tatica t ON t.id = q.tatica_id
-INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId ORDER BY q.ordem;
-
--- 15. Abrir tática · atletas e posições por quadro (DadosPrancheta.cs)
-SELECT aq.quadro_id, ea.id, a.nome, aq.numero, aq.lado, aq.posicao_x, aq.posicao_y
-FROM atleta_quadro aq INNER JOIN quadro q ON q.id = aq.quadro_id
-INNER JOIN tatica t ON t.id = q.tatica_id
-INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-LEFT JOIN equipe_atleta ea ON ea.id = aq.equipe_atleta_id AND ea.equipe_id = t.equipe_id
-LEFT JOIN atleta a ON a.id = ea.atleta_id
-WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId ORDER BY q.ordem, aq.lado, aq.numero;
-
--- 16. Abrir tática · posição da bola por quadro (DadosPrancheta.cs)
-SELECT b.quadro_id, b.posicao_x, b.posicao_y
-FROM bola_quadro b INNER JOIN quadro q ON q.id = b.quadro_id
-INNER JOIN tatica t ON t.id = q.tatica_id
-INNER JOIN usuario_equipe ue ON ue.equipe_id = t.equipe_id
-WHERE t.id = @taticaId AND ue.usuario_id = @usuarioId;
-
--- Na aplicação estas leituras integram a transação de sua operação de escrita.
-START TRANSACTION;
-
--- 17. Editar ou excluir equipe · bloqueio exclusivo da equipe (DadosEquipe.cs)
-SELECT id FROM equipe WHERE id=@equipeId FOR UPDATE;
-
--- 18. Editar elenco ou salvar tática · bloqueio compartilhado da equipe (DadosEquipe.cs)
-SELECT id FROM equipe WHERE id=@equipeId FOR SHARE;
-
--- 19. Equipe · verificar o vínculo de acesso do usuário (DadosEquipe.cs)
-SELECT equipe_id FROM usuario_equipe WHERE usuario_id=@usuarioId AND equipe_id=@equipeId FOR SHARE;
-
--- 20. Excluir equipe · localizar cadastros de atletas a verificar (DadosEquipe.cs)
-SELECT a.id FROM atleta a
-INNER JOIN equipe_atleta ea ON ea.atleta_id=a.id
-WHERE ea.equipe_id=@equipeId ORDER BY a.id FOR UPDATE OF a;
-
--- 21. Editar atleta · bloquear cadastro (DadosAtletas.cs)
-SELECT id FROM atleta WHERE id = @atletaId FOR UPDATE;
-
--- 22. Editar atleta · conferir vínculos e permissões (DadosAtletas.cs)
-SELECT ea.equipe_id, ea.ativo, ue.usuario_id
-FROM equipe_atleta ea
-LEFT JOIN usuario_equipe ue ON ue.equipe_id = ea.equipe_id AND ue.usuario_id = @usuarioId
-WHERE ea.atleta_id = @atletaId FOR UPDATE OF ea FOR SHARE OF ue;
-
--- 23. Salvar tática existente · validar equipe e acesso (DadosPrancheta.cs)
-SELECT t.equipe_id FROM tatica t
-INNER JOIN usuario_equipe ue ON ue.equipe_id=t.equipe_id
-WHERE t.id=@taticaId AND ue.usuario_id=@usuarioId FOR UPDATE OF t FOR SHARE OF ue;
-
--- 24. Salvar tática · conferir vínculos do elenco (DadosPrancheta.cs)
-SELECT id FROM equipe_atleta WHERE equipe_id=@equipeId FOR SHARE;
-
--- Libera os bloqueios obtidos pela demonstração.
-ROLLBACK;

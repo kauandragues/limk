@@ -7,7 +7,6 @@ namespace Limk.VolleyBall.User_Constrols
     {
         private UsuarioAutenticado? _usuario;
         private bool _carregando;
-        private readonly CancellationTokenSource _encerramento = new();
 
         public event EventHandler<UserControl>? TelaSolicitada;
 
@@ -15,42 +14,33 @@ namespace Limk.VolleyBall.User_Constrols
         {
             InitializeComponent();
             DoubleBuffered = true;
-            Disposed += EncerrarConsultas;
-        }
-
-        private void EncerrarConsultas(object? sender, EventArgs e)
-        {
-            Disposed -= EncerrarConsultas;
-            _encerramento.Cancel();
-            _encerramento.Dispose();
         }
 
         public void DefinirUsuario(UsuarioAutenticado usuario)
         {
             _usuario = usuario;
-            string nome = usuario.Nome;
+            string nome = usuario.GetNome();
             lblBoasVindas.Text = $"Bem-vindo, {nome}!";
             btnUsuario.Text = $"Usuário: {nome} ▾";
         }
 
-        private async void TelaInicial_Load(object? sender, EventArgs e)
+        private void TelaInicial_Load(object? sender, EventArgs e)
         {
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
 
-            await AtualizarInicioAsync();
+            AtualizarInicio();
         }
 
-        private async void btnAtualizar_Click(object? sender, EventArgs e)
+        private void btnAtualizar_Click(object? sender, EventArgs e)
         {
-            await AtualizarInicioAsync();
+            AtualizarInicio();
         }
 
-        private async Task AtualizarInicioAsync()
+        private void AtualizarInicio()
         {
             if (_carregando || _usuario == null || IsDisposed)
                 return;
-            CancellationToken token = _encerramento.Token;
 
             _carregando = true;
             btnAtualizar.Enabled = false;
@@ -59,24 +49,18 @@ namespace Limk.VolleyBall.User_Constrols
 
             try
             {
-                ResumoInicio resumo = await DadosInicio.CarregarAsync(_usuario.Id, token);
+                ResumoInicio resumo = DadosInicio.Carregar(_usuario.GetId());
 
-                // O usuário pode abrir outra tela enquanto a consulta está em andamento.
-                if (token.IsCancellationRequested)
-                    return;
-
-                lblTotalEquipes.Text = resumo.Equipes.ToString("N0");
-                lblTotalAtletas.Text = resumo.Atletas.ToString("N0");
-                lblTotalTaticas.Text = resumo.Taticas.ToString("N0");
-                lblTotalQuadros.Text = resumo.Quadros.ToString("N0");
-                ExibirTaticas(resumo.UltimasTaticas);
-                ExibirEquipes(resumo.EquipesCadastradas);
+                lblTotalEquipes.Text = resumo.GetEquipes().ToString("N0");
+                lblTotalAtletas.Text = resumo.GetAtletas().ToString("N0");
+                lblTotalTaticas.Text = resumo.GetTaticas().ToString("N0");
+                lblTotalQuadros.Text = resumo.GetQuadros().ToString("N0");
+                ExibirTaticas(resumo.GetUltimasTaticas());
+                ExibirEquipes(resumo.GetEquipesCadastradas());
                 lblStatusBanco.Text = $"Dados das suas equipes · atualizado às {DateTime.Now:HH:mm}";
             }
             catch (Exception)
             {
-                if (token.IsCancellationRequested)
-                    return;
 
                 lblTotalEquipes.Text = "—";
                 lblTotalAtletas.Text = "—";
@@ -94,8 +78,7 @@ namespace Limk.VolleyBall.User_Constrols
             finally
             {
                 _carregando = false;
-                if (!token.IsCancellationRequested)
-                    btnAtualizar.Enabled = true;
+                btnAtualizar.Enabled = true;
             }
         }
 
@@ -110,7 +93,7 @@ namespace Limk.VolleyBall.User_Constrols
             {
                 CartaoTaticaInicio cartao = new CartaoTaticaInicio();
                 cartao.ExibirTatica(tatica);
-                cartao.AbrirTatica += (sender, id) => TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id));
+                cartao.AbrirTatica += SolicitarAbertura;
                 cartao.Dock = DockStyle.Top;
                 int linha = layoutListaTaticas.RowCount;
                 layoutListaTaticas.RowCount++;
@@ -177,6 +160,11 @@ namespace Limk.VolleyBall.User_Constrols
         private void btnAtletas_Click(object? sender, EventArgs e)
         {
             TelaSolicitada?.Invoke(this, new TelaAtletas());
+        }
+
+        private void SolicitarAbertura(object? sender, int id)
+        {
+            TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id));
         }
     }
 }

@@ -15,8 +15,6 @@
         {
             if (disposing && !IsDisposed)
             {
-                _encerramento.Cancel();
-                _encerramento.Dispose();
                 _tempoTransicao.Stop();
                 _movimentos.Clear();
                 components?.Dispose();
@@ -805,7 +803,6 @@
             // comboAtletaVinculado
             // 
             comboAtletaVinculado.BackColor = Color.FromArgb(247, 248, 252);
-            comboAtletaVinculado.DisplayMember = "Nome";
             comboAtletaVinculado.Dock = DockStyle.Top;
             comboAtletaVinculado.DropDownStyle = ComboBoxStyle.DropDownList;
             comboAtletaVinculado.Font = new Font("Segoe UI", 8.5F);

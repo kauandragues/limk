@@ -15,7 +15,6 @@ namespace Limk.VolleyBall.User_Constrols
         private Bitmap? _imagemEscudo;
         private bool _pronto;
         private bool _operacao;
-        private readonly CancellationTokenSource _encerramento = new CancellationTokenSource();
         public event EventHandler<UserControl>? TelaSolicitada;
 
         public TelaEquipes()
@@ -25,37 +24,42 @@ namespace Limk.VolleyBall.User_Constrols
             AtualizarAcoes();
         }
 
-        public void DefinirUsuario(UsuarioAutenticado usuario) => _usuario = usuario;
+        public void DefinirUsuario(UsuarioAutenticado usuario)
+        {
+            _usuario = usuario;
+        }
 
-        private async void TelaEquipes_Load(object? sender, EventArgs e)
+        private void TelaEquipes_Load(object? sender, EventArgs e)
         {
             if (_usuario == null || _operacao || _pronto || DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
             _operacao = true;
             AtualizarAcoes();
-            label3.Text = "Carregando suas equipes...";
-            try { await RecarregarListaAsync(); }
+            lblResumoEquipes.Text = "Carregando suas equipes...";
+            try
+            {
+                RecarregarLista();
+            }
             catch (Exception)
             {
-                if (!IsDisposed)
-                {
-                    label3.Text = "Não foi possível carregar suas equipes.";
-                    MostrarMensagem("Verifique a conexão e abra a tela novamente.", true);
-                }
+                lblResumoEquipes.Text = "Não foi possível carregar suas equipes.";
+                MostrarMensagem("Verifique a conexão e abra a tela novamente.", true);
             }
-            finally { _operacao = false; if (!IsDisposed) AtualizarAcoes(); }
+            finally
+            {
+                _operacao = false;
+                AtualizarAcoes();
+            }
         }
 
-        private async Task RecarregarListaAsync(bool preservarEdicao = false)
+        private void RecarregarLista(bool preservarEdicao = false)
         {
-            CancellationToken token = _encerramento.Token;
-            DataTable equipes = await DadosUsuario.CarregarEquipesAsync(_usuario!.Id, token);
-            if (token.IsCancellationRequested) return;
+            DataTable equipes = DadosEquipe.Listar(_usuario!.GetId());
             _equipes = equipes;
             _pronto = true;
             ExibirEquipes(preservarEdicao);
         }
 
-        private void textBox1_TextChanged(object? sender, EventArgs e)
+        private void txtBuscaEquipe_TextChanged(object? sender, EventArgs e)
         {
             if (!_operacao) ExibirEquipes(preservarEdicao: true);
         }
@@ -63,40 +67,49 @@ namespace Limk.VolleyBall.User_Constrols
         private void ExibirEquipes(bool preservarEdicao = false)
         {
             if (_equipes.Columns.Count == 0) return;
-            tableLayoutPanel1.SuspendLayout();
+            layoutCartoesEquipes.SuspendLayout();
             try
             {
-                while (tableLayoutPanel1.Controls.Count > 0) tableLayoutPanel1.Controls[0].Dispose();
-                tableLayoutPanel1.RowStyles.Clear();
-                tableLayoutPanel1.RowCount = 0;
-                string busca = textBox1.Text.Trim();
+                while (layoutCartoesEquipes.Controls.Count > 0) layoutCartoesEquipes.Controls[0].Dispose();
+                layoutCartoesEquipes.RowStyles.Clear();
+                layoutCartoesEquipes.RowCount = 0;
+                string busca = txtBuscaEquipe.Text.Trim();
                 foreach (DataRow equipe in _equipes.Rows)
                 {
                     if (!equipe["nome"].ToString()!.Contains(busca, StringComparison.OrdinalIgnoreCase)) continue;
-                    var cartao = new CardEquipes { Dock = DockStyle.Top, Margin = new Padding(0, 0, 0, 8) };
+                    CardEquipes cartao = new CardEquipes { Dock = DockStyle.Top, Margin = new Padding(0, 0, 0, 8) };
                     cartao.ExibirEquipe(equipe);
                     cartao.Click += CartaoSelecionado;
                     cartao.ExcluirEquipe += CartaoExcluirEquipe;
                     cartao.VerElenco += CartaoVerElenco;
-                    int linha = tableLayoutPanel1.RowCount++;
-                    tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-                    tableLayoutPanel1.Controls.Add(cartao, 0, linha);
+                    int linha = layoutCartoesEquipes.RowCount++;
+                    layoutCartoesEquipes.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                    layoutCartoesEquipes.Controls.Add(cartao, 0, linha);
                 }
             }
             finally
             {
-                tableLayoutPanel1.ResumeLayout(true);
+                layoutCartoesEquipes.ResumeLayout(true);
             }
-            label3.Text = tableLayoutPanel1.Controls.Count == 0
-                ? "Nenhuma equipe encontrada." : $"Suas equipes · {tableLayoutPanel1.Controls.Count}";
-            if (preservarEdicao && (textBox3.Text != _nomeOriginal || !ReferenceEquals(_dadosEscudo, _escudoOriginal)))
+            lblResumoEquipes.Text = layoutCartoesEquipes.Controls.Count == 0
+                ? "Nenhuma equipe encontrada." : $"Suas equipes · {layoutCartoesEquipes.Controls.Count}";
+            if (preservarEdicao && (txtNomeEquipe.Text != _nomeOriginal || !ReferenceEquals(_dadosEscudo, _escudoOriginal)))
             {
                 DestacarSelecao();
                 return;
             }
 
-            var selecionado = tableLayoutPanel1.Controls.OfType<CardEquipes>().FirstOrDefault(c => c.EquipeId == _equipeSelecionadaId)
-                ?? tableLayoutPanel1.Controls.OfType<CardEquipes>().FirstOrDefault();
+            CardEquipes? selecionado = null;
+            foreach (CardEquipes cartao in layoutCartoesEquipes.Controls)
+            {
+                if (selecionado == null)
+                    selecionado = cartao;
+                if (cartao.EquipeId == _equipeSelecionadaId)
+                {
+                    selecionado = cartao;
+                    break;
+                }
+            }
             if (selecionado == null) NovaEquipe();
             else SelecionarEquipe(selecionado.EquipeId);
         }
@@ -111,8 +124,8 @@ namespace Limk.VolleyBall.User_Constrols
             DataRow? registro = LocalizarEquipe(equipeId);
             if (registro == null) return;
             _equipeSelecionadaId = equipeId;
-            textBox2.Text = "Editar equipe";
-            textBox3.Text = _nomeOriginal = registro.Field<string>("nome") ?? string.Empty;
+            txtTituloFicha.Text = "Editar equipe";
+            txtNomeEquipe.Text = _nomeOriginal = registro.Field<string>("nome") ?? string.Empty;
             _dadosEscudo = _escudoOriginal = registro["escudo"] as byte[];
             MostrarMensagem("");
             AtualizarEscudo();
@@ -121,20 +134,27 @@ namespace Limk.VolleyBall.User_Constrols
             DestacarSelecao();
         }
 
-        private DataRow? LocalizarEquipe(int equipeId) =>
-            _equipes.AsEnumerable().FirstOrDefault(registro => registro.Field<int>("id") == equipeId);
+        private DataRow? LocalizarEquipe(int equipeId)
+        {
+            foreach (DataRow equipe in _equipes.Rows)
+            {
+                if (equipe.Field<int>("id") == equipeId)
+                    return equipe;
+            }
+            return null;
+        }
 
         private void DestacarSelecao()
         {
-            foreach (CardEquipes cartao in tableLayoutPanel1.Controls)
+            foreach (CardEquipes cartao in layoutCartoesEquipes.Controls)
                 cartao.DefinirSelecionado(cartao.EquipeId == _equipeSelecionadaId);
         }
 
         private void NovaEquipe()
         {
             _equipeSelecionadaId = 0;
-            textBox2.Text = "Cadastrar nova equipe";
-            textBox3.Clear();
+            txtTituloFicha.Text = "Cadastrar nova equipe";
+            txtNomeEquipe.Clear();
             _nomeOriginal = string.Empty;
             _dadosEscudo = _escudoOriginal = null;
             AtualizarEscudo();
@@ -142,32 +162,38 @@ namespace Limk.VolleyBall.User_Constrols
             DestacarSelecao();
         }
 
-        private void button1_Click(object? sender, EventArgs e)
+        private void btnNovaEquipe_Click(object? sender, EventArgs e)
         {
             if (!_pronto || _operacao) return;
             NovaEquipe();
-            textBox3.Focus();
+            txtNomeEquipe.Focus();
         }
 
-        private void button4_Click(object? sender, EventArgs e) => button1_Click(sender, e);
-
-        private async void button2_Click(object? sender, EventArgs e)
+        private void btnEscolherEscudo_Click(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || openFileDialog1.ShowDialog(FindForm()) != DialogResult.OK) return;
+            if (!_pronto || _operacao || seletorEscudo.ShowDialog(FindForm()) != DialogResult.OK) return;
             _operacao = true;
             AtualizarAcoes();
             try
             {
-                byte[] dados = await ImagemEscudo.LerArquivoAsync(openFileDialog1.FileName, _encerramento.Token);
-                if (IsDisposed) return;
+                byte[] dados = ImagemEscudo.LerArquivo(seletorEscudo.FileName);
                 _dadosEscudo = dados;
                 AtualizarEscudo();
                 MostrarMensagem("Escudo escolhido. Salve a equipe para gravar.");
             }
-            catch (OperationCanceledException) { }
-            catch (ArgumentException erro) { if (!IsDisposed) MostrarMensagem(erro.Message, true); }
-            catch (Exception) { if (!IsDisposed) MostrarMensagem("Não foi possível abrir a imagem escolhida.", true); }
-            finally { _operacao = false; if (!IsDisposed) AtualizarAcoes(); }
+            catch (ValidacaoException erro)
+            {
+                MostrarMensagem(erro.Message, true);
+            }
+            catch (Exception)
+            {
+                MostrarMensagem("Não foi possível abrir a imagem escolhida.", true);
+            }
+            finally
+            {
+                _operacao = false;
+                AtualizarAcoes();
+            }
         }
 
         private void btnRemoverEscudo_Click(object? sender, EventArgs e)
@@ -180,15 +206,15 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void AtualizarEscudo()
         {
-            pictureBox4.Image = null;
+            imagemEscudo.Image = null;
             _imagemEscudo?.Dispose();
             _imagemEscudo = ImagemEscudo.CriarImagem(_dadosEscudo);
-            pictureBox4.Image = _imagemEscudo;
+            imagemEscudo.Image = _imagemEscudo;
             labelEscudoEquipe.Text = _imagemEscudo == null ? "Sem escudo" : "Escudo da equipe";
             AtualizarAcoes();
         }
 
-        private async void button5_Click(object? sender, EventArgs e)
+        private void btnSalvarEquipe_Click(object? sender, EventArgs e)
         {
             if (!_pronto || _operacao || _usuario == null) return;
             _operacao = true;
@@ -196,24 +222,32 @@ namespace Limk.VolleyBall.User_Constrols
             bool gravou = false;
             try
             {
-                _equipeSelecionadaId = await DadosEquipe.SalvarAsync(_usuario.Id, _equipeSelecionadaId,
-                    textBox3.Text, _dadosEscudo, _encerramento.Token);
+                _equipeSelecionadaId = DadosEquipe.Salvar(_usuario.GetId(), _equipeSelecionadaId,
+                    txtNomeEquipe.Text, _dadosEscudo);
                 gravou = true;
-                if (IsDisposed) return;
-                textBox1.Clear();
-                await RecarregarListaAsync();
-                if (!IsDisposed) MostrarMensagem("Equipe salva no banco de dados.");
+                txtBuscaEquipe.Clear();
+                RecarregarLista();
+                MostrarMensagem("Equipe salva no banco de dados.");
             }
-            catch (OperationCanceledException) { }
-            catch (ArgumentException erro) { if (!IsDisposed) MostrarMensagem(erro.Message, true); }
-            catch (UnauthorizedAccessException erro) { if (!IsDisposed) MostrarMensagem(erro.Message, true); }
+            catch (ValidacaoException erro)
+            {
+                MostrarMensagem(erro.Message, true);
+            }
+            catch (UnauthorizedAccessException erro)
+            {
+                MostrarMensagem(erro.Message, true);
+            }
             catch (Exception)
             {
-                if (!IsDisposed) MostrarMensagem(gravou
+                MostrarMensagem(gravou
                     ? "Equipe salva. Não foi possível atualizar a lista; abra a tela novamente."
                     : "Não foi possível salvar a equipe. A edição foi mantida; tente novamente.", true);
             }
-            finally { _operacao = false; if (!IsDisposed) AtualizarAcoes(); }
+            finally
+            {
+                _operacao = false;
+                AtualizarAcoes();
+            }
         }
 
         private void CartaoVerElenco(object? sender, EventArgs e)
@@ -222,40 +256,47 @@ namespace Limk.VolleyBall.User_Constrols
                 TelaSolicitada?.Invoke(this, new TelaAtletas(cartao.EquipeId));
         }
 
-        private async void CartaoExcluirEquipe(object? sender, EventArgs e)
+        private void CartaoExcluirEquipe(object? sender, EventArgs e)
         {
-            if (!_pronto || _operacao || sender is not CardEquipes cartao || LocalizarEquipe(cartao.EquipeId) is not { } registro) return;
+            if (!_pronto || _operacao || sender is not CardEquipes cartao) return;
+            DataRow? registro = LocalizarEquipe(cartao.EquipeId);
+            if (registro == null) return;
             string aviso = $"Excluir a equipe '{registro["nome"]}'?\n\nA equipe, suas táticas e os atletas exclusivos dela serão apagados para todos os usuários com acesso. Atletas de outras equipes serão preservados.";
             if (MessageBox.Show(FindForm(), aviso, "Excluir equipe", MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes) return;
-            await ExcluirEquipeAsync(cartao.EquipeId);
+            ExcluirEquipe(cartao.EquipeId);
         }
 
-        private async Task ExcluirEquipeAsync(int equipeId)
+        private void ExcluirEquipe(int equipeId)
         {
             _operacao = true;
             AtualizarAcoes();
             bool excluiu = false;
             try
             {
-                await DadosEquipe.ExcluirAsync(_usuario!.Id, equipeId, _encerramento.Token);
+                DadosEquipe.Excluir(_usuario!.GetId(), equipeId);
                 excluiu = true;
-                if (IsDisposed) return;
                 DataRow? removida = LocalizarEquipe(equipeId);
                 if (removida != null) _equipes.Rows.Remove(removida);
                 if (_equipeSelecionadaId == equipeId) NovaEquipe();
                 ExibirEquipes(preservarEdicao: true);
-                await RecarregarListaAsync(preservarEdicao: true);
-                if (!IsDisposed) MostrarMensagem("Equipe excluída.");
+                RecarregarLista(preservarEdicao: true);
+                MostrarMensagem("Equipe excluída.");
             }
-            catch (OperationCanceledException) { }
-            catch (UnauthorizedAccessException erro) { if (!IsDisposed) MostrarMensagem(erro.Message, true); }
+            catch (UnauthorizedAccessException erro)
+            {
+                MostrarMensagem(erro.Message, true);
+            }
             catch (Exception)
             {
-                if (!IsDisposed) MostrarMensagem(excluiu ? "Equipe excluída. Abra a tela novamente para atualizar a lista."
+                MostrarMensagem(excluiu ? "Equipe excluída. Abra a tela novamente para atualizar a lista."
                     : "Não foi possível excluir a equipe. Nenhuma alteração foi gravada; tente novamente.", true);
             }
-            finally { _operacao = false; if (!IsDisposed) AtualizarAcoes(); }
+            finally
+            {
+                _operacao = false;
+                AtualizarAcoes();
+            }
         }
 
         private void MostrarMensagem(string texto, bool erro = false)
@@ -268,12 +309,12 @@ namespace Limk.VolleyBall.User_Constrols
         {
             bool editar = _pronto && !_operacao;
             painelListaEquipes.Enabled = editar;
-            textBox1.Enabled = editar;
-            button1.Enabled = editar;
-            textBox3.Enabled = editar;
-            button2.Enabled = editar;
-            button4.Enabled = editar;
-            button5.Enabled = editar;
+            txtBuscaEquipe.Enabled = editar;
+            btnNovaEquipe.Enabled = editar;
+            txtNomeEquipe.Enabled = editar;
+            btnEscolherEscudo.Enabled = editar;
+            btnLimparFicha.Enabled = editar;
+            btnSalvarEquipe.Enabled = editar;
             btnRemoverEscudo.Enabled = editar && _dadosEscudo != null;
         }
     }

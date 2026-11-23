@@ -412,7 +412,7 @@ INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (3, 3);
 USE limk;
 SET @usuarioId = 1, @equipeId = 1, @atletaId = 1, @taticaId = 1, @email = 'ana@limk.example';
 
--- 01. Login por e-mail e leitura do hash para autenticação (AutenticacaoUsuario.cs)
+-- 01. Login por e-mail e leitura do hash para autenticação (DadosUsuario.cs)
 SELECT id, nome, email, senha_hash
 FROM usuario
 WHERE email = @email
@@ -454,7 +454,7 @@ WHERE ue.usuario_id = @usuarioId
 ORDER BY e.nome, e.id
 LIMIT 3;
 
--- 05. Equipes · cartões, escudos e contagens (DadosUsuario.cs)
+-- 05. Equipes · cartões, escudos e contagens (DadosEquipe.cs)
 SELECT e.id, e.nome, e.escudo,
     (SELECT COUNT(*) FROM equipe_atleta ea
         WHERE ea.equipe_id = e.id AND ea.ativo = TRUE) AS atletas,
@@ -464,7 +464,7 @@ INNER JOIN usuario_equipe ue ON ue.equipe_id = e.id
 WHERE ue.usuario_id = @usuarioId
 ORDER BY e.nome, e.id;
 
--- 06. Atletas · elenco ativo, posições e permissão de edição (DadosUsuario.cs)
+-- 06. Atletas · elenco ativo, posições e permissão de edição (DadosAtletas.cs)
 SELECT a.id, ea.equipe_id, ea.numero_camisa,
     a.nome, a.apelido, a.data_nascimento, e.nome AS equipe, ea.titular,
     (SELECT GROUP_CONCAT(DISTINCT p.nome ORDER BY p.nome SEPARATOR ', ')
@@ -483,7 +483,7 @@ INNER JOIN usuario_equipe ue ON ue.equipe_id = e.id
 WHERE ue.usuario_id = @usuarioId
 ORDER BY a.nome, e.nome, a.id, e.id;
 
--- 07. Táticas · cartões e quantidade de quadros (DadosUsuario.cs)
+-- 07. Táticas · cartões e quantidade de quadros (DadosPrancheta.cs)
 SELECT t.id, t.equipe_id, t.nome, t.descricao,
     e.nome AS equipe, tt.nome AS tipo, sj.nome AS sistema,
     (SELECT COUNT(*) FROM quadro q WHERE q.tatica_id = t.id) AS quadros

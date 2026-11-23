@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Limk.VolleyBall.User_Constrols
+﻿namespace Limk.VolleyBall.User_Constrols
 {
     public partial class CartaoFaseControl : UserControl
     {
@@ -9,74 +7,91 @@ namespace Limk.VolleyBall.User_Constrols
         private string _tipo = string.Empty;
         private TimeSpan _inicio;
         private bool _ativo;
+        private decimal _duracao = 2m;
         private Point _inicioArraste;
         private bool _mousePressionado;
 
         public event EventHandler? ArrasteSolicitado;
 
-        // Category e DefaultValue organizam estas propriedades no Designer do Visual Studio.
-        [Category("Fase"), DefaultValue(0)]
-        public int Numero
+        public int GetNumero()
         {
-            get { return _numero; }
-            set
+            return _numero;
+        }
+
+        public void SetNumero(int numero)
+        {
+            if (_numero != numero)
             {
-                if (_numero == value) return;
-                _numero = value;
+                _numero = numero;
                 AtualizarCartao();
             }
         }
 
-        [Category("Fase"), DefaultValue("")]
-        public string NomeFase
+        public string GetNomeFase()
         {
-            get { return _nomeFase; }
-            set
+            return _nomeFase;
+        }
+
+        public void SetNomeFase(string nomeFase)
+        {
+            if (_nomeFase != nomeFase)
             {
-                if (_nomeFase == value) return;
-                _nomeFase = value;
+                _nomeFase = nomeFase;
                 AtualizarCartao();
             }
         }
 
-        [Category("Fase"), DefaultValue("")]
-        public string Tipo
+        public string GetTipo()
         {
-            get { return _tipo; }
-            set
+            return _tipo;
+        }
+
+        public void SetTipo(string tipo)
+        {
+            if (_tipo != tipo)
             {
-                if (_tipo == value) return;
-                _tipo = value;
+                _tipo = tipo;
                 AtualizarCartao();
             }
         }
 
-        [Category("Fase"), DefaultValue(typeof(TimeSpan), "00:00:00")]
-        public TimeSpan Inicio
+        public TimeSpan GetInicio()
         {
-            get { return _inicio; }
-            set
+            return _inicio;
+        }
+
+        public void SetInicio(TimeSpan inicio)
+        {
+            if (_inicio != inicio)
             {
-                if (_inicio == value) return;
-                _inicio = value;
+                _inicio = inicio;
                 AtualizarCartao();
             }
         }
 
-        [Category("Fase"), DefaultValue(false)]
-        public bool Ativo
+        public bool GetAtivo()
         {
-            get { return _ativo; }
-            set
+            return _ativo;
+        }
+
+        public void SetAtivo(bool ativo)
+        {
+            if (_ativo != ativo)
             {
-                if (_ativo == value) return;
-                _ativo = value;
+                _ativo = ativo;
                 AtualizarCartao();
             }
         }
 
-        [Category("Fase"), DefaultValue(typeof(decimal), "2")]
-        public decimal Duracao { get; set; } = 2m;
+        public decimal GetDuracao()
+        {
+            return _duracao;
+        }
+
+        public void SetDuracao(decimal duracao)
+        {
+            _duracao = duracao;
+        }
 
         public CartaoFaseControl()
         {
@@ -101,7 +116,7 @@ namespace Limk.VolleyBall.User_Constrols
                 return;
             // Um pequeno movimento ainda conta como clique, seguindo a tolerância do Windows.
             Size tolerancia = SystemInformation.DragSize;
-            var areaClique = new Rectangle(_inicioArraste.X - tolerancia.Width / 2,
+            Rectangle areaClique = new Rectangle(_inicioArraste.X - tolerancia.Width / 2,
                 _inicioArraste.Y - tolerancia.Height / 2, tolerancia.Width, tolerancia.Height);
             if (areaClique.Contains(e.Location))
                 return;
@@ -117,15 +132,15 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void AtualizarCartao()
         {
-            string titulo = $"FASE {Numero:00}";
-            if (Ativo)
+            string titulo = $"FASE {_numero:00}";
+            if (_ativo)
                 titulo += " • ATIVA";
 
-            long minutos = Inicio.Ticks / TimeSpan.TicksPerMinute;
-            string horario = $"{minutos:00}:{Inicio.Seconds:00}.{Inicio.Milliseconds / 100}";
-            btnSelecionarFase.Text = $"{titulo}\n{NomeFase}\n{Tipo} • {horario}";
+            long minutos = _inicio.Ticks / TimeSpan.TicksPerMinute;
+            string horario = $"{minutos:00}:{_inicio.Seconds:00}.{_inicio.Milliseconds / 100}";
+            btnSelecionarFase.Text = $"{titulo}\n{_nomeFase}\n{_tipo} • {horario}";
 
-            if (Ativo)
+            if (_ativo)
             {
                 btnSelecionarFase.BackColor = Color.FromArgb(243, 237, 255);
                 btnSelecionarFase.ForeColor = Color.FromArgb(124, 58, 237);

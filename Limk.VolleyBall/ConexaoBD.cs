@@ -1,13 +1,13 @@
-﻿using MySql.Data.MySqlClient;
-
+﻿using Limk.VolleyBall.Backend;
+using MySql.Data.MySqlClient;
+using System.Data;
 using System.Globalization;
 
 namespace Limk.VolleyBall
 {
     internal static class ConexaoBD
     {
-        // Retorna a conexão fechada para quem precisa abrir de forma assíncrona.
-        public static MySqlConnection CriarConexao()
+        public static void Abrir(MySqlConnection conexao)
         {
             string? portaConfigurada = Environment.GetEnvironmentVariable("DB_PORT");
             ushort porta = 3306;
@@ -28,7 +28,44 @@ namespace Limk.VolleyBall
                 ConnectionTimeout = 5
             };
 
-            return new MySqlConnection(configuracao.ConnectionString);
+            conexao.ConnectionString = configuracao.ConnectionString;
+            conexao.Open();
+        }
+
+        public static void Fechar(MySqlConnection conexao)
+        {
+            // Dispose fecha a conexão e libera os recursos usados por ela.
+            conexao.Dispose();
+        }
+
+        public static DataTable ConsultarTabela(string sql, int? usuarioId = null)
+        {
+            MySqlConnection conexao = new MySqlConnection();
+            try
+            {
+                Abrir(conexao);
+                using MySqlCommand comando = new MySqlCommand(sql, conexao) { CommandTimeout = 5 };
+                if (usuarioId.HasValue)
+                    comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId.Value;
+                using MySqlDataReader leitor = comando.ExecuteReader();
+                DataTable tabela = new DataTable();
+                tabela.Load(leitor);
+                return tabela;
+            }
+            catch (Exception erro) when (EhFalhaDeBanco(erro))
+            {
+                throw new BancoDeDadosException("Não foi possível consultar os dados. Verifique a conexão.", erro);
+            }
+            finally
+            {
+                Fechar(conexao);
+            }
+        }
+
+        public static bool EhFalhaDeBanco(Exception erro)
+        {
+            return erro is MySqlException || erro is InvalidOperationException || erro is ArgumentException
+                || erro is FormatException || erro is OverflowException || erro is TimeoutException;
         }
     }
 }

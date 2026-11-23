@@ -10,8 +10,6 @@ namespace Limk.VolleyBall.User_Constrols
         {
             if (disposing && !IsDisposed)
             {
-                _encerramento.Cancel();
-                _encerramento.Dispose();
                 components?.Dispose();
             }
             base.Dispose(disposing);

@@ -5,7 +5,6 @@ namespace Limk.VolleyBall.User_Constrols
 {
     public partial class TelaConfiguracoes : UserControl, ITelaUsuario
     {
-        private readonly CancellationTokenSource encerramento = new();
         private UsuarioAutenticado? usuario;
         private bool ocupado;
         private bool preferenciasCarregadas;
@@ -21,37 +20,28 @@ namespace Limk.VolleyBall.User_Constrols
         public void DefinirUsuario(UsuarioAutenticado usuarioAutenticado)
         {
             usuario = usuarioAutenticado;
-            lblNomeUsuario.Text = usuarioAutenticado.Nome;
-            lblEmailUsuario.Text = usuarioAutenticado.Email;
+            lblNomeUsuario.Text = usuarioAutenticado.GetNome();
+            lblEmailUsuario.Text = usuarioAutenticado.GetEmail();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && !Disposing && !IsDisposed)
-            {
-                encerramento.Cancel();
-                encerramento.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
-        private async void TelaConfiguracoes_Load(object? sender, EventArgs e)
+        private void TelaConfiguracoes_Load(object? sender, EventArgs e)
         {
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
 
-            await CarregarAsync();
+            Carregar();
         }
 
-        private async void btnRecarregar_Click(object? sender, EventArgs e) => await CarregarAsync();
-
-        private async Task CarregarAsync()
+        private void btnRecarregar_Click(object? sender, EventArgs e)
         {
-            if (usuario is null || ocupado)
+            Carregar();
+        }
+
+        private void Carregar()
+        {
+            if (usuario == null || ocupado)
                 return;
 
-            CancellationToken token = encerramento.Token;
             preferenciasCarregadas = false;
             btnRecarregar.Visible = false;
             DefinirOcupado(true);
@@ -59,85 +49,71 @@ namespace Limk.VolleyBall.User_Constrols
 
             try
             {
-                PreferenciasUsuario preferencias = await DadosPreferenciasUsuario.CarregarAsync(usuario.Id, token);
-                if (token.IsCancellationRequested)
-                    return;
+                PreferenciasUsuario preferencias = DadosPreferenciasUsuario.Carregar(usuario.GetId());
 
                 ExibirPreferencias(preferencias);
                 preferenciasCarregadas = true;
                 ExibirStatus(string.Empty);
             }
-            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            catch (BancoDeDadosException)
             {
-            }
-            catch (FalhaPreferenciasUsuarioException)
-            {
-                if (!token.IsCancellationRequested)
-                {
-                    ExibirStatus("Não foi possível carregar suas preferências. Verifique a conexão e tente novamente.", erro: true);
-                    btnRecarregar.Visible = true;
-                }
+                ExibirStatus("Não foi possível carregar suas preferências. Verifique a conexão e tente novamente.", erro: true);
+                btnRecarregar.Visible = true;
             }
             finally
             {
-                if (!token.IsCancellationRequested)
-                    DefinirOcupado(false);
+                DefinirOcupado(false);
             }
         }
 
-        private async void btnSalvar_Click(object? sender, EventArgs e)
+        private void btnSalvar_Click(object? sender, EventArgs e)
         {
-            if (usuario is null || ocupado || !preferenciasCarregadas)
+            if (usuario == null || ocupado || !preferenciasCarregadas)
                 return;
 
-            var preferencias = new PreferenciasUsuario(lblCorAtletaPrincipal.Text, lblCorAtletaAdversario.Text,
+            PreferenciasUsuario preferencias = new PreferenciasUsuario(lblCorAtletaPrincipal.Text, lblCorAtletaAdversario.Text,
                 lblCorBola.Text, decimal.ToInt32(numDuracaoQuadro.Value));
 
-            CancellationToken token = encerramento.Token;
             DefinirOcupado(true);
             ExibirStatus("Salvando suas preferências…");
 
             try
             {
-                await DadosPreferenciasUsuario.SalvarAsync(usuario.Id, preferencias, token);
-                if (!token.IsCancellationRequested)
-                    ExibirStatus("Preferências salvas.", sucesso: true);
+                DadosPreferenciasUsuario.Salvar(usuario.GetId(), preferencias);
+                ExibirStatus("Preferências salvas.", sucesso: true);
             }
-            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            catch (ValidacaoException erro)
             {
+                ExibirStatus(erro.Message, erro: true);
             }
-            catch (FalhaPreferenciasUsuarioException)
+            catch (BancoDeDadosException)
             {
-                if (!token.IsCancellationRequested)
-                    ExibirStatus("Não foi possível salvar suas preferências. Verifique a conexão e tente novamente.", erro: true);
+                ExibirStatus("Não foi possível salvar suas preferências. Verifique a conexão e tente novamente.", erro: true);
             }
             finally
             {
-                if (!token.IsCancellationRequested)
-                {
-                    DefinirOcupado(false);
-                    painelRolagem.ScrollControlIntoView(lblStatus);
-                }
+                DefinirOcupado(false);
+                painelRolagem.ScrollControlIntoView(lblStatus);
             }
         }
 
         private void btnRestaurarPadrao_Click(object? sender, EventArgs e)
         {
-            ExibirPreferencias(PreferenciasUsuario.Padrao);
+            ExibirPreferencias(PreferenciasUsuario.CriarPadrao());
             ExibirStatus("Valores originais restaurados no formulário. Salve para aplicar.");
         }
 
         private void ExibirPreferencias(PreferenciasUsuario preferencias)
         {
-            ExibirCor(amostraCorAtletaPrincipal, lblCorAtletaPrincipal, preferencias.CorAtletaPrincipal);
-            ExibirCor(amostraCorAtletaAdversario, lblCorAtletaAdversario, preferencias.CorAtletaAdversario);
-            ExibirCor(amostraCorBola, lblCorBola, preferencias.CorBola);
-            numDuracaoQuadro.Value = preferencias.DuracaoQuadroPadraoMs;
+            ExibirCor(amostraCorAtletaPrincipal, lblCorAtletaPrincipal, preferencias.GetCorAtletaPrincipal());
+            ExibirCor(amostraCorAtletaAdversario, lblCorAtletaAdversario, preferencias.GetCorAtletaAdversario());
+            ExibirCor(amostraCorBola, lblCorBola, preferencias.GetCorBola());
+            numDuracaoQuadro.Value = preferencias.GetDuracaoQuadroPadraoMs();
         }
 
         private void AlterarCor(Panel amostra, Label rotulo)
         {
-            using var dialogo = new ColorDialog { Color = amostra.BackColor, FullOpen = true };
+            using ColorDialog dialogo = new ColorDialog { Color = amostra.BackColor, FullOpen = true };
             if (dialogo.ShowDialog(this) != DialogResult.OK)
                 return;
 
@@ -213,8 +189,16 @@ namespace Limk.VolleyBall.User_Constrols
             lblStatus.MaximumSize = new Size(larguraPreferencias, 0);
             foreach (FlowLayoutPanel linha in layoutPreferencias.Controls.OfType<FlowLayoutPanel>())
             {
-                int larguraNecessaria = linha.Controls.Cast<Control>().Where(controle => controle.Visible)
-                    .Sum(controle => (controle.AutoSize ? controle.PreferredSize.Width : controle.Width) + controle.Margin.Horizontal);
+                int larguraNecessaria = 0;
+                foreach (Control controle in linha.Controls)
+                {
+                    if (!controle.Visible)
+                        continue;
+                    int larguraControle = controle.Width;
+                    if (controle.AutoSize)
+                        larguraControle = controle.PreferredSize.Width;
+                    larguraNecessaria += larguraControle + controle.Margin.Horizontal;
+                }
                 linha.WrapContents = larguraNecessaria > larguraPreferencias;
             }
         }

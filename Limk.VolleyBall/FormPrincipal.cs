@@ -29,7 +29,7 @@ namespace Limk.VolleyBall
         {
             base.OnFormClosing(e);
 
-            if (!e.Cancel && (e.CloseReason is CloseReason.UserClosing or CloseReason.ApplicationExitCall))
+            if (!e.Cancel && (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.ApplicationExitCall))
                 e.Cancel = !ConfirmarSaidaDaTelaAtual();
         }
 
@@ -40,11 +40,11 @@ namespace Limk.VolleyBall
 
         internal bool EntrarNaConta()
         {
-            using var login = new FormLogin();
-            if (login.ShowDialog() != DialogResult.OK || login.Usuario is not { } usuario)
+            using FormLogin login = new FormLogin();
+            if (login.ShowDialog() != DialogResult.OK || login.Usuario == null)
                 return false;
 
-            DefinirUsuario(usuario);
+            DefinirUsuario(login.Usuario);
             return true;
         }
 
@@ -66,7 +66,7 @@ namespace Limk.VolleyBall
 
         public void DefinirUsuario(UsuarioAutenticado usuario)
         {
-            if (usuario.Id <= 0)
+            if (usuario.GetId() <= 0)
                 throw new ArgumentOutOfRangeException(nameof(usuario));
 
             _usuario = usuario;
@@ -110,7 +110,9 @@ namespace Limk.VolleyBall
                 panelTelas.Controls[0].Dispose();
         }
 
-        private bool ConfirmarSaidaDaTelaAtual() =>
-            panelTelas.Controls.Count == 0 || panelTelas.Controls[0] is not TelaAtletas atletas || atletas.ConfirmarSaida();
+        private bool ConfirmarSaidaDaTelaAtual()
+        {
+            return panelTelas.Controls.Count == 0 || panelTelas.Controls[0] is not TelaAtletas atletas || atletas.ConfirmarSaida();
+        }
     }
 }

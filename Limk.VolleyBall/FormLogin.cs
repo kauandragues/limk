@@ -31,7 +31,7 @@ namespace Limk.VolleyBall
 
         private void MostrarLogin(string? emailCadastrado = null)
         {
-            var login = new TelaLogin { Dock = DockStyle.Fill };
+            TelaLogin login = new TelaLogin { Dock = DockStyle.Fill };
             login.LoginConcluido += LoginConcluido;
             login.CriarContaSolicitada += CriarContaSolicitada;
             MostrarTela(login, login.BotaoEntrar, "Entrar | LIMK Volleyball");
@@ -43,16 +43,22 @@ namespace Limk.VolleyBall
 
         private void CriarContaSolicitada(object? sender, EventArgs e)
         {
-            var cadastro = new TelaCadastroUsuario { Dock = DockStyle.Fill };
+            TelaCadastroUsuario cadastro = new TelaCadastroUsuario { Dock = DockStyle.Fill };
             cadastro.VoltarParaLogin += VoltarParaLogin;
             cadastro.CadastroConcluido += CadastroConcluido;
             MostrarTela(cadastro, cadastro.BotaoCadastrar, "Criar conta | LIMK Volleyball");
             cadastro.FocarNome();
         }
 
-        private void VoltarParaLogin(object? sender, EventArgs e) => MostrarLogin();
+        private void VoltarParaLogin(object? sender, EventArgs e)
+        {
+            MostrarLogin();
+        }
 
-        private void CadastroConcluido(object? sender, UsuarioAutenticado usuario) => MostrarLogin(usuario.Email);
+        private void CadastroConcluido(object? sender, UsuarioAutenticado usuario)
+        {
+            MostrarLogin(usuario.GetEmail());
+        }
 
         private void MostrarTela(UserControl tela, IButtonControl botaoPrincipal, string titulo)
         {

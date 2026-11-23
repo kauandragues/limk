@@ -10,13 +10,13 @@ namespace Limk.VolleyBall
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            DotEnv.Load();
+            // Um atalho pode iniciar o programa a partir de outra pasta.
+            string arquivoDeConfiguracao = Path.Combine(AppContext.BaseDirectory, ".env");
+            DotEnv.Load(new DotEnvOptions(envFilePaths: new string[] { arquivoDeConfiguracao }));
 
             ApplicationConfiguration.Initialize();
 
-            using var principal = new FormPrincipal();
+            using FormPrincipal principal = new FormPrincipal();
             if (principal.EntrarNaConta())
                 Application.Run(principal);
         }

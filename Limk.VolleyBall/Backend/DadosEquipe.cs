@@ -1,142 +1,158 @@
+using System.Data;
 using MySql.Data.MySqlClient;
 using System.Text;
 
 namespace Limk.VolleyBall.Backend
 {
-    internal sealed class FalhaEquipeException(Exception causa)
-        : Exception("Não foi possível gravar as alterações da equipe no banco de dados.", causa) { }
-
     internal static class DadosEquipe
     {
-        public static async Task<int> SalvarAsync(int usuarioId, int equipeId, string nome, byte[]? escudo,
-            CancellationToken token = default)
+        public static DataTable Listar(int usuarioId)
+        {
+            const string consulta = @"SELECT equipe.id, equipe.nome, equipe.escudo,
+                    (SELECT COUNT(*) FROM equipe_atleta
+                        WHERE equipe_atleta.equipe_id = equipe.id AND equipe_atleta.ativo = TRUE) AS atletas,
+                    (SELECT COUNT(*) FROM tatica WHERE tatica.equipe_id = equipe.id) AS taticas
+                FROM equipe
+                INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe.id
+                WHERE usuario_equipe.usuario_id = @usuarioId
+                ORDER BY equipe.nome, equipe.id";
+            return ConexaoBD.ConsultarTabela(consulta, usuarioId);
+        }
+
+        public static int Salvar(int usuarioId, int equipeId, string nome, byte[]? escudo)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
             ArgumentOutOfRangeException.ThrowIfNegative(equipeId);
             ArgumentNullException.ThrowIfNull(nome);
             nome = nome.Trim();
             if (nome.Length == 0 || nome.EnumerateRunes().Count() > 100)
-                throw new ArgumentException("Informe um nome de equipe com até 100 caracteres.");
+                throw new ValidacaoException("Informe um nome de equipe com até 100 caracteres.");
             if (escudo != null)
             {
                 escudo = escudo.ToArray();
                 using Bitmap? imagem = ImagemEscudo.CriarImagem(escudo);
                 if (imagem == null)
-                    throw new ArgumentException("O escudo precisa ser uma imagem válida de até 4 MB e 4096 pixels por lado.");
+                    throw new ValidacaoException("O escudo precisa ser uma imagem válida de até 4 MB e 4096 pixels por lado.");
             }
 
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using var conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var transacao = await conexao.BeginTransactionAsync(token).ConfigureAwait(false);
+                ConexaoBD.Abrir(conexao);
+                using MySqlTransaction transacao = conexao.BeginTransaction();
                 if (equipeId > 0)
-                    await VerificarAcessoAsync(conexao, transacao, usuarioId, equipeId, token).ConfigureAwait(false);
+                    VerificarAcesso(conexao, transacao, usuarioId, equipeId);
 
                 string sql = equipeId == 0
-                    ? "INSERT INTO equipe (nome,escudo) VALUES (@nome,@escudo)"
-                    : "UPDATE equipe SET nome=@nome,escudo=@escudo WHERE id=@equipeId";
-                using (var comando = Comando(conexao, transacao, sql))
+                    ? "INSERT INTO equipe (nome, escudo) VALUES (@nome, @escudo)"
+                    : "UPDATE equipe SET nome = @nome, escudo = @escudo WHERE id = @equipeId";
+                using (MySqlCommand comando = Comando(conexao, transacao, sql))
                 {
                     comando.Parameters.AddWithValue("@nome", nome);
                     comando.Parameters.AddWithValue("@equipeId", equipeId);
                     comando.Parameters.Add("@escudo", MySqlDbType.MediumBlob).Value = (object?)escudo ?? DBNull.Value;
-                    await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+                    comando.ExecuteNonQuery();
                     if (equipeId == 0)
                     {
                         equipeId = checked((int)comando.LastInsertedId);
-                        using var vinculo = Comando(conexao, transacao,
-                            "INSERT INTO usuario_equipe (usuario_id,equipe_id) VALUES (@usuarioId,@equipeId)");
+                        using MySqlCommand vinculo = Comando(conexao, transacao,
+                            "INSERT INTO usuario_equipe (usuario_id, equipe_id) VALUES (@usuarioId, @equipeId)");
                         vinculo.Parameters.AddWithValue("@usuarioId", usuarioId);
                         vinculo.Parameters.AddWithValue("@equipeId", equipeId);
-                        await vinculo.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+                        vinculo.ExecuteNonQuery();
                     }
                 }
-                token.ThrowIfCancellationRequested();
-                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
+                transacao.Commit();
                 return equipeId;
             }
-            catch (MySqlException erro)
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                token.ThrowIfCancellationRequested();
-                throw new FalhaEquipeException(erro);
+                throw new BancoDeDadosException("Não foi possível gravar a equipe no banco.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        public static async Task ExcluirAsync(int usuarioId, int equipeId, CancellationToken token = default)
+        public static void Excluir(int usuarioId, int equipeId)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(equipeId);
+            MySqlConnection conexao = new MySqlConnection();
             try
             {
-                using var conexao = ConexaoBD.CriarConexao();
-                await conexao.OpenAsync(token).ConfigureAwait(false);
-                using var transacao = await conexao.BeginTransactionAsync(token).ConfigureAwait(false);
-                await VerificarAcessoAsync(conexao, transacao, usuarioId, equipeId, token).ConfigureAwait(false);
+                ConexaoBD.Abrir(conexao);
+                using MySqlTransaction transacao = conexao.BeginTransaction();
+                VerificarAcesso(conexao, transacao, usuarioId, equipeId);
 
-                var atletas = new List<int>();
-                using (var comando = Comando(conexao, transacao, @"SELECT a.id FROM atleta a
-                    INNER JOIN equipe_atleta ea ON ea.atleta_id=a.id
-                    WHERE ea.equipe_id=@equipeId ORDER BY a.id FOR UPDATE OF a"))
+                List<int> atletas = new List<int>();
+                using (MySqlCommand comando = Comando(conexao, transacao, @"SELECT atleta.id FROM atleta
+                    INNER JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id
+                    WHERE equipe_atleta.equipe_id = @equipeId
+                    ORDER BY atleta.id FOR UPDATE OF atleta"))
                 {
                     comando.Parameters.AddWithValue("@equipeId", equipeId);
-                    using var leitor = await comando.ExecuteReaderAsync(token).ConfigureAwait(false);
-                    while (await leitor.ReadAsync(token).ConfigureAwait(false))
+                    using MySqlDataReader leitor = comando.ExecuteReader();
+                    while (leitor.Read())
                         atletas.Add(leitor.GetInt32(0));
                 }
                 // As chaves estrangeiras removem os vínculos, táticas, quadros e seus elementos.
-                using (var comando = Comando(conexao, transacao, "DELETE FROM equipe WHERE id=@equipeId"))
+                using (MySqlCommand comando = Comando(conexao, transacao, "DELETE FROM equipe WHERE id = @equipeId"))
                 {
                     comando.Parameters.AddWithValue("@equipeId", equipeId);
-                    await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+                    comando.ExecuteNonQuery();
                 }
                 foreach (int atletaId in atletas)
                 {
                     // Um cadastro compartilhado continua disponível para as outras equipes.
-                    using var comando = Comando(conexao, transacao, @"DELETE FROM atleta WHERE id=@atletaId
-                        AND NOT EXISTS (SELECT 1 FROM equipe_atleta WHERE atleta_id=@atletaId)");
+                    using MySqlCommand comando = Comando(conexao, transacao, @"DELETE FROM atleta WHERE id = @atletaId
+                        AND NOT EXISTS (SELECT 1 FROM equipe_atleta WHERE atleta_id = @atletaId)");
                     comando.Parameters.AddWithValue("@atletaId", atletaId);
-                    await comando.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+                    comando.ExecuteNonQuery();
                 }
-                token.ThrowIfCancellationRequested();
-                await transacao.CommitAsync(CancellationToken.None).ConfigureAwait(false);
+                transacao.Commit();
             }
-            catch (MySqlException erro)
+            catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                token.ThrowIfCancellationRequested();
-                throw new FalhaEquipeException(erro);
+                throw new BancoDeDadosException("Não foi possível gravar a equipe no banco.", erro);
+            }
+            finally
+            {
+                ConexaoBD.Fechar(conexao);
             }
         }
 
-        private static async Task VerificarAcessoAsync(MySqlConnection conexao, MySqlTransaction transacao,
-            int usuarioId, int equipeId, CancellationToken token)
+        private static void VerificarAcesso(MySqlConnection conexao, MySqlTransaction transacao,
+            int usuarioId, int equipeId)
         {
-            if (!await BloquearComAcessoAsync(conexao, transacao, usuarioId, equipeId, exclusivo: true, token)
-                .ConfigureAwait(false))
+            if (!BloquearComAcesso(conexao, transacao, usuarioId, equipeId, exclusivo: true))
                 throw new UnauthorizedAccessException("Equipe não encontrada nas suas equipes.");
         }
 
-        internal static async Task<bool> BloquearComAcessoAsync(MySqlConnection conexao, MySqlTransaction transacao,
-            int usuarioId, int equipeId, bool exclusivo, CancellationToken token)
+        internal static bool BloquearComAcesso(MySqlConnection conexao, MySqlTransaction transacao,
+            int usuarioId, int equipeId, bool exclusivo)
         {
             // A equipe deve ser bloqueada antes dos vínculos que sua exclusão remove em cascata.
-            string sqlEquipe = exclusivo ? "SELECT id FROM equipe WHERE id=@equipeId FOR UPDATE"
-                : "SELECT id FROM equipe WHERE id=@equipeId FOR SHARE";
-            using (var equipe = Comando(conexao, transacao, sqlEquipe))
+            string sqlEquipe = exclusivo ? "SELECT id FROM equipe WHERE id = @equipeId FOR UPDATE"
+                : "SELECT id FROM equipe WHERE id = @equipeId FOR SHARE";
+            using (MySqlCommand equipe = Comando(conexao, transacao, sqlEquipe))
             {
                 equipe.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
-                if (await equipe.ExecuteScalarAsync(token).ConfigureAwait(false) is null)
+                if (equipe.ExecuteScalar() == null)
                     return false;
             }
 
-            using var acesso = Comando(conexao, transacao,
-                "SELECT equipe_id FROM usuario_equipe WHERE usuario_id=@usuarioId AND equipe_id=@equipeId FOR SHARE");
+            using MySqlCommand acesso = Comando(conexao, transacao,
+                "SELECT equipe_id FROM usuario_equipe WHERE usuario_id = @usuarioId AND equipe_id = @equipeId FOR SHARE");
             acesso.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
             acesso.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
-            return await acesso.ExecuteScalarAsync(token).ConfigureAwait(false) is not null;
+            return acesso.ExecuteScalar() != null;
         }
 
-        private static MySqlCommand Comando(MySqlConnection conexao, MySqlTransaction transacao, string sql) =>
-            new MySqlCommand(sql, conexao, transacao) { CommandTimeout = 5 };
+        private static MySqlCommand Comando(MySqlConnection conexao, MySqlTransaction transacao, string sql)
+        {
+            return new MySqlCommand(sql, conexao, transacao) { CommandTimeout = 5 };
+        }
     }
 }

@@ -1,8 +1,13 @@
 namespace Limk.VolleyBall.Backend
 {
-    public class PosicaoBola : PosicaoElementos
+    public class PosicaoBola : ElementoQuadra
     {
-        public float X { get; set; }
-        public float Y { get; set; }
+        public PosicaoBola Copiar()
+        {
+            PosicaoBola copia = new PosicaoBola();
+            copia.SetX(GetX());
+            copia.SetY(GetY());
+            return copia;
+        }
     }
 }

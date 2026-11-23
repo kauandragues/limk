@@ -53,8 +53,14 @@ namespace Limk.VolleyBall.User_Constrols
             OnClick(EventArgs.Empty);
         }
 
-        private void button8_Click(object? sender, EventArgs e) => VerElenco?.Invoke(this, e);
-        private void button1_Click(object? sender, EventArgs e) => ExcluirEquipe?.Invoke(this, e);
+        private void button8_Click(object? sender, EventArgs e)
+        {
+            VerElenco?.Invoke(this, e);
+        }
+        private void button1_Click(object? sender, EventArgs e)
+        {
+            ExcluirEquipe?.Invoke(this, e);
+        }
 
         private void LiberarEscudo()
         {

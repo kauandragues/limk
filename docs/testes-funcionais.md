@@ -2,6 +2,15 @@
 
 Em 21/11/2026, o aplicativo Windows Forms foi exercitado com MySQL Server 8.0.46 em uma instância local, criada vazia para o ensaio. As interações com os controles foram automatizadas e as alterações persistidas foram verificadas por uma segunda leitura do banco. O ensaio usou memória compartilhada no Windows. A conexão TCP padrão da instalação ainda precisa ser conferida no notebook da apresentação.
 
+## Verificação após a refatoração de 22/11/2026
+
+O projeto compilou em Release. O ensaio usou uma instância MySQL descartável com os dados de demonstração. A cópia usada no ensaio conectou por memória compartilhada porque o ambiente bloqueou a conexão TCP local.
+
+- Cadastro, senha inválida, e-mail duplicado, acesso por equipe, camisa reservada, inativação, preferências, resumo e exclusões foram exercitados.
+- O ensaio abriu as telas de elenco, equipes e táticas, selecionou a ficha de um atleta e conferiu a detecção de alterações locais.
+- Uma restrição temporária na base de teste provocou uma falha ao inserir a segunda fase de uma tática. A releitura recuperou a primeira fase da versão anterior e sua posição original.
+- Na prancheta, foram conferidos número e posição do atleta, duplicação independente, movimento entre fases e restauração ao parar. O teste girou a roda sobre um atleta, arrastou-o com zoom ativo até as bordas e redesenhou o controle após redimensionar.
+
 ## Resultados
 
 | Função | Verificação executada | Resultado observado |

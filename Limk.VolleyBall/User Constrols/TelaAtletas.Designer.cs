@@ -678,8 +678,12 @@ namespace Limk.VolleyBall.User_Constrols
             if (layoutCorpo is null)
                 return;
 
-            int larguraColunas = dataGridViewAtletas.Columns.Cast<DataGridViewColumn>()
-                .Where(coluna => coluna.Visible).Sum(coluna => coluna.MinimumWidth);
+            int larguraColunas = 0;
+            foreach (DataGridViewColumn coluna in dataGridViewAtletas.Columns)
+            {
+                if (coluna.Visible)
+                    larguraColunas += coluna.MinimumWidth;
+            }
             if (larguraColunas == 0)
                 larguraColunas = LogicalToDeviceUnits(385);
 
@@ -693,12 +697,12 @@ namespace Limk.VolleyBall.User_Constrols
             int larguraLadoALado = layoutTela.Padding.Horizontal + larguraColunas + larguraFicha +
                 espacoEntrePainelEFicha + larguraBarra + 2 * SystemInformation.BorderSize.Width;
             bool fichaAbaixo = larguraPagina < larguraLadoALado;
-            var tamanhoMinimo = LogicalToDeviceUnits(new Size(275, fichaAbaixo ? 1000 : 400));
+            Size tamanhoMinimo = LogicalToDeviceUnits(new Size(275, fichaAbaixo ? 1000 : 400));
             int larguraCabecalho = Math.Max(ClientSize.Width, tamanhoMinimo.Width) -
                 layoutTela.Padding.Horizontal - painelCabecalho.Padding.Horizontal;
             if (ClientSize.Height < tamanhoMinimo.Height)
                 larguraCabecalho -= larguraBarra;
-            var espacoCabecalho = new Size(Math.Max(1, larguraCabecalho), 0);
+            Size espacoCabecalho = new Size(Math.Max(1, larguraCabecalho), 0);
 
             panel1.SuspendLayout();
             layoutCorpo.SuspendLayout();
