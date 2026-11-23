@@ -9,12 +9,14 @@ namespace Limk.VolleyBall.Backend
         public static DataTable Listar(int usuarioId)
         {
             const string consulta = @"SELECT equipe.id, equipe.nome, equipe.escudo,
-                    (SELECT COUNT(*) FROM equipe_atleta
-                        WHERE equipe_atleta.equipe_id = equipe.id AND equipe_atleta.ativo = TRUE) AS atletas,
-                    (SELECT COUNT(*) FROM tatica WHERE tatica.equipe_id = equipe.id) AS taticas
+                    COUNT(DISTINCT equipe_atleta.id) AS atletas,
+                    COUNT(DISTINCT tatica.id) AS taticas
                 FROM equipe
                 INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe.id
+                LEFT JOIN equipe_atleta ON equipe_atleta.equipe_id = equipe.id AND equipe_atleta.ativo = TRUE
+                LEFT JOIN tatica ON tatica.equipe_id = equipe.id
                 WHERE usuario_equipe.usuario_id = @usuarioId
+                GROUP BY equipe.id, equipe.nome, equipe.escudo
                 ORDER BY equipe.nome, equipe.id";
             return ConexaoBD.ConsultarTabela(consulta, usuarioId);
         }
@@ -90,7 +92,7 @@ namespace Limk.VolleyBall.Backend
                 using (MySqlCommand comando = Comando(conexao, transacao, @"SELECT atleta.id FROM atleta
                     INNER JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id
                     WHERE equipe_atleta.equipe_id = @equipeId
-                    ORDER BY atleta.id FOR UPDATE OF atleta"))
+                    ORDER BY atleta.id"))
                 {
                     comando.Parameters.AddWithValue("@equipeId", equipeId);
                     using MySqlDataReader leitor = comando.ExecuteReader();
@@ -106,8 +108,9 @@ namespace Limk.VolleyBall.Backend
                 foreach (int atletaId in atletas)
                 {
                     // Um cadastro compartilhado continua disponível para as outras equipes.
-                    using MySqlCommand comando = Comando(conexao, transacao, @"DELETE FROM atleta WHERE id = @atletaId
-                        AND NOT EXISTS (SELECT 1 FROM equipe_atleta WHERE atleta_id = @atletaId)");
+                    using MySqlCommand comando = Comando(conexao, transacao, @"DELETE atleta FROM atleta
+                        LEFT JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id
+                        WHERE atleta.id = @atletaId AND equipe_atleta.id IS NULL");
                     comando.Parameters.AddWithValue("@atletaId", atletaId);
                     comando.ExecuteNonQuery();
                 }
@@ -126,25 +129,15 @@ namespace Limk.VolleyBall.Backend
         private static void VerificarAcesso(MySqlConnection conexao, MySqlTransaction transacao,
             int usuarioId, int equipeId)
         {
-            if (!BloquearComAcesso(conexao, transacao, usuarioId, equipeId, exclusivo: true))
+            if (!TemAcessoEquipe(conexao, transacao, usuarioId, equipeId))
                 throw new UnauthorizedAccessException("Equipe não encontrada nas suas equipes.");
         }
 
-        internal static bool BloquearComAcesso(MySqlConnection conexao, MySqlTransaction transacao,
-            int usuarioId, int equipeId, bool exclusivo)
+        internal static bool TemAcessoEquipe(MySqlConnection conexao, MySqlTransaction transacao,
+            int usuarioId, int equipeId)
         {
-            // A equipe deve ser bloqueada antes dos vínculos que sua exclusão remove em cascata.
-            string sqlEquipe = exclusivo ? "SELECT id FROM equipe WHERE id = @equipeId FOR UPDATE"
-                : "SELECT id FROM equipe WHERE id = @equipeId FOR SHARE";
-            using (MySqlCommand equipe = Comando(conexao, transacao, sqlEquipe))
-            {
-                equipe.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
-                if (equipe.ExecuteScalar() == null)
-                    return false;
-            }
-
             using MySqlCommand acesso = Comando(conexao, transacao,
-                "SELECT equipe_id FROM usuario_equipe WHERE usuario_id = @usuarioId AND equipe_id = @equipeId FOR SHARE");
+                "SELECT equipe_id FROM usuario_equipe WHERE usuario_id = @usuarioId AND equipe_id = @equipeId");
             acesso.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
             acesso.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
             return acesso.ExecuteScalar() != null;

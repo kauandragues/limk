@@ -395,3 +395,184 @@ INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (1, 1);
 INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (1, 2);
 INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (2, 1);
 INSERT INTO tatica_favorita (usuario_id, tatica_id) VALUES (3, 3);
+
+-- Consultas usadas no sistema
+-- Valores de exemplo para testar as consultas.
+SET @usuarioId = 1,
+    @equipeId = 1,
+    @atletaId = 1,
+    @taticaId = 1,
+    @email = 'ana@limk.example';
+
+-- Login pelo e-mail
+SELECT id, nome, email, senha_hash
+FROM usuario
+WHERE email = @email
+LIMIT 1;
+
+-- Totais da tela inicial
+SELECT
+    COUNT(DISTINCT usuario_equipe.equipe_id) AS equipes,
+    COUNT(DISTINCT equipe_atleta.atleta_id) AS atletas,
+    COUNT(DISTINCT tatica.id) AS taticas,
+    COUNT(DISTINCT quadro.id) AS quadros
+FROM usuario_equipe
+LEFT JOIN equipe_atleta ON equipe_atleta.equipe_id = usuario_equipe.equipe_id AND equipe_atleta.ativo = TRUE
+LEFT JOIN tatica ON tatica.equipe_id = usuario_equipe.equipe_id
+LEFT JOIN quadro ON quadro.tatica_id = tatica.id
+WHERE usuario_equipe.usuario_id = @usuarioId;
+
+-- Últimas três táticas cadastradas
+SELECT tatica.nome, tatica.descricao, equipe.nome AS equipe,
+    COUNT(quadro.id) AS quadros, tatica.id
+FROM tatica
+INNER JOIN equipe ON equipe.id = tatica.equipe_id
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+LEFT JOIN quadro ON quadro.tatica_id = tatica.id
+WHERE usuario_equipe.usuario_id = @usuarioId
+GROUP BY tatica.id, tatica.nome, tatica.descricao, equipe.nome
+ORDER BY tatica.id DESC
+LIMIT 3;
+
+-- Equipes exibidas na tela inicial
+SELECT equipe.nome,
+    COUNT(DISTINCT equipe_atleta.id) AS atletas,
+    COUNT(DISTINCT tatica.id) AS taticas
+FROM equipe
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe.id
+LEFT JOIN equipe_atleta ON equipe_atleta.equipe_id = equipe.id AND equipe_atleta.ativo = TRUE
+LEFT JOIN tatica ON tatica.equipe_id = equipe.id
+WHERE usuario_equipe.usuario_id = @usuarioId
+GROUP BY equipe.id, equipe.nome
+ORDER BY equipe.nome, equipe.id
+LIMIT 3;
+
+-- Equipes do usuário
+SELECT equipe.id, equipe.nome, equipe.escudo,
+    COUNT(DISTINCT equipe_atleta.id) AS atletas,
+    COUNT(DISTINCT tatica.id) AS taticas
+FROM equipe
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe.id
+LEFT JOIN equipe_atleta ON equipe_atleta.equipe_id = equipe.id AND equipe_atleta.ativo = TRUE
+LEFT JOIN tatica ON tatica.equipe_id = equipe.id
+WHERE usuario_equipe.usuario_id = @usuarioId
+GROUP BY equipe.id, equipe.nome, equipe.escudo
+ORDER BY equipe.nome, equipe.id;
+
+-- Atletas ativos, posições e permissão de edição
+-- O C# junta as posições de cada atleta para mostrar na tela.
+SELECT atleta.id, equipe_atleta.equipe_id, equipe_atleta.numero_camisa,
+    atleta.nome, atleta.apelido, atleta.data_nascimento, equipe.nome AS equipe, equipe_atleta.titular,
+    posicao.nome AS posicoes, posicao.id AS posicao_ids,
+    COUNT(DISTINCT vinculo.equipe_id) = COUNT(DISTINCT acesso.equipe_id) AS pode_editar_dados
+FROM atleta
+INNER JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id AND equipe_atleta.ativo = TRUE
+INNER JOIN equipe ON equipe.id = equipe_atleta.equipe_id
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe.id
+LEFT JOIN atleta_posicao ON atleta_posicao.atleta_id = atleta.id
+LEFT JOIN posicao ON posicao.id = atleta_posicao.posicao_id
+LEFT JOIN equipe_atleta AS vinculo ON vinculo.atleta_id = atleta.id
+LEFT JOIN usuario_equipe AS acesso ON acesso.equipe_id = vinculo.equipe_id AND acesso.usuario_id = @usuarioId
+WHERE usuario_equipe.usuario_id = @usuarioId
+GROUP BY atleta.id, equipe_atleta.equipe_id, equipe_atleta.numero_camisa,
+    atleta.nome, atleta.apelido, atleta.data_nascimento, equipe.nome, equipe_atleta.titular,
+    posicao.id, posicao.nome
+ORDER BY atleta.nome, equipe.nome, atleta.id, equipe.id, posicao.nome, posicao.id;
+
+-- Posições disponíveis para o cadastro
+SELECT id, nome FROM posicao ORDER BY nome, id;
+
+-- Preferências do usuário
+SELECT cor_atleta_principal, cor_atleta_adversario, cor_bola, duracao_quadro_padrao_ms
+FROM preferencia_usuario
+WHERE usuario_id = @usuarioId;
+
+-- Táticas do usuário
+SELECT tatica.id, tatica.equipe_id, tatica.nome, tatica.descricao,
+    equipe.nome AS equipe, tipo_tatica.nome AS tipo, sistema_jogo.nome AS sistema,
+    COUNT(quadro.id) AS quadros
+FROM tatica
+INNER JOIN equipe ON equipe.id = tatica.equipe_id
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+LEFT JOIN tipo_tatica ON tipo_tatica.id = tatica.tipo_tatica_id
+LEFT JOIN sistema_jogo ON sistema_jogo.id = tatica.sistema_jogo_id
+LEFT JOIN quadro ON quadro.tatica_id = tatica.id
+WHERE usuario_equipe.usuario_id = @usuarioId
+GROUP BY tatica.id, tatica.equipe_id, tatica.nome, tatica.descricao,
+    equipe.nome, tipo_tatica.nome, sistema_jogo.nome
+ORDER BY tatica.id DESC;
+
+-- Tipos de tática
+SELECT id, nome FROM tipo_tatica ORDER BY nome;
+
+-- Sistemas de jogo
+SELECT id, nome FROM sistema_jogo ORDER BY nome;
+
+-- Elenco da equipe
+SELECT equipe_atleta.id, atleta.nome, equipe_atleta.numero_camisa
+FROM usuario_equipe
+LEFT JOIN equipe_atleta ON equipe_atleta.equipe_id = usuario_equipe.equipe_id AND equipe_atleta.ativo = TRUE
+LEFT JOIN atleta ON atleta.id = equipe_atleta.atleta_id
+WHERE usuario_equipe.usuario_id = @usuarioId AND usuario_equipe.equipe_id = @equipeId
+ORDER BY equipe_atleta.numero_camisa, atleta.nome;
+
+-- Dados da tática
+SELECT tatica.id, tatica.equipe_id, tatica.nome, tatica.descricao,
+    tatica.tipo_tatica_id, tatica.sistema_jogo_id
+FROM tatica
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId;
+
+-- Quadros da tática na ordem de reprodução
+SELECT quadro.id, quadro.nome, quadro.duracao_ms, quadro.rotacao
+FROM quadro
+INNER JOIN tatica ON tatica.id = quadro.tatica_id
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId
+ORDER BY quadro.ordem;
+
+-- Atletas e posições de cada quadro
+SELECT atleta_quadro.quadro_id, equipe_atleta.id, atleta.nome, atleta_quadro.numero,
+    atleta_quadro.lado, atleta_quadro.posicao_x, atleta_quadro.posicao_y
+FROM atleta_quadro
+INNER JOIN quadro ON quadro.id = atleta_quadro.quadro_id
+INNER JOIN tatica ON tatica.id = quadro.tatica_id
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+LEFT JOIN equipe_atleta ON equipe_atleta.id = atleta_quadro.equipe_atleta_id AND equipe_atleta.equipe_id = tatica.equipe_id
+LEFT JOIN atleta ON atleta.id = equipe_atleta.atleta_id
+WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId
+ORDER BY quadro.ordem, atleta_quadro.lado, atleta_quadro.numero;
+
+-- Posição da bola em cada quadro
+SELECT bola_quadro.quadro_id, bola_quadro.posicao_x, bola_quadro.posicao_y
+FROM bola_quadro
+INNER JOIN quadro ON quadro.id = bola_quadro.quadro_id
+INNER JOIN tatica ON tatica.id = quadro.tatica_id
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId;
+
+-- Confere o acesso do usuário à equipe
+SELECT equipe_id FROM usuario_equipe WHERE usuario_id = @usuarioId AND equipe_id = @equipeId;
+
+-- Busca os atletas antes de excluir a equipe
+SELECT atleta.id FROM atleta
+INNER JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id
+WHERE equipe_atleta.equipe_id = @equipeId
+ORDER BY atleta.id;
+
+-- Confere se o atleta existe
+SELECT id FROM atleta WHERE id = @atletaId;
+
+-- Confere os vínculos e as permissões do atleta
+SELECT equipe_atleta.equipe_id, equipe_atleta.ativo, usuario_equipe.usuario_id
+FROM equipe_atleta
+LEFT JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe_atleta.equipe_id AND usuario_equipe.usuario_id = @usuarioId
+WHERE equipe_atleta.atleta_id = @atletaId;
+
+-- Confere o acesso à tática e a equipe vinculada
+SELECT tatica.equipe_id FROM tatica
+INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId;
+
+-- Busca os vínculos do elenco antes de salvar a tática
+SELECT id FROM equipe_atleta WHERE equipe_id = @equipeId;

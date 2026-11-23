@@ -11,23 +11,41 @@ namespace Limk.VolleyBall.Backend
             // O vínculo também é filtrado: um atleta pode atuar em duas equipes.
             const string consulta = @"SELECT atleta.id, equipe_atleta.equipe_id, equipe_atleta.numero_camisa,
                     atleta.nome, atleta.apelido, atleta.data_nascimento, equipe.nome AS equipe, equipe_atleta.titular,
-                    (SELECT GROUP_CONCAT(DISTINCT posicao.nome ORDER BY posicao.nome SEPARATOR ', ')
-                        FROM atleta_posicao
-                        INNER JOIN posicao ON posicao.id = atleta_posicao.posicao_id
-                        WHERE atleta_posicao.atleta_id = atleta.id) AS posicoes,
-                    (SELECT GROUP_CONCAT(atleta_posicao.posicao_id ORDER BY atleta_posicao.posicao_id)
-                        FROM atleta_posicao WHERE atleta_posicao.atleta_id = atleta.id) AS posicao_ids,
-                    NOT EXISTS (SELECT 1 FROM equipe_atleta
-                        LEFT JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe_atleta.equipe_id
-                            AND usuario_equipe.usuario_id = @usuarioId
-                        WHERE equipe_atleta.atleta_id = atleta.id AND usuario_equipe.usuario_id IS NULL) AS pode_editar_dados
+                    posicao.nome AS posicoes, posicao.id AS posicao_ids,
+                    COUNT(DISTINCT vinculo.equipe_id) = COUNT(DISTINCT acesso.equipe_id) AS pode_editar_dados
                 FROM atleta
                 INNER JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id AND equipe_atleta.ativo = TRUE
                 INNER JOIN equipe ON equipe.id = equipe_atleta.equipe_id
                 INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe.id
+                LEFT JOIN atleta_posicao ON atleta_posicao.atleta_id = atleta.id
+                LEFT JOIN posicao ON posicao.id = atleta_posicao.posicao_id
+                LEFT JOIN equipe_atleta AS vinculo ON vinculo.atleta_id = atleta.id
+                LEFT JOIN usuario_equipe AS acesso ON acesso.equipe_id = vinculo.equipe_id AND acesso.usuario_id = @usuarioId
                 WHERE usuario_equipe.usuario_id = @usuarioId
-                ORDER BY atleta.nome, equipe.nome, atleta.id, equipe.id";
-            return ConexaoBD.ConsultarTabela(consulta, usuarioId);
+                GROUP BY atleta.id, equipe_atleta.equipe_id, equipe_atleta.numero_camisa,
+                    atleta.nome, atleta.apelido, atleta.data_nascimento, equipe.nome, equipe_atleta.titular,
+                    posicao.id, posicao.nome
+                ORDER BY atleta.nome, equipe.nome, atleta.id, equipe.id, posicao.nome, posicao.id";
+            DataTable registros = ConexaoBD.ConsultarTabela(consulta, usuarioId);
+            DataTable atletas = registros.Clone();
+            atletas.Columns["posicoes"]!.MaxLength = -1;
+            atletas.Columns["posicao_ids"]!.DataType = typeof(string);
+
+            // Junta as posições para mostrar uma linha por atleta em cada equipe.
+            foreach (var grupo in registros.AsEnumerable().GroupBy(linha =>
+                (linha.Field<int>("id"), linha.Field<int>("equipe_id"))))
+            {
+                DataRow atleta = atletas.NewRow();
+                atleta.ItemArray = grupo.First().ItemArray;
+                List<DataRow> posicoes = grupo.Where(linha => !linha.IsNull("posicao_ids")).ToList();
+                if (posicoes.Count > 0)
+                {
+                    atleta["posicoes"] = string.Join(", ", posicoes.Select(linha => linha.Field<string>("posicoes")));
+                    atleta["posicao_ids"] = string.Join(",", posicoes.Select(linha => linha.Field<int>("posicao_ids")).OrderBy(id => id));
+                }
+                atletas.Rows.Add(atleta);
+            }
+            return atletas;
         }
 
         public static List<PosicaoCadastro> CarregarPosicoes()
@@ -173,16 +191,14 @@ namespace Limk.VolleyBall.Backend
         private static void GarantirAcessoEquipe(MySqlConnection conexao, MySqlTransaction transacao,
             int usuarioId, int equipeId)
         {
-            if (!DadosEquipe.BloquearComAcesso(conexao, transacao, usuarioId, equipeId,
-                exclusivo: false))
+            if (!DadosEquipe.TemAcessoEquipe(conexao, transacao, usuarioId, equipeId))
                 throw new ValidacaoException("Você não tem acesso à equipe selecionada.");
         }
 
         private static bool VerificarVinculos(MySqlConnection conexao, MySqlTransaction transacao,
             int usuarioId, int atletaId, int equipeId)
         {
-            // Serializa alterações neste cadastro, inclusive a entrada de novos vínculos pela chave estrangeira.
-            using (MySqlCommand cadastro = CriarComando(conexao, "SELECT id FROM atleta WHERE id = @atletaId FOR UPDATE", transacao))
+            using (MySqlCommand cadastro = CriarComando(conexao, "SELECT id FROM atleta WHERE id = @atletaId", transacao))
             {
                 cadastro.Parameters.Add("@atletaId", MySqlDbType.Int32).Value = atletaId;
                 if (cadastro.ExecuteScalar() == null)
@@ -194,7 +210,6 @@ namespace Limk.VolleyBall.Backend
                 FROM equipe_atleta
                 LEFT JOIN usuario_equipe ON usuario_equipe.equipe_id = equipe_atleta.equipe_id AND usuario_equipe.usuario_id = @usuarioId
                 WHERE equipe_atleta.atleta_id = @atletaId
-                FOR UPDATE OF equipe_atleta FOR SHARE OF usuario_equipe
                 """, transacao);
             comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
             comando.Parameters.Add("@atletaId", MySqlDbType.Int32).Value = atletaId;

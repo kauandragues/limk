@@ -9,13 +9,16 @@ namespace Limk.VolleyBall.Backend
         {
             const string consulta = @"SELECT tatica.id, tatica.equipe_id, tatica.nome, tatica.descricao,
                     equipe.nome AS equipe, tipo_tatica.nome AS tipo, sistema_jogo.nome AS sistema,
-                    (SELECT COUNT(*) FROM quadro WHERE quadro.tatica_id = tatica.id) AS quadros
+                    COUNT(quadro.id) AS quadros
                 FROM tatica
                 INNER JOIN equipe ON equipe.id = tatica.equipe_id
                 INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
                 LEFT JOIN tipo_tatica ON tipo_tatica.id = tatica.tipo_tatica_id
                 LEFT JOIN sistema_jogo ON sistema_jogo.id = tatica.sistema_jogo_id
+                LEFT JOIN quadro ON quadro.tatica_id = tatica.id
                 WHERE usuario_equipe.usuario_id = @usuarioId
+                GROUP BY tatica.id, tatica.equipe_id, tatica.nome, tatica.descricao,
+                    equipe.nome, tipo_tatica.nome, sistema_jogo.nome
                 ORDER BY tatica.id DESC";
             return ConexaoBD.ConsultarTabela(consulta, usuarioId);
         }
@@ -213,15 +216,13 @@ namespace Limk.VolleyBall.Backend
         private static void VerificarEquipeEVinculos(MySqlConnection conexao, MySqlTransaction transacao,
             int usuarioId, Tatica tatica)
         {
-            if (!DadosEquipe.BloquearComAcesso(conexao, transacao, usuarioId, tatica.GetEquipeId(),
-                exclusivo: false))
+            if (!DadosEquipe.TemAcessoEquipe(conexao, transacao, usuarioId, tatica.GetEquipeId()))
                 throw new UnauthorizedAccessException("Você não tem acesso à equipe desta tática.");
             if (tatica.GetId() > 0)
             {
                 const string consulta = @"SELECT tatica.equipe_id FROM tatica
                     INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
-                    WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId
-                    FOR UPDATE OF tatica FOR SHARE OF usuario_equipe";
+                    WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId";
                 using MySqlCommand comando = ConsultaTatica(conexao, transacao, consulta, usuarioId, tatica.GetId());
                 object? equipe = comando.ExecuteScalar();
                 if (equipe == null)
@@ -231,7 +232,7 @@ namespace Limk.VolleyBall.Backend
             }
 
             HashSet<int> vinculos = new HashSet<int>();
-            using (MySqlCommand comando = Comando(conexao, transacao, "SELECT id FROM equipe_atleta WHERE equipe_id = @equipeId FOR SHARE"))
+            using (MySqlCommand comando = Comando(conexao, transacao, "SELECT id FROM equipe_atleta WHERE equipe_id = @equipeId"))
             {
                 comando.Parameters.AddWithValue("@equipeId", tatica.GetEquipeId());
                 using MySqlDataReader leitor = comando.ExecuteReader();
@@ -333,11 +334,9 @@ namespace Limk.VolleyBall.Backend
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(taticaId);
             const string sql = """
-                DELETE FROM tatica
-                WHERE id = @taticaId AND EXISTS (
-                    SELECT 1 FROM usuario_equipe
-                    WHERE usuario_equipe.equipe_id = tatica.equipe_id AND usuario_equipe.usuario_id = @usuarioId
-                )
+                DELETE tatica FROM tatica
+                INNER JOIN usuario_equipe ON usuario_equipe.equipe_id = tatica.equipe_id
+                WHERE tatica.id = @taticaId AND usuario_equipe.usuario_id = @usuarioId
                 """;
             MySqlConnection conexao = new MySqlConnection();
             try
