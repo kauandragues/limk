@@ -18,14 +18,31 @@ namespace Limk.VolleyBall.User_Constrols
             btnAbrirTatica.Enabled = _taticaId > 0;
             lblEquipe.Text = tatica.GetEquipe();
             lblNome.Text = tatica.GetNome();
-            lblDescricao.Text = string.IsNullOrWhiteSpace(tatica.GetDescricao())
-                ? "Sem descrição cadastrada." : tatica.GetDescricao();
-            lblQuadros.Text = tatica.GetQuadros() == 1 ? "1 quadro" : $"{tatica.GetQuadros():N0} quadros";
+            if (string.IsNullOrWhiteSpace(tatica.GetDescricao()))
+            {
+                lblDescricao.Text = "Sem descrição cadastrada.";
+            }
+            else
+            {
+                lblDescricao.Text = tatica.GetDescricao();
+            }
+
+            if (tatica.GetQuadros() == 1)
+            {
+                lblQuadros.Text = "1 quadro";
+            }
+            else
+            {
+                lblQuadros.Text = $"{tatica.GetQuadros():N0} quadros";
+            }
         }
 
         private void SolicitarAbertura(object? sender, EventArgs e)
         {
-            AbrirTatica?.Invoke(this, _taticaId);
+            if (AbrirTatica != null)
+            {
+                AbrirTatica(this, _taticaId);
+            }
         }
     }
 }

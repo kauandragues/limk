@@ -6,14 +6,11 @@ namespace Limk.VolleyBall
     public partial class FormPrincipal : Form
     {
         private UsuarioAutenticado? _usuario;
-
         public FormPrincipal()
         {
             InitializeComponent();
-
             menuLateral1.OnMenuSelecionado += MenuLateral_OnMenuSelecionado;
             menuLateral1.SaidaDaContaSolicitada += SairDaConta;
-
             menuLateral1.Enabled = false;
         }
 
@@ -21,16 +18,16 @@ namespace Limk.VolleyBall
         {
             ColumnStyle colunaMenu = tableLayoutPanel1.ColumnStyles[0];
             colunaMenu.Width = Math.Max(colunaMenu.Width, menuLateral1.ObterLarguraMinima());
-
             base.OnLoad(e);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
-
             if (!e.Cancel && (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.ApplicationExitCall))
+            {
                 e.Cancel = !ConfirmarSaidaDaTelaAtual();
+            }
         }
 
         private void MenuLateral_OnMenuSelecionado(object? sender, UserControl TelaExibir)
@@ -40,34 +37,50 @@ namespace Limk.VolleyBall
 
         internal bool EntrarNaConta()
         {
-            using FormLogin login = new FormLogin();
-            if (login.ShowDialog() != DialogResult.OK || login.Usuario == null)
-                return false;
+            FormLogin login = new FormLogin();
+            try
+            {
+                if (login.ShowDialog() != DialogResult.OK || login.Usuario == null)
+                {
+                    return false;
+                }
 
-            DefinirUsuario(login.Usuario);
-            return true;
+                DefinirUsuario(login.Usuario);
+                return true;
+            }
+            finally
+            {
+                login.Dispose();
+            }
         }
 
         private void SairDaConta(object? sender, EventArgs e)
         {
             if (!ConfirmarSaidaDaTelaAtual())
+            {
                 return;
+            }
 
             _usuario = null;
             menuLateral1.Enabled = false;
             Hide();
             LimparTelaAtual();
-
             if (EntrarNaConta())
+            {
                 Show();
+            }
             else
+            {
                 Close();
+            }
         }
 
         public void DefinirUsuario(UsuarioAutenticado usuario)
         {
             if (usuario.GetId() <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(usuario));
+            }
 
             _usuario = usuario;
             menuLateral1.Enabled = true;
@@ -76,28 +89,32 @@ namespace Limk.VolleyBall
 
         private void MostrarTela(UserControl tela)
         {
-            if (_usuario == null || tela is not ITelaUsuario telaUsuario || !ConfirmarSaidaDaTelaAtual())
+            // A interface ITelaUsuario indica que esta tela sabe receber o usuário conectado.
+            ITelaUsuario? telaUsuario = tela as ITelaUsuario;
+            if (_usuario == null || telaUsuario == null || !ConfirmarSaidaDaTelaAtual())
             {
                 tela.Dispose();
                 return;
             }
 
             telaUsuario.DefinirUsuario(_usuario);
-            if (tela is TelaInicial inicio)
+            if (tela is TelaInicial)
             {
+                TelaInicial inicio = (TelaInicial)tela;
                 inicio.TelaSolicitada += MenuLateral_OnMenuSelecionado;
             }
-            else if (tela is TelaEquipes equipes)
+            else if (tela is TelaEquipes)
             {
+                TelaEquipes equipes = (TelaEquipes)tela;
                 equipes.TelaSolicitada += MenuLateral_OnMenuSelecionado;
             }
-            else if (tela is TelaTaticas taticas)
+            else if (tela is TelaTaticas)
             {
+                TelaTaticas taticas = (TelaTaticas)tela;
                 taticas.TelaSolicitada += MenuLateral_OnMenuSelecionado;
             }
 
             LimparTelaAtual();
-
             tela.Dock = DockStyle.Fill;
             panelTelas.Controls.Add(tela);
             tela.BringToFront();
@@ -107,12 +124,25 @@ namespace Limk.VolleyBall
         private void LimparTelaAtual()
         {
             while (panelTelas.Controls.Count > 0)
+            {
                 panelTelas.Controls[0].Dispose();
+            }
         }
 
         private bool ConfirmarSaidaDaTelaAtual()
         {
-            return panelTelas.Controls.Count == 0 || panelTelas.Controls[0] is not TelaAtletas atletas || atletas.ConfirmarSaida();
+            if (panelTelas.Controls.Count == 0)
+            {
+                return true;
+            }
+
+            TelaAtletas? atletas = panelTelas.Controls[0] as TelaAtletas;
+            if (atletas == null)
+            {
+                return true;
+            }
+
+            return atletas.ConfirmarSaida();
         }
     }
 }

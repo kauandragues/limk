@@ -10,7 +10,6 @@ namespace Limk.VolleyBall
         public FormLogin()
         {
             SuspendLayout();
-
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             MinimumSize = new Size(400, 480);
@@ -19,31 +18,39 @@ namespace Limk.VolleyBall
             StartPosition = FormStartPosition.CenterScreen;
             MostrarLogin();
             Shown += FormLogin_Shown;
-
             ResumeLayout();
         }
 
         private void FormLogin_Shown(object? sender, EventArgs e)
         {
-            if (Controls[0] is TelaLogin login)
+            TelaLogin? login = Controls[0] as TelaLogin;
+            if (login != null)
+            {
                 login.FocarEmail();
+            }
         }
 
-        private void MostrarLogin(string? emailCadastrado = null)
+        private void MostrarLogin(string emailCadastrado = "")
         {
-            TelaLogin login = new TelaLogin { Dock = DockStyle.Fill };
+            TelaLogin login = new TelaLogin();
+            login.Dock = DockStyle.Fill;
             login.LoginConcluido += LoginConcluido;
             login.CriarContaSolicitada += CriarContaSolicitada;
             MostrarTela(login, login.BotaoEntrar, "Entrar | LIMK Volleyball");
-            if (emailCadastrado != null)
+            if (!string.IsNullOrEmpty(emailCadastrado))
+            {
                 login.MostrarContaCriada(emailCadastrado);
+            }
             else
+            {
                 login.FocarEmail();
+            }
         }
 
         private void CriarContaSolicitada(object? sender, EventArgs e)
         {
-            TelaCadastroUsuario cadastro = new TelaCadastroUsuario { Dock = DockStyle.Fill };
+            TelaCadastroUsuario cadastro = new TelaCadastroUsuario();
+            cadastro.Dock = DockStyle.Fill;
             cadastro.VoltarParaLogin += VoltarParaLogin;
             cadastro.CadastroConcluido += CadastroConcluido;
             MostrarTela(cadastro, cadastro.BotaoCadastrar, "Criar conta | LIMK Volleyball");
@@ -64,8 +71,12 @@ namespace Limk.VolleyBall
         {
             AcceptButton = null;
             while (Controls.Count > 0)
+            {
                 Controls[0].Dispose();
+            }
+
             Controls.Add(tela);
+            // AcceptButton define qual botão será acionado quando o usuário pressionar Enter.
             AcceptButton = botaoPrincipal;
             Text = titulo;
         }

@@ -29,7 +29,15 @@ namespace Limk.VolleyBall.User_Constrols
             _taticaId = Convert.ToInt32(tatica["id"]);
             label1.Text = tatica["equipe"].ToString();
             label2.Text = tatica["nome"].ToString();
-            label3.Text = tatica["descricao"] == DBNull.Value ? "Sem descrição cadastrada." : tatica["descricao"].ToString();
+            if (tatica["descricao"] == DBNull.Value)
+            {
+                label3.Text = "Sem descrição cadastrada.";
+            }
+            else
+            {
+                label3.Text = tatica["descricao"].ToString();
+            }
+
             label4.Text = $"{tatica["quadros"]} quadros configurados";
             button1.Enabled = _taticaId > 0;
             btnExcluirTatica.Enabled = _taticaId > 0;
@@ -38,18 +46,29 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void SolicitarAbertura(object? sender, EventArgs e)
         {
-            AbrirTatica?.Invoke(this, _taticaId);
+            if (AbrirTatica != null)
+            {
+                AbrirTatica(this, _taticaId);
+            }
         }
 
         private void SolicitarApresentacao(object? sender, EventArgs e)
         {
-            ApresentarTatica?.Invoke(this, _taticaId);
+            if (ApresentarTatica != null)
+            {
+                ApresentarTatica(this, _taticaId);
+            }
         }
 
         private void SolicitarExclusao(object? sender, EventArgs e)
         {
             if (registro != null)
-                ExcluirTatica?.Invoke(this, registro);
+            {
+                if (ExcluirTatica != null)
+                {
+                    ExcluirTatica(this, registro);
+                }
+            }
         }
     }
 }

@@ -1,0 +1,41 @@
+REQUISITOS PARA OS SLIDES DO PROJETO
+
+Planejamento e execução
+
+- Adequação do Plano de Projeto com sua execução: planejado X executado.
+- Principais dificuldades e problemas encontrados no desenvolvimento do projeto e como foram superados.
+
+Engenharia de Software
+
+- Atores e Casos de Uso principais: Quem utiliza o sistema e quais são as principais funcionalidades.
+  Diagrama de Casos de Uso / Diagrama de Classes: Imagem do diagrama UML do sistema.
+- Requisitos Funcionais e Não Funcionais: Destaque para as regras de negócio críticas.
+- Processo/Metodologia: Breve menção à abordagem adotada (ex: Scrum, Kanban ou iterativo).
+
+Banco de Dados
+
+- Modelo Conceitual (DER / MER): Exibição do Diagrama Entidade-Relacionamento.
+- Modelo Relacional (Esquema das Tabelas): Apresentação das tabelas, chaves primárias (PK) e chaves estrangeiras (FK).
+- Integridade e Consistência: Regras aplicadas para evitar dados duplicados ou órfãos (constraints, tipos de dados).
+- Tecnologia Utilizada: SGBD escolhido (ex: MySQL, PostgreSQL, SQLite) e scripts SQL de criação/povoamento.
+
+Desenvolvimento da aplicação
+
+- Arquitetura da Aplicação: Como o código foi estruturado (ex: MVC, Orientação a Objetos, camadas).
+- Tecnologias e Bibliotecas: Linguagem utilizada e frameworks/libs complementares.
+- Principais Funcionalidades Implementadas: Operações de CRUD (Criar, Ler, Atualizar, Deletar) integradas com o Banco de Dados.
+- Demonstração do Código (Screenshots): Trechos de código limpo, aplicação de POO (classes, herança, interfaces) e tratamento de exceções/erros.
+
+Resultados e Impacto Social
+
+- Entregável para o Parceiro: O que foi/será efetivamente entregue.
+- Feedback / Indicadores: Como o projeto impacta os beneficiários diretos do projeto de extensão.
+
+Aprendizados
+
+- Principais aprendizados da integração entre as três disciplinas.
+
+Dicas para a Apresentação:
+
+- Roteiro Integrado: Ao transitar entre os slides das disciplinas, mostre a rastreabilidade: como o caso de uso (Eng. Software 1) virou uma tabela no banco (Banco de Dados 1) e uma interface/classe no código (LP2).
+- Coesão do Grupo: Dividam as falas para que todos os membros apresentem trechos das três áreas técnicas.

@@ -7,7 +7,9 @@ namespace Limk.VolleyBall.Backend
         public static ResumoInicio Carregar(int usuarioId)
         {
             if (usuarioId <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(usuarioId));
+            }
 
             MySqlConnection conexao = new MySqlConnection();
             try
@@ -34,16 +36,26 @@ namespace Limk.VolleyBall.Backend
                 LEFT JOIN tatica ON tatica.equipe_id = usuario_equipe.equipe_id
                 LEFT JOIN quadro ON quadro.tatica_id = tatica.id
                 WHERE usuario_equipe.usuario_id = @usuarioId";
-
-            ResumoInicio resumo = new ResumoInicio();
-            using (MySqlCommand comando = CriarComando(conexao, usuarioId, consulta))
+            ResumoInicio resumo;
             {
-                using MySqlDataReader leitor = comando.ExecuteReader();
-                leitor.Read();
-                resumo.SetEquipes(leitor.GetInt64(0));
-                resumo.SetAtletas(leitor.GetInt64(1));
-                resumo.SetTaticas(leitor.GetInt64(2));
-                resumo.SetQuadros(leitor.GetInt64(3));
+                MySqlCommand comando = CriarComando(conexao, usuarioId, consulta);
+                try
+                {
+                    MySqlDataReader leitor = comando.ExecuteReader();
+                    try
+                    {
+                        leitor.Read();
+                        resumo = new ResumoInicio(leitor.GetInt64(0), leitor.GetInt64(1), leitor.GetInt64(2), leitor.GetInt64(3));
+                    }
+                    finally
+                    {
+                        leitor.Dispose();
+                    }
+                }
+                finally
+                {
+                    comando.Dispose();
+                }
             }
 
             // Sem histórico de uso, as últimas cadastradas são ordenadas pelo ID.
@@ -57,19 +69,33 @@ namespace Limk.VolleyBall.Backend
                 GROUP BY tatica.id, tatica.nome, tatica.descricao, equipe.nome
                 ORDER BY tatica.id DESC
                 LIMIT 3";
-
-            using (MySqlCommand comando = CriarComando(conexao, usuarioId, consultaTaticas))
             {
-                using MySqlDataReader leitor = comando.ExecuteReader();
-                while (leitor.Read())
+                MySqlCommand comando = CriarComando(conexao, usuarioId, consultaTaticas);
+                try
                 {
-                    TaticaInicio registroTaticaInicio = new TaticaInicio();
-                    registroTaticaInicio.SetId(leitor.GetInt32(4));
-                    registroTaticaInicio.SetNome(leitor.GetString(0));
-                    registroTaticaInicio.SetDescricao(leitor.IsDBNull(1) ? "" : leitor.GetString(1));
-                    registroTaticaInicio.SetEquipe(leitor.GetString(2));
-                    registroTaticaInicio.SetQuadros(leitor.GetInt64(3));
-                    resumo.GetUltimasTaticas().Add(registroTaticaInicio);
+                    MySqlDataReader leitor = comando.ExecuteReader();
+                    try
+                    {
+                        while (leitor.Read())
+                        {
+                            string descricao = "";
+                            if (!leitor.IsDBNull(1))
+                            {
+                                descricao = leitor.GetString(1);
+                            }
+
+                            TaticaInicio registroTaticaInicio = new TaticaInicio(leitor.GetInt32(4), leitor.GetString(0), descricao, leitor.GetString(2), leitor.GetInt64(3));
+                            resumo.GetUltimasTaticas().Add(registroTaticaInicio);
+                        }
+                    }
+                    finally
+                    {
+                        leitor.Dispose();
+                    }
+                }
+                finally
+                {
+                    comando.Dispose();
                 }
             }
 
@@ -84,17 +110,27 @@ namespace Limk.VolleyBall.Backend
                 GROUP BY equipe.id, equipe.nome
                 ORDER BY equipe.nome, equipe.id
                 LIMIT 3";
-
-            using (MySqlCommand comando = CriarComando(conexao, usuarioId, consultaEquipes))
             {
-                using MySqlDataReader leitor = comando.ExecuteReader();
-                while (leitor.Read())
+                MySqlCommand comando = CriarComando(conexao, usuarioId, consultaEquipes);
+                try
                 {
-                    EquipeInicio registroEquipeInicio = new EquipeInicio();
-                    registroEquipeInicio.SetNome(leitor.GetString(0));
-                    registroEquipeInicio.SetAtletas(leitor.GetInt64(1));
-                    registroEquipeInicio.SetTaticas(leitor.GetInt64(2));
-                    resumo.GetEquipesCadastradas().Add(registroEquipeInicio);
+                    MySqlDataReader leitor = comando.ExecuteReader();
+                    try
+                    {
+                        while (leitor.Read())
+                        {
+                            EquipeInicio registroEquipeInicio = new EquipeInicio(leitor.GetString(0), leitor.GetInt64(1), leitor.GetInt64(2));
+                            resumo.GetEquipesCadastradas().Add(registroEquipeInicio);
+                        }
+                    }
+                    finally
+                    {
+                        leitor.Dispose();
+                    }
+                }
+                finally
+                {
+                    comando.Dispose();
                 }
             }
 
@@ -103,7 +139,8 @@ namespace Limk.VolleyBall.Backend
 
         private static MySqlCommand CriarComando(MySqlConnection conexao, int usuarioId, string sql)
         {
-            MySqlCommand comando = new MySqlCommand(sql, conexao) { CommandTimeout = 5 };
+            MySqlCommand comando = new MySqlCommand(sql, conexao);
+            comando.CommandTimeout = 5;
             comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
             return comando;
         }

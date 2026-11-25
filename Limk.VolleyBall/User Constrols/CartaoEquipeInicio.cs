@@ -12,10 +12,35 @@ namespace Limk.VolleyBall.User_Constrols
         internal void ExibirEquipe(EquipeInicio equipe)
         {
             lblNome.Text = equipe.GetNome();
-            lblInicial.Text = string.IsNullOrWhiteSpace(equipe.GetNome())
-                ? "E" : equipe.GetNome().Trim().Substring(0, 1).ToUpper();
-            string atletas = equipe.GetAtletas() == 1 ? "1 atleta" : $"{equipe.GetAtletas():N0} atletas";
-            string taticas = equipe.GetTaticas() == 1 ? "1 tática" : $"{equipe.GetTaticas():N0} táticas";
+            if (string.IsNullOrWhiteSpace(equipe.GetNome()))
+            {
+                lblInicial.Text = "E";
+            }
+            else
+            {
+                lblInicial.Text = equipe.GetNome().Trim().Substring(0, 1).ToUpper();
+            }
+
+            string atletas;
+            if (equipe.GetAtletas() == 1)
+            {
+                atletas = "1 atleta";
+            }
+            else
+            {
+                atletas = $"{equipe.GetAtletas():N0} atletas";
+            }
+
+            string taticas;
+            if (equipe.GetTaticas() == 1)
+            {
+                taticas = "1 tática";
+            }
+            else
+            {
+                taticas = $"{equipe.GetTaticas():N0} táticas";
+            }
+
             lblResumo.Text = $"{atletas} · {taticas}";
         }
     }

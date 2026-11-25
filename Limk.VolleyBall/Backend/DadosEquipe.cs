@@ -23,49 +23,111 @@ namespace Limk.VolleyBall.Backend
 
         public static int Salvar(int usuarioId, int equipeId, string nome, byte[]? escudo)
         {
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
+            if (usuarioId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("usuarioId");
+            }
+
             ArgumentOutOfRangeException.ThrowIfNegative(equipeId);
-            ArgumentNullException.ThrowIfNull(nome);
+            if (nome == null)
+            {
+                throw new ArgumentNullException("nome");
+            }
+
             nome = nome.Trim();
-            if (nome.Length == 0 || nome.EnumerateRunes().Count() > 100)
+            if (nome.Length == 0 || Texto.ContarCaracteres(nome) > 100)
+            {
                 throw new ValidacaoException("Informe um nome de equipe com até 100 caracteres.");
+            }
+
             if (escudo != null)
             {
                 escudo = escudo.ToArray();
-                using Bitmap? imagem = ImagemEscudo.CriarImagem(escudo);
-                if (imagem == null)
-                    throw new ValidacaoException("O escudo precisa ser uma imagem válida de até 4 MB e 4096 pixels por lado.");
+                Bitmap? imagem = ImagemEscudo.CriarImagem(escudo);
+                try
+                {
+                    if (imagem == null)
+                    {
+                        throw new ValidacaoException("O escudo precisa ser uma imagem válida de até 4 MB e 4096 pixels por lado.");
+                    }
+                }
+                finally
+                {
+                    if (imagem != null)
+                    {
+                        imagem.Dispose();
+                    }
+                }
             }
 
             MySqlConnection conexao = new MySqlConnection();
             try
             {
                 ConexaoBD.Abrir(conexao);
-                using MySqlTransaction transacao = conexao.BeginTransaction();
-                if (equipeId > 0)
-                    VerificarAcesso(conexao, transacao, usuarioId, equipeId);
-
-                string sql = equipeId == 0
-                    ? "INSERT INTO equipe (nome, escudo) VALUES (@nome, @escudo)"
-                    : "UPDATE equipe SET nome = @nome, escudo = @escudo WHERE id = @equipeId";
-                using (MySqlCommand comando = Comando(conexao, transacao, sql))
+                MySqlTransaction transacao = conexao.BeginTransaction();
+                try
                 {
-                    comando.Parameters.AddWithValue("@nome", nome);
-                    comando.Parameters.AddWithValue("@equipeId", equipeId);
-                    comando.Parameters.Add("@escudo", MySqlDbType.MediumBlob).Value = (object?)escudo ?? DBNull.Value;
-                    comando.ExecuteNonQuery();
+                    if (equipeId > 0)
+                    {
+                        VerificarAcesso(conexao, transacao, usuarioId, equipeId);
+                    }
+
+                    string sql;
                     if (equipeId == 0)
                     {
-                        equipeId = checked((int)comando.LastInsertedId);
-                        using MySqlCommand vinculo = Comando(conexao, transacao,
-                            "INSERT INTO usuario_equipe (usuario_id, equipe_id) VALUES (@usuarioId, @equipeId)");
-                        vinculo.Parameters.AddWithValue("@usuarioId", usuarioId);
-                        vinculo.Parameters.AddWithValue("@equipeId", equipeId);
-                        vinculo.ExecuteNonQuery();
+                        sql = "INSERT INTO equipe (nome, escudo) VALUES (@nome, @escudo)";
                     }
+                    else
+                    {
+                        sql = "UPDATE equipe SET nome = @nome, escudo = @escudo WHERE id = @equipeId";
+                    }
+
+                    {
+                        MySqlCommand comando = Comando(conexao, transacao, sql);
+                        try
+                        {
+                            comando.Parameters.AddWithValue("@nome", nome);
+                            comando.Parameters.AddWithValue("@equipeId", equipeId);
+                            MySqlParameter parametroEscudo = comando.Parameters.Add("@escudo", MySqlDbType.MediumBlob);
+                            if (escudo == null)
+                            {
+                                parametroEscudo.Value = DBNull.Value;
+                            }
+                            else
+                            {
+                                parametroEscudo.Value = escudo;
+                            }
+
+                            comando.ExecuteNonQuery();
+                            if (equipeId == 0)
+                            {
+                                equipeId = Convert.ToInt32(comando.LastInsertedId);
+                                MySqlCommand vinculo = Comando(conexao, transacao, "INSERT INTO usuario_equipe (usuario_id, equipe_id) VALUES (@usuarioId, @equipeId)");
+                                try
+                                {
+                                    vinculo.Parameters.AddWithValue("@usuarioId", usuarioId);
+                                    vinculo.Parameters.AddWithValue("@equipeId", equipeId);
+                                    vinculo.ExecuteNonQuery();
+                                }
+                                finally
+                                {
+                                    vinculo.Dispose();
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            comando.Dispose();
+                        }
+                    }
+
+                    transacao.Commit();
+                    return equipeId;
                 }
-                transacao.Commit();
-                return equipeId;
+                finally
+                {
+                    transacao.Dispose();
+                }
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
@@ -79,42 +141,89 @@ namespace Limk.VolleyBall.Backend
 
         public static void Excluir(int usuarioId, int equipeId)
         {
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(usuarioId);
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(equipeId);
+            if (usuarioId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("usuarioId");
+            }
+
+            if (equipeId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("equipeId");
+            }
+
             MySqlConnection conexao = new MySqlConnection();
             try
             {
                 ConexaoBD.Abrir(conexao);
-                using MySqlTransaction transacao = conexao.BeginTransaction();
-                VerificarAcesso(conexao, transacao, usuarioId, equipeId);
-
-                List<int> atletas = new List<int>();
-                using (MySqlCommand comando = Comando(conexao, transacao, @"SELECT atleta.id FROM atleta
+                MySqlTransaction transacao = conexao.BeginTransaction();
+                try
+                {
+                    VerificarAcesso(conexao, transacao, usuarioId, equipeId);
+                    List<int> atletas = new List<int>();
+                    {
+                        MySqlCommand comando = Comando(conexao, transacao, @"SELECT atleta.id FROM atleta
                     INNER JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id
                     WHERE equipe_atleta.equipe_id = @equipeId
-                    ORDER BY atleta.id"))
-                {
-                    comando.Parameters.AddWithValue("@equipeId", equipeId);
-                    using MySqlDataReader leitor = comando.ExecuteReader();
-                    while (leitor.Read())
-                        atletas.Add(leitor.GetInt32(0));
-                }
-                // As chaves estrangeiras removem os vínculos, táticas, quadros e seus elementos.
-                using (MySqlCommand comando = Comando(conexao, transacao, "DELETE FROM equipe WHERE id = @equipeId"))
-                {
-                    comando.Parameters.AddWithValue("@equipeId", equipeId);
-                    comando.ExecuteNonQuery();
-                }
-                foreach (int atletaId in atletas)
-                {
-                    // Um cadastro compartilhado continua disponível para as outras equipes.
-                    using MySqlCommand comando = Comando(conexao, transacao, @"DELETE atleta FROM atleta
+                    ORDER BY atleta.id");
+                        try
+                        {
+                            comando.Parameters.AddWithValue("@equipeId", equipeId);
+                            MySqlDataReader leitor = comando.ExecuteReader();
+                            try
+                            {
+                                while (leitor.Read())
+                                {
+                                    atletas.Add(leitor.GetInt32(0));
+                                }
+                            }
+                            finally
+                            {
+                                leitor.Dispose();
+                            }
+                        }
+                        finally
+                        {
+                            comando.Dispose();
+                        }
+                    }
+
+                    // As chaves estrangeiras removem os vínculos, táticas, quadros e seus elementos.
+                    {
+                        MySqlCommand comando = Comando(conexao, transacao, "DELETE FROM equipe WHERE id = @equipeId");
+                        try
+                        {
+                            comando.Parameters.AddWithValue("@equipeId", equipeId);
+                            comando.ExecuteNonQuery();
+                        }
+                        finally
+                        {
+                            comando.Dispose();
+                        }
+                    }
+
+                    foreach (int atletaId in atletas)
+                    {
+                        // Um cadastro compartilhado continua disponível para as outras equipes.
+                        MySqlCommand comando = Comando(conexao, transacao, @"DELETE atleta FROM atleta
                         LEFT JOIN equipe_atleta ON equipe_atleta.atleta_id = atleta.id
                         WHERE atleta.id = @atletaId AND equipe_atleta.id IS NULL");
-                    comando.Parameters.AddWithValue("@atletaId", atletaId);
-                    comando.ExecuteNonQuery();
+                        try
+                        {
+                            comando.Parameters.AddWithValue("@atletaId", atletaId);
+                            comando.ExecuteNonQuery();
+                        }
+                        finally
+                        {
+                            comando.Dispose();
+                        }
+                    }
+
+                    transacao.Commit();
                 }
-                transacao.Commit();
+                finally
+                {
+                    transacao.Dispose();
+                }
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
@@ -126,26 +235,34 @@ namespace Limk.VolleyBall.Backend
             }
         }
 
-        private static void VerificarAcesso(MySqlConnection conexao, MySqlTransaction transacao,
-            int usuarioId, int equipeId)
+        private static void VerificarAcesso(MySqlConnection conexao, MySqlTransaction transacao, int usuarioId, int equipeId)
         {
             if (!TemAcessoEquipe(conexao, transacao, usuarioId, equipeId))
+            {
                 throw new UnauthorizedAccessException("Equipe não encontrada nas suas equipes.");
+            }
         }
 
-        internal static bool TemAcessoEquipe(MySqlConnection conexao, MySqlTransaction transacao,
-            int usuarioId, int equipeId)
+        internal static bool TemAcessoEquipe(MySqlConnection conexao, MySqlTransaction transacao, int usuarioId, int equipeId)
         {
-            using MySqlCommand acesso = Comando(conexao, transacao,
-                "SELECT equipe_id FROM usuario_equipe WHERE usuario_id = @usuarioId AND equipe_id = @equipeId");
-            acesso.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
-            acesso.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
-            return acesso.ExecuteScalar() != null;
+            MySqlCommand acesso = Comando(conexao, transacao, "SELECT equipe_id FROM usuario_equipe WHERE usuario_id = @usuarioId AND equipe_id = @equipeId");
+            try
+            {
+                acesso.Parameters.Add("@equipeId", MySqlDbType.Int32).Value = equipeId;
+                acesso.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId;
+                return acesso.ExecuteScalar() != null;
+            }
+            finally
+            {
+                acesso.Dispose();
+            }
         }
 
         private static MySqlCommand Comando(MySqlConnection conexao, MySqlTransaction transacao, string sql)
         {
-            return new MySqlCommand(sql, conexao, transacao) { CommandTimeout = 5 };
+            MySqlCommand comando = new MySqlCommand(sql, conexao, transacao);
+            comando.CommandTimeout = 5;
+            return comando;
         }
     }
 }

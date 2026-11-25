@@ -7,12 +7,14 @@ namespace Limk.VolleyBall.User_Constrols
     {
         private bool _cadastrando;
         private bool _organizandoFormulario;
-
         internal event EventHandler<UsuarioAutenticado>? CadastroConcluido;
         internal event EventHandler? VoltarParaLogin;
         internal IButtonControl BotaoCadastrar
         {
-            get { return btnCadastrar; }
+            get
+            {
+                return btnCadastrar;
+            }
         }
 
         public TelaCadastroUsuario()
@@ -34,21 +36,56 @@ namespace Limk.VolleyBall.User_Constrols
         private void AjustarLayout()
         {
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            {
                 return;
+            }
 
             bool compacto = ClientSize.Width < LogicalToDeviceUnits(760);
             SuspendLayout();
-            pnlMarca.Dock = compacto ? DockStyle.Top : DockStyle.Left;
+            if (compacto)
+            {
+                pnlMarca.Dock = DockStyle.Top;
+            }
+            else
+            {
+                pnlMarca.Dock = DockStyle.Left;
+            }
+
             pnlMarca.Height = LogicalToDeviceUnits(56);
             pnlMarca.Width = Math.Min(ClientSize.Width * 37 / 100, LogicalToDeviceUnits(400));
-            layoutMarca.Padding = compacto
-                ? new Padding(LogicalToDeviceUnits(18), 0, LogicalToDeviceUnits(18), 0)
-                : new Padding(LogicalToDeviceUnits(28));
-            layoutMarca.RowStyles[0].Height = LogicalToDeviceUnits(compacto ? 56 : 72);
-            layoutMarca.RowStyles[2].Height = compacto ? 0 : LogicalToDeviceUnits(150);
-            layoutLogo.Size = LogicalToDeviceUnits(compacto ? new Size(190, 50) : new Size(227, 72));
-            layoutLogo.ColumnStyles[0].Width = LogicalToDeviceUnits(compacto ? 56 : 84);
-            imgLogo.Size = LogicalToDeviceUnits(compacto ? new Size(42, 42) : new Size(64, 64));
+            if (compacto)
+            {
+                layoutMarca.Padding = new Padding(LogicalToDeviceUnits(18), 0, LogicalToDeviceUnits(18), 0);
+            }
+            else
+            {
+                layoutMarca.Padding = new Padding(LogicalToDeviceUnits(28));
+            }
+
+            if (compacto)
+            {
+                layoutMarca.RowStyles[2].Height = 0;
+            }
+            else
+            {
+                layoutMarca.RowStyles[2].Height = LogicalToDeviceUnits(150);
+            }
+
+            // LogicalToDeviceUnits adapta as medidas à escala de tela configurada no Windows.
+            if (compacto)
+            {
+                layoutMarca.RowStyles[0].Height = LogicalToDeviceUnits(56);
+                layoutLogo.Size = LogicalToDeviceUnits(new Size(190, 50));
+                layoutLogo.ColumnStyles[0].Width = LogicalToDeviceUnits(56);
+                imgLogo.Size = LogicalToDeviceUnits(new Size(42, 42));
+            }
+            else
+            {
+                layoutMarca.RowStyles[0].Height = LogicalToDeviceUnits(72);
+                layoutLogo.Size = LogicalToDeviceUnits(new Size(227, 72));
+                layoutLogo.ColumnStyles[0].Width = LogicalToDeviceUnits(84);
+                imgLogo.Size = LogicalToDeviceUnits(new Size(64, 64));
+            }
             imgQuadra.Visible = !compacto;
             lblPrancheta.Visible = !compacto;
             ResumeLayout(true);
@@ -62,9 +99,10 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void PosicionarFormulario()
         {
-            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
-                _organizandoFormulario || pnlConteudo.Width <= 0)
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime || _organizandoFormulario || pnlConteudo.Width <= 0)
+            {
                 return;
+            }
 
             _organizandoFormulario = true;
             try
@@ -101,25 +139,42 @@ namespace Limk.VolleyBall.User_Constrols
         {
             txtSenha.UseSystemPasswordChar = !chkMostrarSenhas.Checked;
             txtConfirmarSenha.UseSystemPasswordChar = !chkMostrarSenhas.Checked;
-            chkMostrarSenhas.Text = chkMostrarSenhas.Checked ? "Ocultar senhas" : "Mostrar senhas";
+            if (chkMostrarSenhas.Checked)
+            {
+                chkMostrarSenhas.Text = "Ocultar senhas";
+            }
+            else
+            {
+                chkMostrarSenhas.Text = "Mostrar senhas";
+            }
         }
 
         private void campo_TextChanged(object? sender, EventArgs e)
         {
             if (!_cadastrando && lblMensagem.Text.Length > 0)
-                ExibirMensagem(string.Empty);
+            {
+                ExibirMensagem("");
+            }
         }
 
         private void lnkVoltarLogin_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
         {
             if (!_cadastrando)
-                VoltarParaLogin?.Invoke(this, EventArgs.Empty);
+            {
+                if (VoltarParaLogin != null)
+                {
+                    VoltarParaLogin(this, EventArgs.Empty);
+                }
+            }
         }
 
         private void btnCadastrar_Click(object? sender, EventArgs e)
         {
             if (_cadastrando)
+            {
                 return;
+            }
+
             if (txtSenha.Text != txtConfirmarSenha.Text)
             {
                 txtConfirmarSenha.Select();
@@ -151,7 +206,10 @@ namespace Limk.VolleyBall.User_Constrols
             txtSenha.Clear();
             txtConfirmarSenha.Clear();
             chkMostrarSenhas.Checked = false;
-            CadastroConcluido?.Invoke(this, usuario);
+            if (CadastroConcluido != null)
+            {
+                CadastroConcluido(this, usuario);
+            }
         }
 
         private void DefinirCarregamento(bool carregando)
@@ -172,18 +230,28 @@ namespace Limk.VolleyBall.User_Constrols
             }
             else if (lblMensagem.Text == "Criando sua conta...")
             {
-                ExibirMensagem(string.Empty);
+                ExibirMensagem("");
             }
         }
 
         private void ExibirMensagem(string texto, bool erro = false)
         {
-            lblMensagem.ForeColor = erro ? Color.FromArgb(155, 39, 64) : Color.FromArgb(100, 116, 139);
+            if (erro)
+            {
+                lblMensagem.ForeColor = Color.FromArgb(155, 39, 64);
+            }
+            else
+            {
+                lblMensagem.ForeColor = Color.FromArgb(100, 116, 139);
+            }
+
             lblMensagem.Text = texto;
             lblMensagem.Visible = texto.Length > 0;
             PosicionarFormulario();
             if (texto.Length > 0)
+            {
                 pnlConteudo.ScrollControlIntoView(lblMensagem);
+            }
         }
     }
 }

@@ -2,9 +2,23 @@ namespace Limk.VolleyBall.Backend
 {
     internal class EquipeInicio
     {
-        private string nome = "";
+        private string nome;
         private long atletas;
         private long taticas;
+
+        public EquipeInicio()
+        {
+            nome = "";
+            atletas = 0;
+            taticas = 0;
+        }
+
+        public EquipeInicio(string nome, long atletas, long taticas)
+        {
+            this.nome = nome;
+            this.atletas = atletas;
+            this.taticas = taticas;
+        }
 
         public string GetNome()
         {

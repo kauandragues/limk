@@ -9,6 +9,22 @@ namespace Limk.VolleyBall.Backend
         private List<TaticaInicio> ultimasTaticas = new List<TaticaInicio>();
         private List<EquipeInicio> equipesCadastradas = new List<EquipeInicio>();
 
+        public ResumoInicio()
+        {
+            equipes = 0;
+            atletas = 0;
+            taticas = 0;
+            quadros = 0;
+        }
+
+        public ResumoInicio(long equipes, long atletas, long taticas, long quadros)
+        {
+            this.equipes = equipes;
+            this.atletas = atletas;
+            this.taticas = taticas;
+            this.quadros = quadros;
+        }
+
         public long GetEquipes()
         {
             return equipes;

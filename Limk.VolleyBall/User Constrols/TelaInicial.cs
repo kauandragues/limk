@@ -7,9 +7,7 @@ namespace Limk.VolleyBall.User_Constrols
     {
         private UsuarioAutenticado? _usuario;
         private bool _carregando;
-
         public event EventHandler<UserControl>? TelaSolicitada;
-
         public TelaInicial()
         {
             InitializeComponent();
@@ -27,7 +25,9 @@ namespace Limk.VolleyBall.User_Constrols
         private void TelaInicial_Load(object? sender, EventArgs e)
         {
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            {
                 return;
+            }
 
             AtualizarInicio();
         }
@@ -40,17 +40,17 @@ namespace Limk.VolleyBall.User_Constrols
         private void AtualizarInicio()
         {
             if (_carregando || _usuario == null || IsDisposed)
+            {
                 return;
+            }
 
             _carregando = true;
             btnAtualizar.Enabled = false;
             lblStatusBanco.ForeColor = Color.FromArgb(100, 116, 139);
             lblStatusBanco.Text = "Consultando o banco de dados...";
-
             try
             {
                 ResumoInicio resumo = DadosInicio.Carregar(_usuario.GetId());
-
                 lblTotalEquipes.Text = resumo.GetEquipes().ToString("N0");
                 lblTotalAtletas.Text = resumo.GetAtletas().ToString("N0");
                 lblTotalTaticas.Text = resumo.GetTaticas().ToString("N0");
@@ -61,7 +61,6 @@ namespace Limk.VolleyBall.User_Constrols
             }
             catch (Exception)
             {
-
                 lblTotalEquipes.Text = "—";
                 lblTotalAtletas.Text = "—";
                 lblTotalTaticas.Text = "—";
@@ -88,7 +87,6 @@ namespace Limk.VolleyBall.User_Constrols
             LimparCartoes(layoutListaTaticas);
             lblEstadoTaticas.Text = "Nenhuma tática nas equipes às quais você tem acesso.";
             lblEstadoTaticas.Visible = taticas.Count == 0;
-
             foreach (TaticaInicio tatica in taticas)
             {
                 CartaoTaticaInicio cartao = new CartaoTaticaInicio();
@@ -100,6 +98,7 @@ namespace Limk.VolleyBall.User_Constrols
                 layoutListaTaticas.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 layoutListaTaticas.Controls.Add(cartao, 0, linha);
             }
+
             layoutListaTaticas.ResumeLayout(true);
         }
 
@@ -109,7 +108,6 @@ namespace Limk.VolleyBall.User_Constrols
             LimparCartoes(layoutListaEquipes);
             lblEstadoEquipes.Text = "Nenhuma equipe vinculada ao seu usuário.";
             lblEstadoEquipes.Visible = equipes.Count == 0;
-
             foreach (EquipeInicio equipe in equipes)
             {
                 CartaoEquipeInicio cartao = new CartaoEquipeInicio();
@@ -120,6 +118,7 @@ namespace Limk.VolleyBall.User_Constrols
                 layoutListaEquipes.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 layoutListaEquipes.Controls.Add(cartao, 0, linha);
             }
+
             layoutListaEquipes.ResumeLayout(true);
         }
 
@@ -127,7 +126,10 @@ namespace Limk.VolleyBall.User_Constrols
         {
             // Remove os cartões anteriores antes de atualizar os dados.
             while (lista.Controls.Count > 0)
+            {
                 lista.Controls[0].Dispose();
+            }
+
             lista.RowStyles.Clear();
             lista.RowCount = 0;
         }
@@ -139,32 +141,50 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void itemConfiguracoes_Click(object? sender, EventArgs e)
         {
-            TelaSolicitada?.Invoke(this, new TelaConfiguracoes());
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaConfiguracoes());
+            }
         }
 
         private void btnPrancheta_Click(object? sender, EventArgs e)
         {
-            TelaSolicitada?.Invoke(this, new TelaPranchetaTatica());
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaPranchetaTatica());
+            }
         }
 
         private void btnTaticas_Click(object? sender, EventArgs e)
         {
-            TelaSolicitada?.Invoke(this, new TelaTaticas());
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaTaticas());
+            }
         }
 
         private void btnEquipes_Click(object? sender, EventArgs e)
         {
-            TelaSolicitada?.Invoke(this, new TelaEquipes());
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaEquipes());
+            }
         }
 
         private void btnAtletas_Click(object? sender, EventArgs e)
         {
-            TelaSolicitada?.Invoke(this, new TelaAtletas());
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaAtletas());
+            }
         }
 
         private void SolicitarAbertura(object? sender, int id)
         {
-            TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id));
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaPranchetaTatica(id));
+            }
         }
     }
 }

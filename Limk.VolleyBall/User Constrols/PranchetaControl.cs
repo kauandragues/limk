@@ -17,9 +17,9 @@ namespace Limk.VolleyBall.User_Constrols
         private Color _corAtletaPrincipal;
         private Color _corAtletaAdversario;
         private Color _corBola;
-
         public PranchetaControl()
         {
+            // Desenha primeiro em memória para evitar que a quadra pisque durante os movimentos.
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
             AplicarPreferencias(PreferenciasUsuario.CriarPadrao());
@@ -46,14 +46,18 @@ namespace Limk.VolleyBall.User_Constrols
         public void SelecionarElemento(ElementoQuadra? elemento)
         {
             if (elemento != null && !_elementos.Contains(elemento))
+            {
                 throw new ArgumentException("O elemento deve pertencer à prancheta.", nameof(elemento));
+            }
 
             _arrastando = false;
             Capture = false;
             _selecionado = elemento;
             Invalidate();
             if (SelecaoAlterada != null)
+            {
                 SelecaoAlterada(this, EventArgs.Empty);
+            }
         }
 
         // A imagem cabe no controle com 20 pixels de margem. Escalar os dois lados
@@ -63,16 +67,12 @@ namespace Limk.VolleyBall.User_Constrols
             const float margem = 20f;
             float larguraDisponivel = Math.Max(0f, ClientSize.Width - 2 * margem);
             float alturaDisponivel = Math.Max(0f, ClientSize.Height - 2 * margem);
-            float escala = Math.Min(larguraDisponivel / _imagemQuadra.Width,
-                                    alturaDisponivel / _imagemQuadra.Height);
+            float escala = Math.Min(larguraDisponivel / _imagemQuadra.Width, alturaDisponivel / _imagemQuadra.Height);
             float largura = _imagemQuadra.Width * escala;
             float altura = _imagemQuadra.Height * escala;
             float esquerda = (ClientSize.Width - largura) / 2;
             float topo = (ClientSize.Height - altura) / 2;
-
-            return new RectangleF(esquerda * _zoom + _deslocamentoVisao.X,
-                                  topo * _zoom + _deslocamentoVisao.Y,
-                                  largura * _zoom, altura * _zoom);
+            return new RectangleF(esquerda * _zoom + _deslocamentoVisao.X, topo * _zoom + _deslocamentoVisao.Y, largura * _zoom, altura * _zoom);
         }
 
         private PointF CalcularCentroNaTela(ElementoQuadra elemento, RectangleF quadra)
@@ -87,7 +87,9 @@ namespace Limk.VolleyBall.User_Constrols
         {
             float ladoMenor = Math.Min(quadra.Width, quadra.Height);
             if (elemento is PosicaoBola)
+            {
                 return ladoMenor * 0.025f;
+            }
 
             return ladoMenor * 0.04f;
         }
@@ -97,14 +99,19 @@ namespace Limk.VolleyBall.User_Constrols
             base.OnPaint(e);
             RectangleF quadra = CalcularQuadraNaTela();
             if (quadra.Width <= 0 || quadra.Height <= 0)
+            {
                 return;
+            }
 
             Graphics desenho = e.Graphics;
+            // A suavização deixa as bordas dos círculos e a imagem menos serrilhadas.
             desenho.SmoothingMode = SmoothingMode.AntiAlias;
             desenho.InterpolationMode = InterpolationMode.HighQualityBicubic;
             desenho.DrawImage(_imagemQuadra, quadra);
             foreach (ElementoQuadra elemento in _elementos)
+            {
                 DesenharElemento(desenho, elemento, quadra);
+            }
         }
 
         private void DesenharElemento(Graphics desenho, ElementoQuadra elemento, RectangleF quadra)
@@ -112,69 +119,104 @@ namespace Limk.VolleyBall.User_Constrols
             PointF centro = CalcularCentroNaTela(elemento, quadra);
             float raio = CalcularRaio(elemento, quadra);
             RectangleF circulo = new RectangleF(centro.X - raio, centro.Y - raio, 2 * raio, 2 * raio);
-
             Color cor = _corBola;
             AtletaQuadro? atleta = elemento as AtletaQuadro;
             if (atleta != null)
             {
                 cor = _corAtletaPrincipal;
                 if (atleta.GetLado() == LadoAtleta.Adversario)
+                {
                     cor = _corAtletaAdversario;
+                }
             }
 
-            using SolidBrush preenchimento = new SolidBrush(cor);
-            using Pen contorno = new Pen(Color.White, 2 * _zoom);
-            desenho.FillEllipse(preenchimento, circulo);
-            desenho.DrawEllipse(contorno, circulo);
-
-            if (elemento == _selecionado)
+            SolidBrush preenchimento = new SolidBrush(cor);
+            try
             {
-                using Pen destaque = new Pen(Color.FromArgb(25, 35, 58), 2 * _zoom);
-                RectangleF selecao = RectangleF.Inflate(circulo, 3 * _zoom, 3 * _zoom);
-                desenho.DrawEllipse(destaque, selecao);
+                Pen contorno = new Pen(Color.White, 2 * _zoom);
+                try
+                {
+                    desenho.FillEllipse(preenchimento, circulo);
+                    desenho.DrawEllipse(contorno, circulo);
+                    if (elemento == _selecionado)
+                    {
+                        Pen destaque = new Pen(Color.FromArgb(25, 35, 58), 2 * _zoom);
+                        try
+                        {
+                            RectangleF selecao = RectangleF.Inflate(circulo, 3 * _zoom, 3 * _zoom);
+                            desenho.DrawEllipse(destaque, selecao);
+                        }
+                        finally
+                        {
+                            destaque.Dispose();
+                        }
+                    }
+
+                    if (atleta != null)
+                    {
+                        DesenharNumeroAtleta(desenho, atleta.GetNumeroCamisa(), circulo, cor);
+                    }
+                }
+                finally
+                {
+                    contorno.Dispose();
+                }
             }
-            if (atleta != null)
-                DesenharNumeroAtleta(desenho, atleta.GetNumeroCamisa(), circulo, cor);
+            finally
+            {
+                preenchimento.Dispose();
+            }
         }
 
         private void DesenharNumeroAtleta(Graphics desenho, int numero, RectangleF circulo, Color corFundo)
         {
             // O diâmetro já está em pixels e inclui o zoom.
-            using Font fonte = new Font(
-                Font.FontFamily,
-                circulo.Height * 0.45f,
-                FontStyle.Bold,
-                GraphicsUnit.Pixel
-            );
-            using StringFormat formato = new StringFormat
+            Font fonte = new Font(Font.FontFamily, circulo.Height * 0.45f, FontStyle.Bold, GraphicsUnit.Pixel);
+            try
             {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center,
-                FormatFlags = StringFormatFlags.NoWrap
-            };
+                StringFormat formato = new StringFormat();
+                formato.Alignment = StringAlignment.Center;
+                formato.LineAlignment = StringAlignment.Center;
+                formato.FormatFlags = StringFormatFlags.NoWrap;
+                try
+                {
+                    // Esta conta estima se o fundo é claro para escolher um número preto ou branco.
+                    int luminancia = (299 * corFundo.R + 587 * corFundo.G + 114 * corFundo.B) / 1000;
+                    Brush corNumero = Brushes.White;
+                    if (luminancia >= 145)
+                    {
+                        corNumero = Brushes.Black;
+                    }
 
-            int luminancia = (299 * corFundo.R + 587 * corFundo.G + 114 * corFundo.B) / 1000;
-            Brush corNumero = Brushes.White;
-            if (luminancia >= 145)
-                corNumero = Brushes.Black;
-            desenho.DrawString(numero.ToString(), fonte, corNumero, circulo, formato);
+                    desenho.DrawString(numero.ToString(), fonte, corNumero, circulo, formato);
+                }
+                finally
+                {
+                    formato.Dispose();
+                }
+            }
+            finally
+            {
+                fonte.Dispose();
+            }
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
             if (e.Delta == 0)
+            {
                 return;
+            }
 
             // Uma posição na tela é a posição original multiplicada pelo zoom,
             // mais o deslocamento. Invertemos essa conta para achar o ponto sob o mouse.
             float pontoOriginalX = (e.X - _deslocamentoVisao.X) / _zoom;
             float pontoOriginalY = (e.Y - _deslocamentoVisao.Y) / _zoom;
-
             float passosDaRoda = e.Delta / 120f;
             float fator = MathF.Pow(1.1f, passosDaRoda);
+            // Clamp mantém o resultado entre os limites: aqui, de metade até quatro vezes o tamanho.
             _zoom = Math.Clamp(_zoom * fator, 0.5f, 4f);
-
             // O ponto original deve voltar ao mesmo pixel depois de ampliar ou reduzir.
             _deslocamentoVisao.X = e.X - pontoOriginalX * _zoom;
             _deslocamentoVisao.Y = e.Y - pontoOriginalY * _zoom;
@@ -186,13 +228,17 @@ namespace Limk.VolleyBall.User_Constrols
             base.OnMouseDown(e);
             Focus();
             if (e.Button != MouseButtons.Left)
+            {
                 return;
+            }
 
             RectangleF quadra = CalcularQuadraNaTela();
             ElementoQuadra? clicado = EncontrarElemento(e.Location, quadra);
             SelecionarElemento(clicado);
             if (clicado == null)
+            {
                 return;
+            }
 
             PointF centro = CalcularCentroNaTela(clicado, quadra);
             // Guardar a distância até o centro evita um salto ao clicar perto da borda.
@@ -205,7 +251,9 @@ namespace Limk.VolleyBall.User_Constrols
         private ElementoQuadra? EncontrarElemento(Point mouse, RectangleF quadra)
         {
             if (quadra.Width <= 0 || quadra.Height <= 0)
+            {
                 return null;
+            }
 
             // Em uma sobreposição, o último elemento desenhado está por cima.
             for (int indice = _elementos.Count - 1; indice >= 0; indice--)
@@ -216,8 +264,11 @@ namespace Limk.VolleyBall.User_Constrols
                 float distanciaX = mouse.X - centro.X;
                 float distanciaY = mouse.Y - centro.Y;
                 if (distanciaX * distanciaX + distanciaY * distanciaY <= raio * raio)
+                {
                     return elemento;
+                }
             }
+
             return null;
         }
 
@@ -225,11 +276,15 @@ namespace Limk.VolleyBall.User_Constrols
         {
             base.OnMouseMove(e);
             if (!_arrastando || _selecionado == null)
+            {
                 return;
+            }
 
             RectangleF quadra = CalcularQuadraNaTela();
             if (quadra.Width <= 0 || quadra.Height <= 0)
+            {
                 return;
+            }
 
             float centroX = e.X - _distanciaDoClique.X * _zoom;
             float centroY = e.Y - _distanciaDoClique.Y * _zoom;
@@ -239,7 +294,9 @@ namespace Limk.VolleyBall.User_Constrols
             _selecionado.SetY(Math.Clamp(yRelativo, 0f, 1f));
             Invalidate();
             if (PosicaoAlterada != null)
+            {
                 PosicaoAlterada(this, EventArgs.Empty);
+            }
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
@@ -256,7 +313,9 @@ namespace Limk.VolleyBall.User_Constrols
         {
             base.OnMouseCaptureChanged(e);
             if (!Capture)
+            {
                 _arrastando = false;
+            }
         }
     }
 }

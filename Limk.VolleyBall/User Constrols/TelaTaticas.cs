@@ -10,7 +10,6 @@ namespace Limk.VolleyBall.User_Constrols
         private DataTable _taticas = new DataTable();
         private bool _carregando;
         public event EventHandler<UserControl>? TelaSolicitada;
-
         public TelaTaticas()
         {
             InitializeComponent();
@@ -28,9 +27,10 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void TelaTaticas_Load(object? sender, EventArgs e)
         {
-            if (_usuario == null || _carregando || _taticas.Columns.Count > 0 || IsDisposed ||
-                DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            if (_usuario == null || _carregando || _taticas.Columns.Count > 0 || IsDisposed || DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            {
                 return;
+            }
 
             _carregando = true;
             label2.Text = "Carregando as táticas das suas equipes...";
@@ -38,9 +38,20 @@ namespace Limk.VolleyBall.User_Constrols
             {
                 DataTable equipes = DadosEquipe.Listar(_usuario.GetId());
                 DataTable taticas = DadosPrancheta.Listar(_usuario.GetId());
-                List<KeyValuePair<int, string>> opcoes = new List<KeyValuePair<int, string>> { new KeyValuePair<int, string>(0, "Todas as minhas equipes") };
+                // Cada opção guarda o código da equipe (Key) e o nome mostrado na lista (Value).
+                List<KeyValuePair<int, string>> opcoes = new List<KeyValuePair<int, string>>();
+                opcoes.Add(new KeyValuePair<int, string>(0, "Todas as minhas equipes"));
                 foreach (DataRow equipe in equipes.Rows)
-                    opcoes.Add(new KeyValuePair<int, string>(Convert.ToInt32(equipe["id"]), equipe["nome"].ToString()!));
+                {
+                    string? nome = equipe["nome"].ToString();
+                    if (nome == null)
+                    {
+                        nome = "";
+                    }
+
+                    opcoes.Add(new KeyValuePair<int, string>(Convert.ToInt32(equipe["id"]), nome));
+                }
+
                 comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
                 comboBox1.DisplayMember = "Value";
                 comboBox1.ValueMember = "Key";
@@ -50,10 +61,18 @@ namespace Limk.VolleyBall.User_Constrols
                 comboBox2.Items.Add("Todos os tipos");
                 foreach (DataRow registro in taticas.Rows)
                 {
-                    string tipo = registro["tipo"].ToString() ?? "";
+                    string? tipo = registro["tipo"].ToString();
+                    if (tipo == null)
+                    {
+                        tipo = "";
+                    }
+
                     if (tipo.Length > 0 && !comboBox2.Items.Contains(tipo))
+                    {
                         comboBox2.Items.Add(tipo);
+                    }
                 }
+
                 comboBox2.SelectedIndex = 0;
                 _taticas = taticas;
             }
@@ -65,28 +84,41 @@ namespace Limk.VolleyBall.User_Constrols
             {
                 _carregando = false;
             }
+
             if (!IsDisposed && _taticas.Columns.Count > 0)
+            {
                 ExibirTaticas();
+            }
         }
 
         private void FiltroAlterado(object? sender, EventArgs e)
         {
             if (!_carregando)
+            {
                 ExibirTaticas();
+            }
         }
 
         private void LimparFiltros_Click(object? sender, EventArgs e)
         {
             if (_carregando)
+            {
                 return;
+            }
 
             // Evita recriar os cartões a cada filtro removido.
             _carregando = true;
             textBox1.Clear();
             if (comboBox1.Items.Count > 0)
+            {
                 comboBox1.SelectedIndex = 0;
+            }
+
             if (comboBox2.Items.Count > 0)
+            {
                 comboBox2.SelectedIndex = 0;
+            }
+
             _carregando = false;
             ExibirTaticas();
         }
@@ -94,23 +126,59 @@ namespace Limk.VolleyBall.User_Constrols
         private void ExibirTaticas()
         {
             if (_taticas.Columns.Count == 0)
+            {
                 return;
+            }
+
             tableLayoutPanel1.SuspendLayout();
             while (tableLayoutPanel1.Controls.Count > 0)
+            {
                 tableLayoutPanel1.Controls[0].Dispose();
+            }
+
             tableLayoutPanel1.RowStyles.Clear();
             tableLayoutPanel1.RowCount = 0;
+            int equipeId = 0;
+            if (comboBox1.SelectedValue is int)
+            {
+                equipeId = (int)comboBox1.SelectedValue;
+            }
 
-            int equipeId = comboBox1.SelectedValue is int id ? id : 0;
-            string tipo = comboBox2.SelectedIndex > 0 ? comboBox2.Text : "";
+            string tipo;
+            if (comboBox2.SelectedIndex > 0)
+            {
+                tipo = comboBox2.Text;
+            }
+            else
+            {
+                tipo = "";
+            }
+
             string busca = textBox1.Text.Trim();
             int indice = 0;
             foreach (DataRow tatica in _taticas.Rows)
             {
-                if ((equipeId > 0 && Convert.ToInt32(tatica["equipe_id"]) != equipeId) ||
-                    (tipo.Length > 0 && tatica["tipo"].ToString() != tipo) ||
-                    !tatica["nome"].ToString()!.Contains(busca, StringComparison.OrdinalIgnoreCase))
+                string? nomeTatica = tatica["nome"].ToString();
+                if (nomeTatica == null)
+                {
+                    nomeTatica = "";
+                }
+
+                if (equipeId > 0 && Convert.ToInt32(tatica["equipe_id"]) != equipeId)
+                {
                     continue;
+                }
+
+                if (tipo.Length > 0 && tatica["tipo"].ToString() != tipo)
+                {
+                    continue;
+                }
+
+                if (!nomeTatica.Contains(busca, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 CardTática cartao = new CardTática();
                 cartao.ExibirTatica(tatica);
                 cartao.AbrirTatica += SolicitarAbertura;
@@ -118,28 +186,40 @@ namespace Limk.VolleyBall.User_Constrols
                 cartao.ExcluirTatica += ExcluirTatica;
                 cartao.Dock = DockStyle.Top;
                 int linha = indice / 2;
+                // A divisão encontra a linha. O resto da divisão (%) alterna a coluna entre 0 e 1.
                 if (linha >= tableLayoutPanel1.RowCount)
                 {
                     tableLayoutPanel1.RowCount++;
                     tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 }
+
                 tableLayoutPanel1.Controls.Add(cartao, indice % 2, linha);
                 indice++;
             }
+
             tableLayoutPanel1.ResumeLayout(true);
-            label2.Text = indice == 0 ? "Nenhuma tática nas equipes selecionadas." : $"{indice} táticas das suas equipes";
+            if (indice == 0)
+            {
+                label2.Text = "Nenhuma tática nas equipes selecionadas.";
+            }
+            else
+            {
+                label2.Text = $"{indice} táticas das suas equipes";
+            }
         }
 
         private void ExcluirTatica(object? sender, DataRow tatica)
         {
             if (_usuario == null || !tableLayoutPanel1.Enabled)
+            {
                 return;
+            }
 
-            string mensagem = $"Excluir a tática “{tatica["nome"]}” da equipe “{tatica["equipe"]}”?\n\n" +
-                "Todos os seus quadros e as posições de atletas e bola serão apagados.";
-            if (MessageBox.Show(this, mensagem, "Excluir tática", MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            string mensagem = $"Excluir a tática “{tatica["nome"]}” da equipe “{tatica["equipe"]}”?\n\n" + "Todos os seus quadros e as posições de atletas e bola serão apagados.";
+            if (MessageBox.Show(this, mensagem, "Excluir tática", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            {
                 return;
+            }
 
             tableLayoutPanel1.Enabled = false;
             try
@@ -148,7 +228,9 @@ namespace Limk.VolleyBall.User_Constrols
                 _taticas.Rows.Remove(tatica);
                 ExibirTaticas();
                 if (!excluida)
+                {
                     label2.Text = "Esta tática já foi excluída ou você perdeu o acesso à equipe.";
+                }
             }
             catch (BancoDeDadosException)
             {
@@ -162,18 +244,26 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void SolicitarNovaTatica(object? sender, EventArgs e)
         {
-            TelaSolicitada?.Invoke(this, new TelaPranchetaTatica());
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaPranchetaTatica());
+            }
         }
 
         private void SolicitarAbertura(object? sender, int id)
         {
-            TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id));
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaPranchetaTatica(id));
+            }
         }
 
         private void SolicitarApresentacao(object? sender, int id)
         {
-            TelaSolicitada?.Invoke(this, new TelaPranchetaTatica(id, apresentar: true));
+            if (TelaSolicitada != null)
+            {
+                TelaSolicitada(this, new TelaPranchetaTatica(id, apresentar: true));
+            }
         }
-
     }
 }

@@ -2,11 +2,26 @@ namespace Limk.VolleyBall.Backend
 {
     public class QuadroTatica
     {
-        private string nome = "Nova fase";
-        private int duracaoMs = 1000;
+        private string nome;
+        private int duracaoMs;
         private int? rotacao;
         private List<AtletaQuadro> atletas = new List<AtletaQuadro>();
         private PosicaoBola? bola;
+
+        public QuadroTatica()
+        {
+            nome = "Nova fase";
+            duracaoMs = 1000;
+            rotacao = null;
+            bola = null;
+        }
+
+        public QuadroTatica(string nome, int duracaoMs = 1000, int? rotacao = null)
+        {
+            this.nome = nome;
+            this.duracaoMs = duracaoMs;
+            this.rotacao = rotacao;
+        }
 
         public string GetNome()
         {
@@ -60,14 +75,16 @@ namespace Limk.VolleyBall.Backend
 
         public QuadroTatica Copiar()
         {
-            QuadroTatica copia = new QuadroTatica();
-            copia.SetNome(GetNome());
-            copia.SetDuracaoMs(GetDuracaoMs());
-            copia.SetRotacao(GetRotacao());
+            // Copiamos também os atletas e a bola para que editar uma fase não altere a outra.
+            QuadroTatica copia = new QuadroTatica(GetNome(), GetDuracaoMs(), GetRotacao());
             foreach (AtletaQuadro atleta in GetAtletas())
+            {
                 copia.GetAtletas().Add(atleta.Copiar());
+            }
             if (bola != null)
+            {
                 copia.SetBola(bola.Copiar());
+            }
             return copia;
         }
     }

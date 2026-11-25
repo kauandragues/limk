@@ -12,12 +12,14 @@ namespace Limk.VolleyBall.User_Constrols
         private const string MensagemCarregando = "Verificando seu acesso…";
         private bool autenticando;
         private bool organizandoFormulario;
-
         internal event EventHandler<UsuarioAutenticado>? LoginConcluido;
         internal event EventHandler? CriarContaSolicitada;
         internal IButtonControl BotaoEntrar
         {
-            get { return btnEntrar; }
+            get
+            {
+                return btnEntrar;
+            }
         }
 
         public TelaLogin()
@@ -51,26 +53,60 @@ namespace Limk.VolleyBall.User_Constrols
         private void AjustarLayout()
         {
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            {
                 return;
-            bool compacto = ClientSize.Width < LogicalToDeviceUnits(760);
+            }
 
+            bool compacto = ClientSize.Width < LogicalToDeviceUnits(760);
             SuspendLayout();
-            pnlMarca.Dock = compacto ? DockStyle.Top : DockStyle.Left;
+            if (compacto)
+            {
+                pnlMarca.Dock = DockStyle.Top;
+            }
+            else
+            {
+                pnlMarca.Dock = DockStyle.Left;
+            }
+
             pnlMarca.Height = LogicalToDeviceUnits(56);
             pnlMarca.Width = Math.Min(ClientSize.Width * 37 / 100, LogicalToDeviceUnits(400));
-            layoutMarca.Padding = compacto
-                ? new Padding(LogicalToDeviceUnits(18), 0, LogicalToDeviceUnits(18), 0)
-                : new Padding(LogicalToDeviceUnits(28));
-            layoutMarca.RowStyles[0].Height = LogicalToDeviceUnits(compacto ? 56 : 72);
-            layoutMarca.RowStyles[2].Height = compacto ? 0 : LogicalToDeviceUnits(150);
-            layoutLogo.Size = LogicalToDeviceUnits(compacto ? new Size(190, 50) : new Size(227, 72));
-            layoutLogo.ColumnStyles[0].Width = LogicalToDeviceUnits(compacto ? 56 : 84);
-            imgLogo.Size = LogicalToDeviceUnits(compacto ? new Size(42, 42) : new Size(64, 64));
+            if (compacto)
+            {
+                layoutMarca.Padding = new Padding(LogicalToDeviceUnits(18), 0, LogicalToDeviceUnits(18), 0);
+            }
+            else
+            {
+                layoutMarca.Padding = new Padding(LogicalToDeviceUnits(28));
+            }
+
+            if (compacto)
+            {
+                layoutMarca.RowStyles[2].Height = 0;
+            }
+            else
+            {
+                layoutMarca.RowStyles[2].Height = LogicalToDeviceUnits(150);
+            }
+
+            // LogicalToDeviceUnits adapta as medidas à escala de tela configurada no Windows.
+            if (compacto)
+            {
+                layoutMarca.RowStyles[0].Height = LogicalToDeviceUnits(56);
+                layoutLogo.Size = LogicalToDeviceUnits(new Size(190, 50));
+                layoutLogo.ColumnStyles[0].Width = LogicalToDeviceUnits(56);
+                imgLogo.Size = LogicalToDeviceUnits(new Size(42, 42));
+            }
+            else
+            {
+                layoutMarca.RowStyles[0].Height = LogicalToDeviceUnits(72);
+                layoutLogo.Size = LogicalToDeviceUnits(new Size(227, 72));
+                layoutLogo.ColumnStyles[0].Width = LogicalToDeviceUnits(84);
+                imgLogo.Size = LogicalToDeviceUnits(new Size(64, 64));
+            }
             imgQuadra.Visible = !compacto;
             lblPrancheta.Visible = !compacto;
             ResumeLayout(true);
             layoutLogo.PerformLayout();
-
             PosicionarFormulario();
         }
 
@@ -81,9 +117,10 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void PosicionarFormulario()
         {
-            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
-                organizandoFormulario || pnlConteudo.Width <= 0)
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime || organizandoFormulario || pnlConteudo.Width <= 0)
+            {
                 return;
+            }
 
             organizandoFormulario = true;
             try
@@ -91,7 +128,6 @@ namespace Limk.VolleyBall.User_Constrols
                 int margem = LogicalToDeviceUnits(18);
                 int largura = Math.Max(1, Math.Min(LogicalToDeviceUnits(452), pnlConteudo.Width - 2 * margem));
                 int altura = MedirFormulario(largura);
-
                 if (altura + 2 * margem > pnlConteudo.Height)
                 {
                     largura = Math.Max(1, Math.Min(largura, pnlConteudo.Width - 2 * margem - SystemInformation.VerticalScrollBarWidth));
@@ -119,40 +155,74 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void campo_Paint(object? sender, PaintEventArgs e)
         {
-            if (sender is Control campo)
-                ControlPaint.DrawBorder(e.Graphics, campo.ClientRectangle,
-                    campo.ContainsFocus ? CorAcao : CorBorda, ButtonBorderStyle.Solid);
+            Control? campo = sender as Control;
+            if (campo != null)
+            {
+                Color cor = CorBorda;
+                if (campo.ContainsFocus)
+                {
+                    cor = CorAcao;
+                }
+                ControlPaint.DrawBorder(e.Graphics, campo.ClientRectangle, cor, ButtonBorderStyle.Solid);
+            }
         }
 
         private void campo_FocoAlterado(object? sender, EventArgs e)
         {
-            if (sender is Control campo)
+            Control? campo = sender as Control;
+            if (campo != null)
+            {
                 campo.Invalidate();
+            }
         }
 
         private void chkMostrarSenha_CheckedChanged(object? sender, EventArgs e)
         {
             txtSenha.UseSystemPasswordChar = !chkMostrarSenha.Checked;
-            chkMostrarSenha.Text = chkMostrarSenha.Checked ? "Ocultar" : "Mostrar";
-            chkMostrarSenha.AccessibleName = chkMostrarSenha.Checked ? "Ocultar senha" : "Mostrar senha";
+            if (chkMostrarSenha.Checked)
+            {
+                chkMostrarSenha.Text = "Ocultar";
+            }
+            else
+            {
+                chkMostrarSenha.Text = "Mostrar";
+            }
+
+            if (chkMostrarSenha.Checked)
+            {
+                chkMostrarSenha.AccessibleName = "Ocultar senha";
+            }
+            else
+            {
+                chkMostrarSenha.AccessibleName = "Mostrar senha";
+            }
         }
 
         private void campo_TextChanged(object? sender, EventArgs e)
         {
             if (!autenticando && lblMensagem.Text.Length > 0)
-                ExibirMensagem(string.Empty);
+            {
+                ExibirMensagem("");
+            }
         }
 
         private void lnkCriarConta_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
         {
             if (!autenticando)
-                CriarContaSolicitada?.Invoke(this, EventArgs.Empty);
+            {
+                if (CriarContaSolicitada != null)
+                {
+                    CriarContaSolicitada(this, EventArgs.Empty);
+                }
+            }
         }
 
         private void btnEntrar_Click(object? sender, EventArgs e)
         {
             if (autenticando)
+            {
                 return;
+            }
 
             string email = txtEmail.Text.Trim();
             if (!MailAddress.TryCreate(email, out MailAddress? endereco) || endereco.Address != email)
@@ -194,7 +264,10 @@ namespace Limk.VolleyBall.User_Constrols
                 return;
             }
 
-            LoginConcluido?.Invoke(this, usuario);
+            if (LoginConcluido != null)
+            {
+                LoginConcluido(this, usuario);
+            }
         }
 
         private void DefinirCarregamento(bool carregando)
@@ -206,7 +279,6 @@ namespace Limk.VolleyBall.User_Constrols
             btnEntrar.Enabled = !carregando;
             lnkCriarConta.Enabled = !carregando;
             UseWaitCursor = carregando;
-
             if (carregando)
             {
                 chkMostrarSenha.Checked = false;
@@ -214,19 +286,28 @@ namespace Limk.VolleyBall.User_Constrols
             }
             else if (lblMensagem.Text == MensagemCarregando)
             {
-                ExibirMensagem(string.Empty);
+                ExibirMensagem("");
             }
         }
 
         private void ExibirMensagem(string texto, bool erro = false)
         {
-            lblMensagem.ForeColor = erro ? Color.FromArgb(155, 39, 64) : CorTextoSecundario;
+            if (erro)
+            {
+                lblMensagem.ForeColor = Color.FromArgb(155, 39, 64);
+            }
+            else
+            {
+                lblMensagem.ForeColor = CorTextoSecundario;
+            }
+
             lblMensagem.Text = texto;
             lblMensagem.Visible = texto.Length > 0;
             PosicionarFormulario();
-
             if (texto.Length > 0)
+            {
                 pnlConteudo.ScrollControlIntoView(lblMensagem);
+            }
         }
     }
 }

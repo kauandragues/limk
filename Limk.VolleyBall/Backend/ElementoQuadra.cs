@@ -6,6 +6,18 @@ namespace Limk.VolleyBall.Backend
         private float x;
         private float y;
 
+        protected ElementoQuadra()
+        {
+            x = 0;
+            y = 0;
+        }
+
+        protected ElementoQuadra(float x, float y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
         public float GetX()
         {
             return x;

@@ -3,8 +3,22 @@ namespace Limk.VolleyBall.Backend
     public class AtletaDaEquipe
     {
         private int equipeAtletaId;
-        private string nome = "Sem vínculo cadastrado";
+        private string nome;
         private int numeroCamisa;
+
+        public AtletaDaEquipe()
+        {
+            equipeAtletaId = 0;
+            nome = "Sem vínculo cadastrado";
+            numeroCamisa = 0;
+        }
+
+        public AtletaDaEquipe(int equipeAtletaId, string nome, int numeroCamisa)
+        {
+            this.equipeAtletaId = equipeAtletaId;
+            this.nome = nome;
+            this.numeroCamisa = numeroCamisa;
+        }
 
         public int GetEquipeAtletaId()
         {

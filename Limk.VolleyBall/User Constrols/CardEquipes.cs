@@ -11,9 +11,9 @@ namespace Limk.VolleyBall.User_Constrols
         private readonly Image? _iconeExcluir;
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int EquipeId { get; private set; }
+
         public event EventHandler? VerElenco;
         public event EventHandler? ExcluirEquipe;
-
         public CardEquipes()
         {
             InitializeComponent();
@@ -25,8 +25,15 @@ namespace Limk.VolleyBall.User_Constrols
         private void LiberarImagensDoCartao(object? sender, EventArgs e)
         {
             Disposed -= LiberarImagensDoCartao;
-            _escudoPadrao?.Dispose();
-            _iconeExcluir?.Dispose();
+            if (_escudoPadrao != null)
+            {
+                _escudoPadrao.Dispose();
+            }
+
+            if (_iconeExcluir != null)
+            {
+                _iconeExcluir.Dispose();
+            }
         }
 
         internal void ExibirEquipe(DataRow equipe)
@@ -37,14 +44,44 @@ namespace Limk.VolleyBall.User_Constrols
             label10.Text = $"{equipe["taticas"]} táticas";
             LiberarEscudo();
             _escudo = ImagemEscudo.CriarImagem(equipe["escudo"] as byte[]);
-            pictureBox3.Image = _escudo ?? _escudoPadrao;
-            pictureBox3.BackColor = _escudo == null ? Color.MediumSlateBlue : Color.White;
+            if (_escudo == null)
+            {
+                pictureBox3.Image = _escudoPadrao;
+            }
+            else
+            {
+                pictureBox3.Image = _escudo;
+            }
+
+            if (_escudo == null)
+            {
+                pictureBox3.BackColor = Color.MediumSlateBlue;
+            }
+            else
+            {
+                pictureBox3.BackColor = Color.White;
+            }
         }
 
         internal void DefinirSelecionado(bool selecionado)
         {
-            panel3.BackColor = selecionado ? Color.FromArgb(243, 237, 255) : Color.White;
-            label8.ForeColor = selecionado ? Color.FromArgb(92, 48, 154) : Color.Black;
+            if (selecionado)
+            {
+                panel3.BackColor = Color.FromArgb(243, 237, 255);
+            }
+            else
+            {
+                panel3.BackColor = Color.White;
+            }
+
+            if (selecionado)
+            {
+                label8.ForeColor = Color.FromArgb(92, 48, 154);
+            }
+            else
+            {
+                label8.ForeColor = Color.Black;
+            }
         }
 
         private void SelecionarCartao(object? sender, EventArgs e)
@@ -55,17 +92,28 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void button8_Click(object? sender, EventArgs e)
         {
-            VerElenco?.Invoke(this, e);
+            if (VerElenco != null)
+            {
+                VerElenco(this, e);
+            }
         }
+
         private void button1_Click(object? sender, EventArgs e)
         {
-            ExcluirEquipe?.Invoke(this, e);
+            if (ExcluirEquipe != null)
+            {
+                ExcluirEquipe(this, e);
+            }
         }
 
         private void LiberarEscudo()
         {
             pictureBox3.Image = null;
-            _escudo?.Dispose();
+            if (_escudo != null)
+            {
+                _escudo.Dispose();
+            }
+
             _escudo = null;
         }
     }

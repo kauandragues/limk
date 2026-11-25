@@ -3,12 +3,36 @@ namespace Limk.VolleyBall.Backend
     public class Atleta
     {
         private int id;
-        private string nome = string.Empty;
-        private string apelido = string.Empty;
+        private string nome;
+        private string apelido;
         private int numeroCamisa;
+        // O ? permite deixar a data como null quando ela não foi informada.
         private DateTime? dataNascimento;
         private int idEquipe;
         private bool titular;
+
+        public Atleta()
+        {
+            id = 0;
+            nome = "";
+            apelido = "";
+            numeroCamisa = 0;
+            dataNascimento = null;
+            idEquipe = 0;
+            titular = false;
+        }
+
+        public Atleta(int id, string nome, string apelido, int numeroCamisa, DateTime? dataNascimento,
+            int idEquipe, bool titular)
+        {
+            this.id = id;
+            this.nome = nome;
+            this.apelido = apelido;
+            this.numeroCamisa = numeroCamisa;
+            this.dataNascimento = dataNascimento;
+            this.idEquipe = idEquipe;
+            this.titular = titular;
+        }
 
         public int GetId()
         {

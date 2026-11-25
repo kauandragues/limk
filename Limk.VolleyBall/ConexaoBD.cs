@@ -1,7 +1,6 @@
 ﻿using Limk.VolleyBall.Backend;
 using MySql.Data.MySqlClient;
 using System.Data;
-using System.Globalization;
 
 namespace Limk.VolleyBall
 {
@@ -9,27 +8,49 @@ namespace Limk.VolleyBall
     {
         public static void Abrir(MySqlConnection conexao)
         {
-            string? portaConfigurada = Environment.GetEnvironmentVariable("DB_PORT");
-            ushort porta = 3306;
-            if (!string.IsNullOrWhiteSpace(portaConfigurada) &&
-                (!ushort.TryParse(portaConfigurada, NumberStyles.Integer, CultureInfo.InvariantCulture, out porta) || porta == 0))
+            string portaConfigurada = LerConfiguracao("DB_PORT");
+            int porta = 3306;
+            if (!string.IsNullOrWhiteSpace(portaConfigurada))
             {
-                throw new FormatException("DB_PORT deve conter uma porta entre 1 e 65535.");
+                // TryParse tenta transformar o texto em número e informa se a conversão funcionou.
+                bool portaValida = int.TryParse(portaConfigurada, out porta);
+                if (!portaValida || porta < 1 || porta > 65535)
+                {
+                    throw new FormatException("DB_PORT deve conter uma porta entre 1 e 65535.");
+                }
             }
 
-            string? servidor = Environment.GetEnvironmentVariable("DB_SERVER");
-            MySqlConnectionStringBuilder configuracao = new MySqlConnectionStringBuilder
+            string servidor = LerConfiguracao("DB_SERVER");
+            if (string.IsNullOrWhiteSpace(servidor))
             {
-                Server = string.IsNullOrWhiteSpace(servidor) ? "localhost" : servidor.Trim(),
-                Port = porta,
-                Database = Environment.GetEnvironmentVariable("DB_NAME") ?? "",
-                UserID = Environment.GetEnvironmentVariable("DB_USER") ?? "",
-                Password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "",
-                ConnectionTimeout = 5
-            };
+                servidor = "localhost";
+            }
+            else
+            {
+                servidor = servidor.Trim();
+            }
 
+            MySqlConnectionStringBuilder configuracao = new MySqlConnectionStringBuilder();
+            configuracao.Server = servidor;
+            configuracao.Port = (uint)porta;
+            configuracao.Database = LerConfiguracao("DB_NAME");
+            configuracao.UserID = LerConfiguracao("DB_USER");
+            configuracao.Password = LerConfiguracao("DB_PASSWORD");
+            configuracao.ConnectionTimeout = 5;
             conexao.ConnectionString = configuracao.ConnectionString;
             conexao.Open();
+        }
+
+        private static string LerConfiguracao(string nome)
+        {
+            // As variáveis de ambiente guardam as configurações carregadas do arquivo .env.
+            string? valor = Environment.GetEnvironmentVariable(nome);
+            if (valor == null)
+            {
+                return "";
+            }
+
+            return valor;
         }
 
         public static void Fechar(MySqlConnection conexao)
@@ -44,28 +65,48 @@ namespace Limk.VolleyBall
             try
             {
                 Abrir(conexao);
-                using MySqlCommand comando = new MySqlCommand(sql, conexao) { CommandTimeout = 5 };
-                if (usuarioId.HasValue)
-                    comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId.Value;
-                using MySqlDataReader leitor = comando.ExecuteReader();
-                DataTable tabela = new DataTable();
-                tabela.Load(leitor);
-                return tabela;
+                MySqlCommand comando = new MySqlCommand(sql, conexao);
+                comando.CommandTimeout = 5;
+                try
+                {
+                    if (usuarioId.HasValue)
+                    {
+                        // O parâmetro envia o valor separadamente, sem misturá-lo ao texto do SQL.
+                        comando.Parameters.Add("@usuarioId", MySqlDbType.Int32).Value = usuarioId.Value;
+                    }
+
+                    MySqlDataReader leitor = comando.ExecuteReader();
+                    try
+                    {
+                        DataTable tabela = new DataTable();
+                        tabela.Load(leitor);
+                        return tabela;
+                    }
+                    finally
+                    {
+                        leitor.Dispose();
+                    }
+                }
+                finally
+                {
+                    comando.Dispose();
+                }
             }
+            // when limita este catch aos tipos de erro relacionados ao acesso ao banco.
             catch (Exception erro) when (EhFalhaDeBanco(erro))
             {
                 throw new BancoDeDadosException("Não foi possível consultar os dados. Verifique a conexão.", erro);
             }
             finally
             {
+                // finally executa mesmo quando ocorre um erro ou um return dentro do try.
                 Fechar(conexao);
             }
         }
 
         public static bool EhFalhaDeBanco(Exception erro)
         {
-            return erro is MySqlException || erro is InvalidOperationException || erro is ArgumentException
-                || erro is FormatException || erro is OverflowException || erro is TimeoutException;
+            return erro is MySqlException || erro is InvalidOperationException || erro is ArgumentException || erro is FormatException || erro is OverflowException || erro is TimeoutException;
         }
     }
 }

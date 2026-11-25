@@ -4,10 +4,33 @@ namespace Limk.VolleyBall.Backend
     // Alterar outra fase ou o cadastro do elenco não altera essa fotografia.
     public class AtletaQuadro : ElementoQuadra
     {
+        // O ? permite usar null quando o atleta não está ligado a um cadastro do elenco.
         private int? equipeAtletaId;
-        private string nome = "";
+        private string nome;
         private int numeroCamisa;
         private LadoAtleta lado;
+
+        public AtletaQuadro()
+        {
+            equipeAtletaId = null;
+            nome = "";
+            numeroCamisa = 0;
+            lado = LadoAtleta.Principal;
+            SetX(0);
+            SetY(0);
+        }
+
+        public AtletaQuadro(int? equipeAtletaId, string nome, int numeroCamisa, LadoAtleta lado,
+            float x, float y)
+        {
+            this.equipeAtletaId = equipeAtletaId;
+            this.nome = nome;
+            this.numeroCamisa = numeroCamisa;
+            this.lado = lado;
+            // As coordenadas pertencem à classe ElementoQuadra, que fornece estes métodos.
+            SetX(x);
+            SetY(y);
+        }
 
         public int? GetEquipeAtletaId()
         {
@@ -51,14 +74,7 @@ namespace Limk.VolleyBall.Backend
 
         public AtletaQuadro Copiar()
         {
-            AtletaQuadro atletaDaFase = new AtletaQuadro();
-            atletaDaFase.SetEquipeAtletaId(GetEquipeAtletaId());
-            atletaDaFase.SetNome(GetNome());
-            atletaDaFase.SetNumeroCamisa(GetNumeroCamisa());
-            atletaDaFase.SetLado(GetLado());
-            atletaDaFase.SetX(GetX());
-            atletaDaFase.SetY(GetY());
-            return atletaDaFase;
+            return new AtletaQuadro(GetEquipeAtletaId(), GetNome(), GetNumeroCamisa(), GetLado(), GetX(), GetY());
         }
     }
 }

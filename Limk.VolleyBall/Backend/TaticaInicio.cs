@@ -3,10 +3,28 @@ namespace Limk.VolleyBall.Backend
     internal class TaticaInicio
     {
         private int id;
-        private string nome = "";
-        private string descricao = "";
-        private string equipe = "";
+        private string nome;
+        private string descricao;
+        private string equipe;
         private long quadros;
+
+        public TaticaInicio()
+        {
+            id = 0;
+            nome = "";
+            descricao = "";
+            equipe = "";
+            quadros = 0;
+        }
+
+        public TaticaInicio(int id, string nome, string descricao, string equipe, long quadros)
+        {
+            this.id = id;
+            this.nome = nome;
+            this.descricao = descricao;
+            this.equipe = equipe;
+            this.quadros = quadros;
+        }
 
         public int GetId()
         {

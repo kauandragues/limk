@@ -3,16 +3,14 @@
     public partial class CartaoFaseControl : UserControl
     {
         private int _numero;
-        private string _nomeFase = string.Empty;
-        private string _tipo = string.Empty;
+        private string _nomeFase = "";
+        private string _tipo = "";
         private TimeSpan _inicio;
         private bool _ativo;
-        private decimal _duracao = 2m;
+        private int _duracaoMs = 2000;
         private Point _inicioArraste;
         private bool _mousePressionado;
-
         public event EventHandler? ArrasteSolicitado;
-
         public int GetNumero()
         {
             return _numero;
@@ -83,14 +81,14 @@
             }
         }
 
-        public decimal GetDuracao()
+        public int GetDuracaoMs()
         {
-            return _duracao;
+            return _duracaoMs;
         }
 
-        public void SetDuracao(decimal duracao)
+        public void SetDuracaoMs(int duracaoMs)
         {
-            _duracao = duracao;
+            _duracaoMs = duracaoMs;
         }
 
         public CartaoFaseControl()
@@ -113,16 +111,24 @@
         private void btnSelecionarFase_MouseMove(object? sender, MouseEventArgs e)
         {
             if (!_mousePressionado || e.Button != MouseButtons.Left)
+            {
                 return;
+            }
+
             // Um pequeno movimento ainda conta como clique, seguindo a tolerância do Windows.
             Size tolerancia = SystemInformation.DragSize;
-            Rectangle areaClique = new Rectangle(_inicioArraste.X - tolerancia.Width / 2,
-                _inicioArraste.Y - tolerancia.Height / 2, tolerancia.Width, tolerancia.Height);
+            Rectangle areaClique = new Rectangle(_inicioArraste.X - tolerancia.Width / 2, _inicioArraste.Y - tolerancia.Height / 2, tolerancia.Width, tolerancia.Height);
             if (areaClique.Contains(e.Location))
+            {
                 return;
+            }
+
             _mousePressionado = false;
             btnSelecionarFase.Capture = false;
-            ArrasteSolicitado?.Invoke(this, EventArgs.Empty);
+            if (ArrasteSolicitado != null)
+            {
+                ArrasteSolicitado(this, EventArgs.Empty);
+            }
         }
 
         private void btnSelecionarFase_MouseUp(object? sender, MouseEventArgs e)
@@ -134,12 +140,13 @@
         {
             string titulo = $"FASE {_numero:00}";
             if (_ativo)
+            {
                 titulo += " • ATIVA";
+            }
 
             long minutos = _inicio.Ticks / TimeSpan.TicksPerMinute;
             string horario = $"{minutos:00}:{_inicio.Seconds:00}.{_inicio.Milliseconds / 100}";
             btnSelecionarFase.Text = $"{titulo}\n{_nomeFase}\n{_tipo} • {horario}";
-
             if (_ativo)
             {
                 btnSelecionarFase.BackColor = Color.FromArgb(243, 237, 255);
