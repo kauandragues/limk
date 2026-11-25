@@ -72,7 +72,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível acessar as preferências.", erro);
+                throw new BancoDeDadosException("carregar as preferências", erro);
             }
             finally
             {
@@ -138,7 +138,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível acessar as preferências.", erro);
+                throw new BancoDeDadosException("salvar as preferências", erro);
             }
             finally
             {

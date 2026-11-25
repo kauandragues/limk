@@ -123,7 +123,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível carregar as posições. Verifique a conexão e tente novamente.", erro);
+                throw new BancoDeDadosException("carregar as posições", erro);
             }
             finally
             {
@@ -269,7 +269,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível salvar o atleta. Verifique a conexão e tente novamente.", erro);
+                throw new BancoDeDadosException("salvar o atleta", erro);
             }
             finally
             {
@@ -326,7 +326,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível excluir o atleta do elenco. Verifique a conexão e tente novamente.", erro);
+                throw new BancoDeDadosException("excluir o atleta do elenco", erro);
             }
             finally
             {

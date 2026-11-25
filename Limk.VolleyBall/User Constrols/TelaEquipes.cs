@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public partial class TelaEquipes : UserControl, ITelaUsuario
+    public partial class TelaEquipes : UserControl
     {
         private UsuarioAutenticado? _usuario;
         private DataTable _equipes = new DataTable();
@@ -15,10 +15,13 @@ namespace Limk.VolleyBall.User_Constrols
         private Bitmap? _imagemEscudo;
         private bool _pronto;
         private bool _operacao;
+        // Avisa o FormPrincipal para trocar de tela, por exemplo, ao abrir o elenco de uma equipe.
+        // EventHandler<UserControl> recebe a origem do pedido (sender) e a tela desejada.
         public event EventHandler<UserControl>? TelaSolicitada;
         public TelaEquipes()
         {
             InitializeComponent();
+            // No designer do Visual Studio, o return encerra o construtor após criar os controles visuais.
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
@@ -34,6 +37,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void TelaEquipes_Load(object? sender, EventArgs e)
         {
+            // Evita carregar equipes no designer do Visual Studio, sem usuário, durante uma operação ou com a tela já pronta.
             if (_usuario == null || _operacao || _pronto || DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;

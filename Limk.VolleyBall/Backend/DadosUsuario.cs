@@ -20,23 +20,23 @@ namespace Limk.VolleyBall.Backend
             email = email.Trim();
             if (nome.Length == 0 || Texto.ContarCaracteres(nome) > 100)
             {
-                throw new ValidacaoException("Informe seu nome com até 100 caracteres.");
+                throw new ValidacaoException("Informe seu nome com até 100 caracteres.", campo: "nome");
             }
 
             if (email.Length > LimiteEmail || !MailAddress.TryCreate(email, out MailAddress? endereco) || endereco.Address != email)
             {
-                throw new ValidacaoException("Informe um e-mail válido.");
+                throw new ValidacaoException("Informe um e-mail válido.", campo: "email");
             }
 
             if (string.IsNullOrWhiteSpace(senha) || Texto.ContarCaracteres(senha) < 8)
             {
-                throw new ValidacaoException("Use uma senha com pelo menos 8 caracteres.");
+                throw new ValidacaoException("Use uma senha com pelo menos 8 caracteres.", campo: "senha");
             }
 
             // O bcrypt usado no login aceita no máximo 72 bytes, inclusive em senhas com acentos.
             if (Encoding.UTF8.GetByteCount(senha) > LimiteSenhaEmBytes)
             {
-                throw new ValidacaoException("A senha é muito longa. Use uma senha menor.");
+                throw new ValidacaoException("A senha é muito longa. Use uma senha menor.", campo: "senha");
             }
 
             // O banco recebe um hash da senha. BCrypt permite conferir a senha sem guardar o texto original.
@@ -85,11 +85,11 @@ namespace Limk.VolleyBall.Backend
             }
             catch (MySqlException erro) when (erro.Number == 1062)
             {
-                throw new ValidacaoException("Já existe uma conta com este e-mail. Entre com sua senha ou use outro e-mail.", erro);
+                throw new ValidacaoException("Já existe uma conta com este e-mail. Entre com sua senha ou use outro e-mail.", erro, campo: "email");
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível criar a conta no banco.", erro);
+                throw new BancoDeDadosException("criar a conta", erro);
             }
             finally
             {
@@ -171,7 +171,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception ex) when (ConexaoBD.EhFalhaDeBanco(ex))
             {
-                throw new BancoDeDadosException("Não foi possível consultar o banco para entrar.", ex);
+                throw new BancoDeDadosException("consultar o usuário para entrar na conta", ex);
             }
             finally
             {

@@ -131,7 +131,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível gravar a equipe no banco.", erro);
+                throw new BancoDeDadosException("salvar a equipe", erro);
             }
             finally
             {
@@ -227,7 +227,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível gravar a equipe no banco.", erro);
+                throw new BancoDeDadosException("excluir a equipe", erro);
             }
             finally
             {

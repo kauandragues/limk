@@ -9,6 +9,7 @@ namespace Limk.VolleyBall
         public FormPrincipal()
         {
             InitializeComponent();
+            // O += registra o método que será chamado quando o menu disparar o evento de navegação.
             menuLateral1.OnMenuSelecionado += MenuLateral_OnMenuSelecionado;
             menuLateral1.SaidaDaContaSolicitada += SairDaConta;
             menuLateral1.Enabled = false;
@@ -30,6 +31,7 @@ namespace Limk.VolleyBall
             }
         }
 
+        // Recebe a tela enviada pelo menu ou por um atalho e encaminha o pedido para MostrarTela.
         private void MenuLateral_OnMenuSelecionado(object? sender, UserControl TelaExibir)
         {
             MostrarTela(TelaExibir);
@@ -89,31 +91,53 @@ namespace Limk.VolleyBall
 
         private void MostrarTela(UserControl tela)
         {
-            // A interface ITelaUsuario indica que esta tela sabe receber o usuário conectado.
-            ITelaUsuario? telaUsuario = tela as ITelaUsuario;
-            if (_usuario == null || telaUsuario == null || !ConfirmarSaidaDaTelaAtual())
+            if (_usuario == null || !ConfirmarSaidaDaTelaAtual())
             {
                 tela.Dispose();
                 return;
             }
 
-            telaUsuario.DefinirUsuario(_usuario);
+            // Cada tela recebe o usuário antes de ser adicionada ao painel.
             if (tela is TelaInicial)
             {
                 TelaInicial inicio = (TelaInicial)tela;
+                inicio.DefinirUsuario(_usuario);
                 inicio.TelaSolicitada += MenuLateral_OnMenuSelecionado;
             }
             else if (tela is TelaEquipes)
             {
                 TelaEquipes equipes = (TelaEquipes)tela;
+                equipes.DefinirUsuario(_usuario);
                 equipes.TelaSolicitada += MenuLateral_OnMenuSelecionado;
             }
             else if (tela is TelaTaticas)
             {
                 TelaTaticas taticas = (TelaTaticas)tela;
+                taticas.DefinirUsuario(_usuario);
                 taticas.TelaSolicitada += MenuLateral_OnMenuSelecionado;
             }
+            else if (tela is TelaAtletas)
+            {
+                TelaAtletas atletas = (TelaAtletas)tela;
+                atletas.DefinirUsuario(_usuario);
+            }
+            else if (tela is TelaPranchetaTatica)
+            {
+                TelaPranchetaTatica prancheta = (TelaPranchetaTatica)tela;
+                prancheta.DefinirUsuario(_usuario);
+            }
+            else if (tela is TelaConfiguracoes)
+            {
+                TelaConfiguracoes configuracoes = (TelaConfiguracoes)tela;
+                configuracoes.DefinirUsuario(_usuario);
+            }
+            else
+            {
+                tela.Dispose();
+                return;
+            }
 
+            // Descarta a tela anterior e coloca a nova no painel do formulário principal.
             LimparTelaAtual();
             tela.Dock = DockStyle.Fill;
             panelTelas.Controls.Add(tela);

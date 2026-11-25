@@ -3,7 +3,7 @@ using System.Drawing.Drawing2D;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public class PranchetaControl : Control
+    public partial class PranchetaControl : UserControl
     {
         private readonly List<ElementoQuadra> _elementos = new List<ElementoQuadra>();
         public event EventHandler? SelecaoAlterada;
@@ -19,6 +19,7 @@ namespace Limk.VolleyBall.User_Constrols
         private Color _corBola;
         public PranchetaControl()
         {
+            InitializeComponent();
             // Desenha primeiro em memória para evitar que a quadra pisque durante os movimentos.
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);

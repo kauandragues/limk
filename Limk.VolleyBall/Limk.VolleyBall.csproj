@@ -68,6 +68,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="User Constrols\PranchetaControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="User Constrols\PranchetaControl.Designer.cs">
+      <DependentUpon>PranchetaControl.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="User Constrols\PranchetaControl.resx">
+      <DependentUpon>PranchetaControl.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Update="User Constrols\CartaoFaseControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

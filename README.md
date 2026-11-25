@@ -69,7 +69,7 @@ O cadastro pede nome, e-mail, senha e confirmação. A senha precisa ter pelo me
 
 `Backend/DadosUsuario.cs` valida e grava a conta e suas preferências em uma transação. `User Constrols/TelaCadastroUsuario.Designer.cs` contém o layout editável no Visual Studio; `TelaCadastroUsuario.cs` trata os campos e o botão. `FormLogin.cs` alterna entre login e cadastro na mesma janela.
 
-O login informa o ID, o nome e o e-mail do usuário ao formulário principal. A interface `ITelaUsuario` permite que o formulário entregue essa identidade a cada tela antes de carregá-la, tanto pelo menu quanto pelos atalhos.
+O login informa o ID, o nome e o e-mail do usuário ao formulário principal. Antes de exibir uma tela, o formulário principal chama diretamente o método `DefinirUsuario` dela, tanto pelo menu quanto pelos atalhos.
 
 O acesso aos dados segue os vínculos da tabela `usuario_equipe`:
 

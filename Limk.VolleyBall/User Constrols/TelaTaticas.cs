@@ -4,11 +4,13 @@ using System.Data;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public partial class TelaTaticas : UserControl, ITelaUsuario
+    public partial class TelaTaticas : UserControl
     {
         private UsuarioAutenticado? _usuario;
         private DataTable _taticas = new DataTable();
         private bool _carregando;
+        // Avisa o FormPrincipal para abrir a prancheta ao criar, editar ou apresentar uma tática.
+        // EventHandler<UserControl> recebe a origem do pedido (sender) e a tela desejada.
         public event EventHandler<UserControl>? TelaSolicitada;
         public TelaTaticas()
         {
@@ -27,6 +29,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void TelaTaticas_Load(object? sender, EventArgs e)
         {
+            // Evita carregar táticas no designer do Visual Studio, sem usuário, durante outra carga ou após carregar ou descartar a tela.
             if (_usuario == null || _carregando || _taticas.Columns.Count > 0 || IsDisposed || DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;

@@ -92,7 +92,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível acessar os dados da tática.", erro);
+                throw new BancoDeDadosException("carregar o elenco da equipe", erro);
             }
             finally
             {
@@ -302,7 +302,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível acessar os dados da tática.", erro);
+                throw new BancoDeDadosException("carregar a tática", erro);
             }
             finally
             {
@@ -343,7 +343,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível acessar os dados da tática.", erro);
+                throw new BancoDeDadosException("salvar a tática", erro);
             }
             finally
             {
@@ -592,7 +592,7 @@ namespace Limk.VolleyBall.Backend
             }
             catch (Exception erro) when (ConexaoBD.EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível acessar os dados da tática.", erro);
+                throw new BancoDeDadosException("excluir a tática", erro);
             }
             finally
             {

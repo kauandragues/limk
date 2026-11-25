@@ -5,16 +5,45 @@ namespace Limk.VolleyBall.User_Constrols
 {
     internal sealed class MovimentoElemento
     {
-        // { get; } permite ler os dados de fora, mas só o construtor pode defini-los.
-        public ElementoQuadra Elemento { get; }
-        public PointF Inicio { get; }
-        public PointF Destino { get; }
+        private ElementoQuadra elemento;
+        private PointF inicio;
+        private PointF destino;
 
         public MovimentoElemento(ElementoQuadra elemento, PointF destino)
         {
-            Elemento = elemento;
-            Inicio = new PointF(elemento.GetX(), elemento.GetY());
-            Destino = destino;
+            this.elemento = elemento;
+            inicio = new PointF(elemento.GetX(), elemento.GetY());
+            this.destino = destino;
+        }
+
+        public ElementoQuadra GetElemento()
+        {
+            return elemento;
+        }
+
+        public void SetElemento(ElementoQuadra elemento)
+        {
+            this.elemento = elemento;
+        }
+
+        public PointF GetInicio()
+        {
+            return inicio;
+        }
+
+        public void SetInicio(PointF inicio)
+        {
+            this.inicio = inicio;
+        }
+
+        public PointF GetDestino()
+        {
+            return destino;
+        }
+
+        public void SetDestino(PointF destino)
+        {
+            this.destino = destino;
         }
     }
 }

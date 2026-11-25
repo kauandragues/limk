@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public partial class TelaPranchetaTatica : UserControl, ITelaUsuario
+    public partial class TelaPranchetaTatica : UserControl
     {
         private UsuarioAutenticado? _usuario;
         private Tatica _tatica = new Tatica();
@@ -47,6 +47,7 @@ namespace Limk.VolleyBall.User_Constrols
         private void PrepararTela()
         {
             InitializeComponent();
+            // No designer do Visual Studio, o return encerra a preparação antes de criar a fase inicial da tática.
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
@@ -66,6 +67,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void TelaPranchetaTatica_Load(object? sender, EventArgs e)
         {
+            // Evita carregar a tática no designer do Visual Studio, sem usuário, com a tela já pronta ou durante uma operação.
             if (_usuario == null || _pronto || _operacao || DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
@@ -940,10 +942,10 @@ namespace Limk.VolleyBall.User_Constrols
             // Progresso 0 mantém a posição inicial; 0,5 chega à metade; 1 alcança o destino.
             foreach (MovimentoElemento movimento in _movimentos)
             {
-                float distanciaX = movimento.Destino.X - movimento.Inicio.X;
-                float distanciaY = movimento.Destino.Y - movimento.Inicio.Y;
-                movimento.Elemento.SetX(movimento.Inicio.X + distanciaX * progresso);
-                movimento.Elemento.SetY(movimento.Inicio.Y + distanciaY * progresso);
+                float distanciaX = movimento.GetDestino().X - movimento.GetInicio().X;
+                float distanciaY = movimento.GetDestino().Y - movimento.GetInicio().Y;
+                movimento.GetElemento().SetX(movimento.GetInicio().X + distanciaX * progresso);
+                movimento.GetElemento().SetY(movimento.GetInicio().Y + distanciaY * progresso);
             }
 
             prancheta.Invalidate();

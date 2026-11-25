@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public partial class TelaAtletas : UserControl, ITelaUsuario
+    public partial class TelaAtletas : UserControl
     {
         private readonly int _equipeInicialId;
         private UsuarioAutenticado? _usuario;
@@ -41,6 +41,7 @@ namespace Limk.VolleyBall.User_Constrols
         {
             InitializeComponent();
             // O Visual Studio também cria esta tela ao abrir o editor visual.
+            // Nesse modo, o return encerra a preparação antes de configurar os dados e eventos da tela.
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
@@ -143,6 +144,7 @@ namespace Limk.VolleyBall.User_Constrols
             coluna.DataPropertyName = campo;
             coluna.HeaderText = titulo;
             coluna.MinimumWidth = LogicalToDeviceUnits(larguraMinima);
+            // No modo Fill, distribui a largura proporcionalmente: quanto maior o peso, mais espaço a coluna recebe.
             coluna.FillWeight = peso;
             coluna.SortMode = DataGridViewColumnSortMode.Automatic;
             dataGridViewAtletas.Columns.Add(coluna);

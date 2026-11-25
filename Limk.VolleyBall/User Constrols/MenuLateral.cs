@@ -5,8 +5,11 @@ namespace Limk.VolleyBall.User_Constrols
         private Button? btnAtual;
         private static readonly Color CorSelecionada = Color.FromArgb(92, 48, 154);
         private static readonly Color CorHover = Color.FromArgb(52, 37, 71);
-        // Estes eventos avisam o formulário principal quando o usuário escolhe uma tela ou sai da conta.
+        // event declara um aviso. O FormPrincipal usa += para registrar o método que recebe esse aviso.
+        // EventHandler<UserControl> envia dois argumentos: quem avisou (sender) e a tela escolhida.
+        // O ? indica que pode não haver nenhum método inscrito no evento.
         public event EventHandler<UserControl>? OnMenuSelecionado;
+        // A saída da conta usa EventHandler e envia EventArgs.Empty, pois não precisa informar uma tela.
         internal event EventHandler? SaidaDaContaSolicitada;
         public MenuLateral()
         {

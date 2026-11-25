@@ -95,7 +95,7 @@ namespace Limk.VolleyBall
             // when limita este catch aos tipos de erro relacionados ao acesso ao banco.
             catch (Exception erro) when (EhFalhaDeBanco(erro))
             {
-                throw new BancoDeDadosException("Não foi possível consultar os dados. Verifique a conexão.", erro);
+                throw new BancoDeDadosException("consultar os dados", erro);
             }
             finally
             {

@@ -52,6 +52,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void AjustarLayout()
         {
+            // No designer do Visual Studio, o return impede que o layout seja ajustado automaticamente.
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
@@ -117,6 +118,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void PosicionarFormulario()
         {
+            // Evita reposicionar o formulário no designer do Visual Studio, durante outro ajuste ou sem largura disponível.
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime || organizandoFormulario || pnlConteudo.Width <= 0)
             {
                 return;

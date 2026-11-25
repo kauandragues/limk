@@ -3,10 +3,13 @@ using System.ComponentModel;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public partial class TelaInicial : UserControl, ITelaUsuario
+    public partial class TelaInicial : UserControl
     {
         private UsuarioAutenticado? _usuario;
         private bool _carregando;
+        // event permite avisar o FormPrincipal quando um atalho pede a abertura de outra tela.
+        // EventHandler<UserControl> envia quem pediu a troca (sender) e a tela que deve ser exibida.
+        // O FormPrincipal se inscreve com +=; o ? indica que pode não haver nenhum método inscrito.
         public event EventHandler<UserControl>? TelaSolicitada;
         public TelaInicial()
         {
@@ -24,6 +27,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void TelaInicial_Load(object? sender, EventArgs e)
         {
+            // No designer do Visual Studio, o return impede o carregamento dos dados da tela inicial.
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
@@ -165,8 +169,10 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void btnEquipes_Click(object? sender, EventArgs e)
         {
+            // Só dispara o evento se houver um método inscrito para receber o pedido.
             if (TelaSolicitada != null)
             {
+                // this é a tela de origem; a nova TelaEquipes é enviada ao FormPrincipal.
                 TelaSolicitada(this, new TelaEquipes());
             }
         }

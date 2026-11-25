@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Limk.VolleyBall.User_Constrols
 {
-    public partial class TelaConfiguracoes : UserControl, ITelaUsuario
+    public partial class TelaConfiguracoes : UserControl
     {
         private UsuarioAutenticado? usuario;
         private bool ocupado;
@@ -11,6 +11,7 @@ namespace Limk.VolleyBall.User_Constrols
         public TelaConfiguracoes()
         {
             InitializeComponent();
+            // No designer do Visual Studio, o return encerra o construtor após criar os controles visuais.
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
@@ -28,6 +29,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void TelaConfiguracoes_Load(object? sender, EventArgs e)
         {
+            // No designer do Visual Studio, o return impede o carregamento das preferências do usuário.
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
@@ -203,6 +205,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         private void AjustarLayout(object? sender, EventArgs e)
         {
+            // No designer do Visual Studio, o return impede que o layout seja ajustado automaticamente.
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
