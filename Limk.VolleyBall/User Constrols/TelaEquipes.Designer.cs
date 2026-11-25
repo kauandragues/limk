@@ -50,9 +50,9 @@ namespace Limk.VolleyBall.User_Constrols
             layoutEscudoAcoes.SuspendLayout();
             layoutAcoesEquipe.SuspendLayout();
             SuspendLayout();
-            //
+            // 
             // label1
-            //
+            // 
             label1.AutoSize = true;
             label1.Font = new Font("Arial", 16.2F, FontStyle.Bold);
             label1.Location = new Point(17, 16);
@@ -60,9 +60,9 @@ namespace Limk.VolleyBall.User_Constrols
             label1.Size = new Size(287, 26);
             label1.TabIndex = 4;
             label1.Text = "Gerenciamento de Equipes";
-            //
+            // 
             // label2
-            //
+            // 
             label2.AutoSize = true;
             label2.Font = new Font("Arial", 7.8F);
             label2.Location = new Point(24, 48);
@@ -70,9 +70,9 @@ namespace Limk.VolleyBall.User_Constrols
             label2.Size = new Size(266, 14);
             label2.TabIndex = 3;
             label2.Text = "Cadastre suas equipes e atualize o nome e o escudo.";
-            //
+            // 
             // txtBuscaEquipe
-            //
+            // 
             txtBuscaEquipe.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             txtBuscaEquipe.Location = new Point(360, 20);
             txtBuscaEquipe.Name = "txtBuscaEquipe";
@@ -80,9 +80,9 @@ namespace Limk.VolleyBall.User_Constrols
             txtBuscaEquipe.Size = new Size(185, 23);
             txtBuscaEquipe.TabIndex = 0;
             txtBuscaEquipe.TextChanged += txtBuscaEquipe_TextChanged;
-            //
+            // 
             // btnNovaEquipe
-            //
+            // 
             btnNovaEquipe.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnNovaEquipe.BackColor = Color.FromArgb(124, 58, 237);
             btnNovaEquipe.FlatAppearance.BorderSize = 0;
@@ -95,9 +95,9 @@ namespace Limk.VolleyBall.User_Constrols
             btnNovaEquipe.Text = "+ Cadastrar nova equipe";
             btnNovaEquipe.UseVisualStyleBackColor = false;
             btnNovaEquipe.Click += btnNovaEquipe_Click;
-            //
+            // 
             // panel4
-            //
+            // 
             panel4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel4.Controls.Add(painelListaEquipes);
             panel4.Controls.Add(panel1);
@@ -105,9 +105,9 @@ namespace Limk.VolleyBall.User_Constrols
             panel4.Name = "panel4";
             panel4.Size = new Size(696, 506);
             panel4.TabIndex = 2;
-            //
+            // 
             // painelListaEquipes
-            //
+            // 
             painelListaEquipes.AutoScroll = true;
             painelListaEquipes.Controls.Add(layoutCartoesEquipes);
             painelListaEquipes.Controls.Add(lblResumoEquipes);
@@ -117,9 +117,9 @@ namespace Limk.VolleyBall.User_Constrols
             painelListaEquipes.Padding = new Padding(0, 0, 12, 0);
             painelListaEquipes.Size = new Size(379, 506);
             painelListaEquipes.TabIndex = 0;
-            //
+            // 
             // layoutCartoesEquipes
-            //
+            // 
             layoutCartoesEquipes.AutoSize = true;
             layoutCartoesEquipes.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             layoutCartoesEquipes.ColumnCount = 1;
@@ -130,9 +130,9 @@ namespace Limk.VolleyBall.User_Constrols
             layoutCartoesEquipes.Name = "layoutCartoesEquipes";
             layoutCartoesEquipes.Size = new Size(367, 0);
             layoutCartoesEquipes.TabIndex = 0;
-            //
+            // 
             // lblResumoEquipes
-            //
+            // 
             lblResumoEquipes.AutoSize = true;
             lblResumoEquipes.Dock = DockStyle.Top;
             lblResumoEquipes.Location = new Point(0, 0);
@@ -141,9 +141,9 @@ namespace Limk.VolleyBall.User_Constrols
             lblResumoEquipes.Size = new Size(75, 23);
             lblResumoEquipes.TabIndex = 1;
             lblResumoEquipes.Text = "Suas equipes";
-            //
+            // 
             // panel1
-            //
+            // 
             panel1.AutoScroll = true;
             panel1.BackColor = Color.White;
             panel1.Controls.Add(layoutEditorEquipe);
@@ -152,9 +152,9 @@ namespace Limk.VolleyBall.User_Constrols
             panel1.Name = "panel1";
             panel1.Size = new Size(317, 506);
             panel1.TabIndex = 1;
-            //
+            // 
             // layoutEditorEquipe
-            //
+            // 
             layoutEditorEquipe.AutoSize = true;
             layoutEditorEquipe.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             layoutEditorEquipe.ColumnCount = 1;
@@ -184,9 +184,9 @@ namespace Limk.VolleyBall.User_Constrols
             layoutEditorEquipe.RowStyles.Add(new RowStyle());
             layoutEditorEquipe.Size = new Size(317, 371);
             layoutEditorEquipe.TabIndex = 0;
-            //
+            // 
             // txtTituloFicha
-            //
+            // 
             txtTituloFicha.BackColor = Color.White;
             txtTituloFicha.BorderStyle = BorderStyle.None;
             txtTituloFicha.Dock = DockStyle.Top;
@@ -199,9 +199,9 @@ namespace Limk.VolleyBall.User_Constrols
             txtTituloFicha.TabIndex = 0;
             txtTituloFicha.TabStop = false;
             txtTituloFicha.Text = "Cadastrar nova equipe";
-            //
+            // 
             // label4
-            //
+            // 
             label4.AutoSize = true;
             label4.Dock = DockStyle.Top;
             label4.Location = new Point(16, 54);
@@ -210,9 +210,9 @@ namespace Limk.VolleyBall.User_Constrols
             label4.Size = new Size(285, 15);
             label4.TabIndex = 1;
             label4.Text = "NOME DA EQUIPE";
-            //
+            // 
             // txtNomeEquipe
-            //
+            // 
             txtNomeEquipe.Dock = DockStyle.Top;
             txtNomeEquipe.Location = new Point(16, 73);
             txtNomeEquipe.Margin = new Padding(0, 0, 0, 16);
@@ -221,9 +221,9 @@ namespace Limk.VolleyBall.User_Constrols
             txtNomeEquipe.PlaceholderText = "Ex: Taubaté Vôlei Clube";
             txtNomeEquipe.Size = new Size(285, 23);
             txtNomeEquipe.TabIndex = 0;
-            //
+            // 
             // label5
-            //
+            // 
             label5.AutoSize = true;
             label5.Dock = DockStyle.Top;
             label5.Location = new Point(16, 112);
@@ -232,9 +232,9 @@ namespace Limk.VolleyBall.User_Constrols
             label5.Size = new Size(285, 15);
             label5.TabIndex = 2;
             label5.Text = "ESCUDO DA EQUIPE";
-            //
+            // 
             // imagemEscudo
-            //
+            // 
             imagemEscudo.Anchor = AnchorStyles.Left;
             imagemEscudo.BackColor = Color.White;
             imagemEscudo.BorderStyle = BorderStyle.FixedSingle;
@@ -245,9 +245,9 @@ namespace Limk.VolleyBall.User_Constrols
             imagemEscudo.SizeMode = PictureBoxSizeMode.Zoom;
             imagemEscudo.TabIndex = 3;
             imagemEscudo.TabStop = false;
-            //
+            // 
             // labelEscudoEquipe
-            //
+            // 
             labelEscudoEquipe.AutoSize = true;
             labelEscudoEquipe.Dock = DockStyle.Top;
             labelEscudoEquipe.Font = new Font("Segoe UI", 8F);
@@ -258,9 +258,9 @@ namespace Limk.VolleyBall.User_Constrols
             labelEscudoEquipe.Size = new Size(285, 13);
             labelEscudoEquipe.TabIndex = 4;
             labelEscudoEquipe.Text = "Sem escudo";
-            //
+            // 
             // layoutEscudoAcoes
-            //
+            // 
             layoutEscudoAcoes.AutoSize = true;
             layoutEscudoAcoes.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             layoutEscudoAcoes.Controls.Add(btnEscolherEscudo);
@@ -271,9 +271,9 @@ namespace Limk.VolleyBall.User_Constrols
             layoutEscudoAcoes.Name = "layoutEscudoAcoes";
             layoutEscudoAcoes.Size = new Size(285, 32);
             layoutEscudoAcoes.TabIndex = 5;
-            //
+            // 
             // btnEscolherEscudo
-            //
+            // 
             btnEscolherEscudo.Location = new Point(0, 0);
             btnEscolherEscudo.Margin = new Padding(0, 0, 8, 0);
             btnEscolherEscudo.Name = "btnEscolherEscudo";
@@ -281,9 +281,9 @@ namespace Limk.VolleyBall.User_Constrols
             btnEscolherEscudo.TabIndex = 0;
             btnEscolherEscudo.Text = "Escolher escudo";
             btnEscolherEscudo.Click += btnEscolherEscudo_Click;
-            //
+            // 
             // btnRemoverEscudo
-            //
+            // 
             btnRemoverEscudo.Location = new Point(153, 0);
             btnRemoverEscudo.Margin = new Padding(0);
             btnRemoverEscudo.Name = "btnRemoverEscudo";
@@ -291,9 +291,9 @@ namespace Limk.VolleyBall.User_Constrols
             btnRemoverEscudo.TabIndex = 1;
             btnRemoverEscudo.Text = "Remover";
             btnRemoverEscudo.Click += btnRemoverEscudo_Click;
-            //
+            // 
             // layoutAcoesEquipe
-            //
+            // 
             layoutAcoesEquipe.AutoSize = true;
             layoutAcoesEquipe.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             layoutAcoesEquipe.Controls.Add(btnLimparFicha);
@@ -304,9 +304,9 @@ namespace Limk.VolleyBall.User_Constrols
             layoutAcoesEquipe.Name = "layoutAcoesEquipe";
             layoutAcoesEquipe.Size = new Size(285, 32);
             layoutAcoesEquipe.TabIndex = 6;
-            //
+            // 
             // btnLimparFicha
-            //
+            // 
             btnLimparFicha.Location = new Point(0, 0);
             btnLimparFicha.Margin = new Padding(0, 0, 8, 0);
             btnLimparFicha.Name = "btnLimparFicha";
@@ -314,9 +314,9 @@ namespace Limk.VolleyBall.User_Constrols
             btnLimparFicha.TabIndex = 0;
             btnLimparFicha.Text = "Limpar";
             btnLimparFicha.Click += btnNovaEquipe_Click;
-            //
+            // 
             // btnSalvarEquipe
-            //
+            // 
             btnSalvarEquipe.BackColor = Color.FromArgb(124, 58, 237);
             btnSalvarEquipe.FlatAppearance.BorderSize = 0;
             btnSalvarEquipe.FlatStyle = FlatStyle.Flat;
@@ -329,9 +329,9 @@ namespace Limk.VolleyBall.User_Constrols
             btnSalvarEquipe.Text = "Salvar equipe";
             btnSalvarEquipe.UseVisualStyleBackColor = false;
             btnSalvarEquipe.Click += btnSalvarEquipe_Click;
-            //
+            // 
             // labelStatusEquipe
-            //
+            // 
             labelStatusEquipe.AutoSize = true;
             labelStatusEquipe.Dock = DockStyle.Top;
             labelStatusEquipe.ForeColor = Color.FromArgb(100, 116, 139);
@@ -341,15 +341,15 @@ namespace Limk.VolleyBall.User_Constrols
             labelStatusEquipe.Name = "labelStatusEquipe";
             labelStatusEquipe.Size = new Size(285, 15);
             labelStatusEquipe.TabIndex = 7;
-            //
+            // 
             // seletorEscudo
-            //
+            // 
             seletorEscudo.Filter = "Imagens|*.png;*.jpg;*.jpeg;*.bmp;*.gif";
             seletorEscudo.RestoreDirectory = true;
             seletorEscudo.Title = "Escolher escudo da equipe";
-            //
+            // 
             // TelaEquipes
-            //
+            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
