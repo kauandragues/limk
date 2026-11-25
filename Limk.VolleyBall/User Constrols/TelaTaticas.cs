@@ -8,6 +8,8 @@ namespace Limk.VolleyBall.User_Constrols
     {
         private UsuarioAutenticado? _usuario;
         private DataTable _taticas = new DataTable();
+        // Preencher ou limpar os filtros pelo código também dispara TextChanged e SelectedIndexChanged.
+        // Enquanto true, evita que esses eventos recriem os cartões a cada alteração; a lista é atualizada ao final.
         private bool _carregando;
         // Avisa o FormPrincipal para abrir a prancheta ao criar, editar ou apresentar uma tática.
         // EventHandler<UserControl> recebe a origem do pedido (sender) e a tela desejada.

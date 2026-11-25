@@ -12,14 +12,14 @@ namespace Limk.VolleyBall.User_Constrols
         private const string MensagemCarregando = "Verificando seu acesso…";
         private bool autenticando;
         private bool organizandoFormulario;
+        // Avisa o FormLogin que o login terminou; EventHandler<UsuarioAutenticado> envia esta tela e o usuário autenticado.
         internal event EventHandler<UsuarioAutenticado>? LoginConcluido;
+        // Pede ao FormLogin para mostrar o cadastro; envia EventArgs.Empty porque não precisa passar dados adicionais.
         internal event EventHandler? CriarContaSolicitada;
-        internal IButtonControl BotaoEntrar
+
+        internal IButtonControl GetBotaoEntrar()
         {
-            get
-            {
-                return btnEntrar;
-            }
+            return btnEntrar;
         }
 
         public TelaLogin()

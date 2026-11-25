@@ -42,12 +42,18 @@ namespace Limk.VolleyBall
             FormLogin login = new FormLogin();
             try
             {
-                if (login.ShowDialog() != DialogResult.OK || login.Usuario == null)
+                if (login.ShowDialog() != DialogResult.OK)
                 {
                     return false;
                 }
 
-                DefinirUsuario(login.Usuario);
+                UsuarioAutenticado? usuario = login.GetUsuario();
+                if (usuario == null)
+                {
+                    return false;
+                }
+
+                DefinirUsuario(usuario);
                 return true;
             }
             finally

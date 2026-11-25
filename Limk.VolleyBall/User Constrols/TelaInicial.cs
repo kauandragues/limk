@@ -6,6 +6,8 @@ namespace Limk.VolleyBall.User_Constrols
     public partial class TelaInicial : UserControl
     {
         private UsuarioAutenticado? _usuario;
+        // Sinaliza uma atualização em andamento para impedir que AtualizarInicio inicie outra consulta.
+        // O finally volta o valor para false mesmo se o carregamento falhar, permitindo tentar novamente.
         private bool _carregando;
         // event permite avisar o FormPrincipal quando um atalho pede a abertura de outra tela.
         // EventHandler<UserControl> envia quem pediu a troca (sender) e a tela que deve ser exibida.

@@ -150,7 +150,7 @@ namespace Limk.VolleyBall.User_Constrols
                     selecionado = cartao;
                 }
 
-                if (cartao.EquipeId == _equipeSelecionadaId)
+                if (cartao.GetEquipeId() == _equipeSelecionadaId)
                 {
                     selecionado = cartao;
                     break;
@@ -163,7 +163,7 @@ namespace Limk.VolleyBall.User_Constrols
             }
             else
             {
-                SelecionarEquipe(selecionado.EquipeId);
+                SelecionarEquipe(selecionado.GetEquipeId());
             }
         }
 
@@ -172,7 +172,7 @@ namespace Limk.VolleyBall.User_Constrols
             CardEquipes? cartao = sender as CardEquipes;
             if (!_operacao && cartao != null)
             {
-                SelecionarEquipe(cartao.EquipeId);
+                SelecionarEquipe(cartao.GetEquipeId());
             }
         }
 
@@ -223,7 +223,7 @@ namespace Limk.VolleyBall.User_Constrols
         {
             foreach (CardEquipes cartao in layoutCartoesEquipes.Controls)
             {
-                cartao.DefinirSelecionado(cartao.EquipeId == _equipeSelecionadaId);
+                cartao.DefinirSelecionado(cartao.GetEquipeId() == _equipeSelecionadaId);
             }
         }
 
@@ -367,7 +367,7 @@ namespace Limk.VolleyBall.User_Constrols
             {
                 if (TelaSolicitada != null)
                 {
-                    TelaSolicitada(this, new TelaAtletas(cartao.EquipeId));
+                    TelaSolicitada(this, new TelaAtletas(cartao.GetEquipeId()));
                 }
             }
         }
@@ -385,7 +385,7 @@ namespace Limk.VolleyBall.User_Constrols
                 return;
             }
 
-            DataRow? registro = LocalizarEquipe(cartao.EquipeId);
+            DataRow? registro = LocalizarEquipe(cartao.GetEquipeId());
             if (registro == null)
             {
                 return;
@@ -397,7 +397,7 @@ namespace Limk.VolleyBall.User_Constrols
                 return;
             }
 
-            ExcluirEquipe(cartao.EquipeId);
+            ExcluirEquipe(cartao.GetEquipeId());
         }
 
         private void ExcluirEquipe(int equipeId)

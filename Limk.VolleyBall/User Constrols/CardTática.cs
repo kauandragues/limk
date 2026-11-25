@@ -11,8 +11,11 @@ namespace Limk.VolleyBall.User_Constrols
     public partial class CardTática : UserControl
     {
         private int _taticaId;
+        // Pede à TelaTaticas para abrir a prancheta. EventHandler<int> envia este cartão (sender) e o ID da tática.
         public event EventHandler<int>? AbrirTatica;
+        // Pede à TelaTaticas para apresentar a tática, enviando o ID como segundo argumento do evento.
         public event EventHandler<int>? ApresentarTatica;
+        // Pede à TelaTaticas para excluir a tática. EventHandler<DataRow> envia o registro usado na confirmação.
         internal event EventHandler<DataRow>? ExcluirTatica;
         private DataRow? registro;
         public CardTática()

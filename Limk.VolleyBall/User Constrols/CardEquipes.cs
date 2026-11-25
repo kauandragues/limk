@@ -1,19 +1,33 @@
 using Limk.VolleyBall.Backend;
-using System.ComponentModel;
 using System.Data;
 
 namespace Limk.VolleyBall.User_Constrols
 {
     public partial class CardEquipes : UserControl
     {
+        private int _equipeId;
         private Image? _escudo;
         private readonly Image? _escudoPadrao;
         private readonly Image? _iconeExcluir;
-        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int EquipeId { get; private set; }
 
+        // EventHandler envia este cartão em sender e os argumentos do clique aos métodos inscritos com +=.
+        // O ? indica que pode não haver nenhum método inscrito no evento.
+        // Pede à TelaEquipes para abrir o elenco; ela identifica a equipe por GetEquipeId() no cartão recebido.
         public event EventHandler? VerElenco;
+        // Pede à TelaEquipes para confirmar a exclusão da equipe identificada pelo cartão recebido em sender.
         public event EventHandler? ExcluirEquipe;
+
+        // Expõe o ID por um método, sem criar uma propriedade para o Designer exibir ou gravar.
+        internal int GetEquipeId()
+        {
+            return _equipeId;
+        }
+
+        private void SetEquipeId(int equipeId)
+        {
+            _equipeId = equipeId;
+        }
+
         public CardEquipes()
         {
             InitializeComponent();
@@ -38,7 +52,7 @@ namespace Limk.VolleyBall.User_Constrols
 
         internal void ExibirEquipe(DataRow equipe)
         {
-            EquipeId = Convert.ToInt32(equipe["id"]);
+            SetEquipeId(Convert.ToInt32(equipe["id"]));
             label8.Text = equipe["nome"].ToString();
             label9.Text = $"{equipe["atletas"]} atletas";
             label10.Text = $"{equipe["taticas"]} táticas";

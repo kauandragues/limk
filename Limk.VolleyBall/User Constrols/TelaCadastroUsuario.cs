@@ -7,14 +7,14 @@ namespace Limk.VolleyBall.User_Constrols
     {
         private bool _cadastrando;
         private bool _organizandoFormulario;
+        // Avisa o FormLogin que o cadastro terminou; EventHandler<UsuarioAutenticado> envia esta tela e o usuário criado.
         internal event EventHandler<UsuarioAutenticado>? CadastroConcluido;
+        // Pede ao FormLogin para voltar ao login; envia EventArgs.Empty porque não precisa passar dados adicionais.
         internal event EventHandler? VoltarParaLogin;
-        internal IButtonControl BotaoCadastrar
+
+        internal IButtonControl GetBotaoCadastrar()
         {
-            get
-            {
-                return btnCadastrar;
-            }
+            return btnCadastrar;
         }
 
         public TelaCadastroUsuario()

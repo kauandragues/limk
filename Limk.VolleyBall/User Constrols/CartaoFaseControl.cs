@@ -10,6 +10,8 @@
         private int _duracaoMs = 2000;
         private Point _inicioArraste;
         private bool _mousePressionado;
+        // Avisa a TelaPranchetaTatica para iniciar o arraste do cartão e permitir reordenar os quadros.
+        // EventHandler envia este cartão em sender e EventArgs.Empty, pois não há dados extras.
         public event EventHandler? ArrasteSolicitado;
         public int GetNumero()
         {

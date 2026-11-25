@@ -6,7 +6,11 @@ namespace Limk.VolleyBall.User_Constrols
     public partial class PranchetaControl : UserControl
     {
         private readonly List<ElementoQuadra> _elementos = new List<ElementoQuadra>();
+        // Avisa a TelaPranchetaTatica para atualizar o painel de propriedades ao selecionar ou desmarcar um elemento.
+        // Envia esta prancheta em sender e EventArgs.Empty; a tela consulta GetElementoSelecionado().
         public event EventHandler? SelecaoAlterada;
+        // Avisa a TelaPranchetaTatica para atualizar as coordenadas quando o elemento selecionado é arrastado.
+        // Também usa EventArgs.Empty, pois a tela consulta a posição diretamente no elemento selecionado.
         public event EventHandler? PosicaoAlterada;
         private readonly Image _imagemQuadra = Properties.Resources.Quadra;
         private float _zoom = 1f;

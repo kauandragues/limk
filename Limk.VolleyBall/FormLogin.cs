@@ -5,7 +5,17 @@ namespace Limk.VolleyBall
 {
     internal sealed class FormLogin : Form
     {
-        public UsuarioAutenticado? Usuario { get; private set; }
+        private UsuarioAutenticado? _usuario;
+
+        public UsuarioAutenticado? GetUsuario()
+        {
+            return _usuario;
+        }
+
+        private void SetUsuario(UsuarioAutenticado? usuario)
+        {
+            _usuario = usuario;
+        }
 
         public FormLogin()
         {
@@ -36,7 +46,7 @@ namespace Limk.VolleyBall
             login.Dock = DockStyle.Fill;
             login.LoginConcluido += LoginConcluido;
             login.CriarContaSolicitada += CriarContaSolicitada;
-            MostrarTela(login, login.BotaoEntrar, "Entrar | LIMK Volleyball");
+            MostrarTela(login, login.GetBotaoEntrar(), "Entrar | LIMK Volleyball");
             if (!string.IsNullOrEmpty(emailCadastrado))
             {
                 login.MostrarContaCriada(emailCadastrado);
@@ -53,7 +63,7 @@ namespace Limk.VolleyBall
             cadastro.Dock = DockStyle.Fill;
             cadastro.VoltarParaLogin += VoltarParaLogin;
             cadastro.CadastroConcluido += CadastroConcluido;
-            MostrarTela(cadastro, cadastro.BotaoCadastrar, "Criar conta | LIMK Volleyball");
+            MostrarTela(cadastro, cadastro.GetBotaoCadastrar(), "Criar conta | LIMK Volleyball");
             cadastro.FocarNome();
         }
 
@@ -83,7 +93,7 @@ namespace Limk.VolleyBall
 
         private void LoginConcluido(object? sender, UsuarioAutenticado usuario)
         {
-            Usuario = usuario;
+            SetUsuario(usuario);
             DialogResult = DialogResult.OK;
         }
     }
